@@ -17,7 +17,7 @@
 
 import pyglet
 from util import Reactable
-from screens import first_stage
+from screens import first_stage, common_screen
 
 class GameController(Reactable):
     """Ui controller"""
@@ -35,6 +35,7 @@ class GameController(Reactable):
         if game_state is None:
             game_state = GameState(self.get_hero())
         self.game_state = game_state
+        self.screens.append(common_screen)
     def get_hero(self):
         """Return a hero set by the hero selection screen"""
         return None

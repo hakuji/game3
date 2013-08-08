@@ -24,4 +24,4 @@ class Stage(Screen):
 
 first_stage = Stage([], [])
 
-#common_screen = Screen(level_frame, message_box, stats_panel, tool_panel]) level frame might not be useful
+common_screen = Screen([])#message_box, stats_panel, tool_panel])
