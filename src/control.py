@@ -44,7 +44,10 @@ class GameController(Reactable):
         if len(self.screens) > 1:
             self.screens.pop()
         else:
-            pyglet.app.exit()
+            self.quit()
+    def quit(self):
+        """Politely exit the game"""
+        pyglet.app.exit()
     def draw(self):
         """Draws the current screen"""
         self.top_screen().draw()

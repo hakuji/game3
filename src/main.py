@@ -38,11 +38,14 @@ def on_draw():
     state.draw()
 
 def init():
-    state.subs.extend([KeySubscription(state.back_one_screen, key.Q),
-                                        KeySubscription(state.back_one_screen, key.ESCAPE)])
+    state.subs.extend([
+        KeySubscription(state.back_one_screen, key.Q),
+        KeySubscription(state.back_one_screen, key.ESCAPE),
+        KeySubscription(state.quit, key.C, key.MOD_CTRL)
+    ])
     state.screens.append(MAIN_MENU)
     MAIN_MENU.contents.append(Option(
-        state.subs,
+        state.subs[0:1],
         'Quit',
         pyglet.text.Label(
             font_name='Times',
