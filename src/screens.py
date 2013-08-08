@@ -15,7 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with game 3.  If not, see <http://www.gnu.org/licenses/>.
 
-from util import Screen
+import pyglet
+from util import Screen, Container
+from constants import WINDOW_WIDTH, WINDOW_HEIGHT
 
 class Stage(Screen):
     def __init__(self, contents, layout):
@@ -24,4 +26,31 @@ class Stage(Screen):
 
 first_stage = Stage([], [])
 
-common_screen = Screen([])#message_box, stats_panel, tool_panel])
+class LabeledField(Container):
+    def __init__(self, label, value_func):
+        self.label = pyglet.text.Label(
+            label,
+            font_name='Times',
+            font_size=20,
+            x=WINDOW_WIDTH//2, y=WINDOW_HEIGHT//2,
+            anchor_x='center', anchor_y='center')
+        self.value = pyglet.text.Label(
+            font_name='Times',
+            font_size=20,
+            x=WINDOW_WIDTH//2, y=WINDOW_HEIGHT//2,
+            anchor_x='center', anchor_y='center')
+        self.value_func = value_func
+        self.contents = [self.label, self.value]
+
+    def draw(self):
+        self.value.text = str(self.value_func())
+        super(LabeledField, self).draw()
+
+def health():
+    return 10
+
+STATS_PANEL = Container([LabeledField('Health', health)])
+
+
+
+common_screen = Screen([STATS_PANEL])#stats_panel, message_box, tool_panel])

@@ -43,6 +43,13 @@ class Drawable(object):
     def draw(self):
         self.sprite.draw()
 
+class Container(object):
+    def __init__(self, contents):
+        self.contents = contents
+    def draw(self):
+        for i in self.contents:
+            i.draw()
+
 class Reactable(object):
     """Anything that can react to keyboard inputs"""
     def __init__(self, subs):
@@ -67,14 +74,9 @@ class Option(Drawable, Reactable):
     def get_text(self):
         return self.keypart() + ' - ' + self.description
 
-class Screen(object):
-    def __init__(self, elements):
-        self.elements = elements
-    def draw(self):
-        for i in self.elements:
-            i.draw()
+class Screen(Container):
     def react(self, key, modifiers):
-        for i in self.elements:
+        for i in self.contents:
             try:
                 i.react(key, modifiers)
             except AttributeError:

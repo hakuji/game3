@@ -41,7 +41,7 @@ def init():
     state.subs.extend([KeySubscription(state.back_one_screen, key.Q),
                                         KeySubscription(state.back_one_screen, key.ESCAPE)])
     state.screens.append(MAIN_MENU)
-    MAIN_MENU.elements.append(Option(
+    MAIN_MENU.contents.append(Option(
         state.subs,
         'Quit',
         pyglet.text.Label(
