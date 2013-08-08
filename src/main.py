@@ -1,0 +1,54 @@
+#!/bin/python
+# Copyright 2013 by akuji
+#
+# This file is part of game 3.
+#
+# game 3 is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# game 3 is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with game 3.  If not, see <http://www.gnu.org/licenses/>.
+
+import pyglet
+from control import state
+from constants import WINDOW_WIDTH, WINDOW_HEIGHT
+from util import KeySubscription, Option
+from pyglet.window import key
+from menu import MAIN_MENU
+
+window = pyglet.window.Window(width=WINDOW_WIDTH, height=WINDOW_HEIGHT)
+
+@window.event
+def on_key_press(symbol, modifiers):
+    state.react(symbol, modifiers)
+
+@window.event
+def on_draw():
+    window.clear()
+    state.draw()
+
+def init():
+    state.subs.extend([KeySubscription(state.back_one_screen, key.Q),
+                                        KeySubscription(state.back_one_screen, key.ESCAPE)])
+    state.screens.append(MAIN_MENU)
+    MAIN_MENU.elements.append(Option(
+        state.subs,
+        'Quit',
+        pyglet.text.Label(
+            font_name='Times',
+            font_size=12,
+            x=WINDOW_WIDTH//2, y=WINDOW_HEIGHT//2 - 92,
+            anchor_x='center', anchor_y='center')))
+
+    pyglet.app.run()
+
+if __name__ == '__main__':
+    init()
+    
