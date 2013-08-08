@@ -17,7 +17,7 @@
 
 import pyglet
 from util import Screen, Container
-from constants import WINDOW_WIDTH, WINDOW_HEIGHT
+from constants import STATS_PANEL_X, FIELD_FONT_SIZE as FONT_SIZE
 
 class Stage(Screen):
     def __init__(self, contents, layout):
@@ -28,7 +28,6 @@ first_stage = Stage([], [])
 
 class LabeledField(Container):
     def __init__(self, label, value_func, x, y):
-        FONT_SIZE = 12
         self.label = pyglet.text.Label(
             label,
             font_name='Times',
@@ -49,7 +48,13 @@ class LabeledField(Container):
 def health():
     return 10
 
-STATS_PANEL = Container([LabeledField('Health', health, 530, 460)])
+def place():
+    return "Nowhere"
+
+STATS_PANEL = Container([
+    LabeledField('Health', health, STATS_PANEL_X, 460),
+    LabeledField('Place', place, STATS_PANEL_X, 430)
+])
 
 
 
