@@ -27,18 +27,18 @@ class Stage(Screen):
 first_stage = Stage([], [])
 
 class LabeledField(Container):
-    def __init__(self, label, value_func):
+    def __init__(self, label, value_func, x, y):
+        FONT_SIZE = 12
         self.label = pyglet.text.Label(
             label,
             font_name='Times',
-            font_size=20,
-            x=WINDOW_WIDTH//2, y=WINDOW_HEIGHT//2,
-            anchor_x='center', anchor_y='center')
+            font_size=FONT_SIZE,
+            x=x, y=y)
         self.value = pyglet.text.Label(
             font_name='Times',
-            font_size=20,
-            x=WINDOW_WIDTH//2, y=WINDOW_HEIGHT//2,
-            anchor_x='center', anchor_y='center')
+            font_size=FONT_SIZE,
+            x = x + self.label.content_width + 15,
+            y = y)
         self.value_func = value_func
         self.contents = [self.label, self.value]
 
@@ -49,7 +49,7 @@ class LabeledField(Container):
 def health():
     return 10
 
-STATS_PANEL = Container([LabeledField('Health', health)])
+STATS_PANEL = Container([LabeledField('Health', health, 530, 460)])
 
 
 
