@@ -20,6 +20,9 @@
 import pyglet
 from pyglet.window import key
 
+class SubscriptionFound(Exception):
+    pass
+
 class KeySubscription(object):
     """Keyboard inputs combination that trigger an event"""
     def __init__(self, action, key, modifiers=0):
@@ -31,6 +34,7 @@ class KeySubscription(object):
     def react(self, key, modifiers):
         if self.key == key and self.modifiers == modifiers:
             self.action()
+            raise SubscriptionFound()
 
 class Drawable(object):
     """Anything that can be drawn"""
