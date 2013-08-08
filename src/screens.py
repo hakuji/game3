@@ -29,7 +29,7 @@ first_stage = Stage([], [])
 class LabeledField(Container):
     def __init__(self, label, value_func, x, y):
         self.label = pyglet.text.Label(
-            label,
+            label + ':',
             font_name='Times',
             font_size=FONT_SIZE,
             x=x, y=y)
@@ -49,7 +49,7 @@ def health():
     return 10
 
 def place():
-    return "Nowhere"
+    return 'Nowhere'
 
 STATS_PANEL = Container([
     LabeledField('Health', health, STATS_PANEL_X, 460),
