@@ -83,18 +83,13 @@ class Screen(Container):
                 pass
 
 class Hero(Drawable):
-    def __init__(self, sex, race, religon, perks, pos):
-        self.sprite = pyglet.text.Label('@',
-                          font_name='Monospace',
-                          font_size=12,
-                          x=pos[0], y=pos[1],
-                          anchor_x='center', anchor_y='center')
-        self.sex = sex
-        self.race = race
-        self.religon = religon
-        self.perks = perks
-        self.inv = []
-        (self.str, self.int, self.dex) = race.default_attributes()
+    def __init__(self, lvl, inv = None):
+        self.sprite = pyglet.text.Label(
+            '@',
+            font_name='Monospace',
+            font_size=12)
+        if inv is None:
+            self.inv = []
     def move_left(self):
         self.sprite.x = max(1, self.sprite.x - 1) #TODO: Real boundary check
 
