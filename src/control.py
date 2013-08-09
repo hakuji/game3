@@ -16,7 +16,7 @@
 # along with game 3.  If not, see <http://www.gnu.org/licenses/>.
 
 import pyglet
-from util import Reactable
+from util import Reactable, Hero
 from screens import first_stage, common_screen
 
 class GameController(Reactable):
@@ -30,15 +30,15 @@ class GameController(Reactable):
         self.subs = subs
     def top_screen(self):
         return self.screens[-1]
-    def start_game(self, game_state = None):
+    def get_chsc_callback(self, screen):
+        """Return a function that changes the current screen"""
+        return lambda : self.screens.append(screen)
+    def start_game(self, dificulty, hero = None, stage = first_stage):#Mutable state, fix it
         """Where the magic happens"""
-        if game_state is None:
-            game_state = GameState(self.get_hero())
-        self.game_state = game_state
+        if hero is None:
+            hero = Hero()
+        self.game_state = GameState(dificulty, hero, stage)
         self.screens.append(common_screen)
-    def get_hero(self):
-        """Return a hero set by the hero selection screen"""
-        return None
     def back_one_screen(self):
         """Revert to previous screen or quit"""
         if len(self.screens) > 1:
@@ -58,6 +58,7 @@ class GameController(Reactable):
 
 class GameState(object):
     """State of the playable parts of the game"""
-    def __init__(self, hero, stage = first_stage):
+    def __init__(self, dificulty, hero, stage):
         pass
+
 state = GameController()

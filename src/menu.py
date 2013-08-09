@@ -19,8 +19,34 @@
 import pyglet
 from util import KeySubscription, Screen, Option
 from pyglet.window import key
-from constants import WINDOW_WIDTH, WINDOW_HEIGHT
+from constants import WINDOW_WIDTH, WINDOW_HEIGHT, HARD, NORMAL
 from control import state
+
+def get_start(dificulty):
+    def l():
+        state.start_game(dificulty)
+        del state.screens[-2]
+    return l
+
+CHOOSE_DIFICULTY = Screen([
+    pyglet.text.Label('Choose the game dificulty',
+                          font_name='Times',
+                          font_size=25,
+                          x=WINDOW_WIDTH//2, y=WINDOW_HEIGHT//2,
+                          anchor_x='center', anchor_y='center'),
+    Option([KeySubscription(get_start(NORMAL), key.N)],
+           'Normal',
+           pyglet.text.Label(font_name='Times',
+                          font_size=12,
+                          x=WINDOW_WIDTH//2, y=WINDOW_HEIGHT//2 - 52,
+                          anchor_x='center', anchor_y='center')),
+    Option([KeySubscription(get_start(HARD), key.H)],
+           'Hard',
+           pyglet.text.Label(font_name='Times',
+                          font_size=12,
+                          x=WINDOW_WIDTH//2, y=WINDOW_HEIGHT//2 - 72,
+                          anchor_x='center', anchor_y='center'))
+])
 
 MAIN_MENU = Screen([
     pyglet.text.Label('Game 3',
@@ -28,7 +54,8 @@ MAIN_MENU = Screen([
                           font_size=36,
                           x=WINDOW_WIDTH//2, y=WINDOW_HEIGHT//2,
                           anchor_x='center', anchor_y='center'),
-    Option([KeySubscription(state.start_game, key.N)],
+    Option([KeySubscription(
+        state.get_chsc_callback(CHOOSE_DIFICULTY), key.N)],
            'New game',
            pyglet.text.Label(font_name='Times',
                           font_size=12,
