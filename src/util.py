@@ -83,11 +83,12 @@ class Screen(Container):
                 pass
 
 class Hero(Drawable):
-    def __init__(self, lvl, inv = None):
+    def __init__(self, lvl = 0, inv = None):
         self.sprite = pyglet.text.Label(
             '@',
             font_name='Monospace',
             font_size=12)
+        self.lvl = inv
         if inv is None:
             self.inv = []
     def move_left(self):
