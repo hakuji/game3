@@ -18,12 +18,15 @@
 
 import pyglet
 from control import state
-from constants import WINDOW_WIDTH, WINDOW_HEIGHT
+from constants import WINDOW_WIDTH, WINDOW_HEIGHT, GAME_NAME
 from util import KeySubscription, Option, SubscriptionFound
 from pyglet.window import key
 from menu import MAIN_MENU
 
-window = pyglet.window.Window(width=WINDOW_WIDTH, height=WINDOW_HEIGHT)
+window = pyglet.window.Window(
+    caption = GAME_NAME,
+    width = WINDOW_WIDTH,
+    height = WINDOW_HEIGHT)
 
 @window.event
 def on_key_press(symbol, modifiers):
