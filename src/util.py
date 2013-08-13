@@ -123,7 +123,7 @@ class Object(Drawable):
             font_size=OBJECT_FONT_SIZE)
         super(Object, self).__init__(sprite)
         self.definition = definition
-    def contains(self, x, y, height, width, go_through):
+    def contains(self, x, y, height, width):
         """Used to detect collision"""
         return False
 
@@ -158,13 +158,13 @@ before raising an exception"""
             obj.sprite.y = y
             return
         for i in range(10000):
-            x, y = self.get_position(width, height)
+            x, y = self.get_random_position(width, height)
             if not any(i.contains(x, y, width, height)
                        for i in self.objects):
-                self.obj.sprite.x = x
-                self.obj.sprite.y = y
+                obj.sprite.x = x
+                obj.sprite.y = y
                 return
-        raise Exception('Could not assign position to object: '
+        raise Exception('Could not assign a position to object: '
                         + str(obj))
 
 

@@ -17,7 +17,7 @@
 
 from util import ObjectDefinition
 
-DESC_STAIRS = ObjectDefinition(1, True, '>', 'Descending stairs')
+DESC_STAIRS = ObjectDefinition(1, False, '>', 'Descending stairs')
 
 STAGES =[[
     (DESC_STAIRS, 1)
