@@ -19,6 +19,10 @@
 
 import pyglet
 from pyglet.window import key
+from constants import FIELD_FONT_SIZE as FONT_SIZE, OBJECT_FONT_SIZE, ST_BOUND_Y, ST_BOUND_X
+import itertools
+from random import randint as random
+flatten = itertools.chain.from_iterable
 
 class SubscriptionFound(Exception):
     pass
@@ -96,3 +100,88 @@ class Hero(Drawable):
 
     def move_right(self):
         self.sprite.x = self.sprite.x + 1
+
+class ObjectDefinition(object):
+    """The common properties of a type of object"""
+    def __init__(self, id, go_through, symbol, description):
+        self.id = id
+        self.go_through = go_through
+        self.symbol = symbol
+        self.description = description
+    def toScreenObject(self, count):
+        return [Object(self) for i in range(count)]
+
+class Object(Drawable):
+    """Actual object on the screen"""
+    @classmethod
+    def from_list(cls, l):
+        return flatten(map(lambda x: x[0].toScreenObject(x[1]), l))
+    def __init__(self, definition):
+        sprite = pyglet.text.Label(
+            definition.symbol,
+            font_name='Monospace',
+            font_size=OBJECT_FONT_SIZE)
+        super(Object, self).__init__(sprite)
+        self.definition = definition
+    def contains(self, x, y, height, width, go_through):
+        """Used to detect collision"""
+        return False
+
+class Stage(Container):
+    def __init__(self, object_list, walls, creatures):
+        self.walls = walls
+        self.objects = Object.from_list(object_list)
+        self.creatures = creatures
+        self.contents = []
+        self.contents.extend(walls)
+        self.contents.extend(self.objects)
+        self.contents.extend(creatures)
+        super(Stage, self).__init__(self.contents)
+        self.arrange_objects()
+    def arrange_objects(self):
+        """Set initial arrangement of the objects"""
+        for obj in self.objects:
+            self.set_location(obj)
+    def get_random_position(width, height):
+        """Returns a random point in the map"""
+        x = random(0, ST_BOUND_X - width)
+        y = random(0, ST_BOUND_Y - height)
+        return x, y
+    def set_location(self, obj):
+        """Assign a random free position to an object. Will try 10000 times
+before raising an exception"""
+        width = obj.sprite.width
+        height = obj.sprite.height
+        if obj.go_through:
+            x, y = self.get_position(width, height)
+            self.obj.sprite.x = x
+            self.obj.sprite.y = y
+        for i in range(10000):
+            x, y = self.get_position(width, height)
+            if not any(i.contains(x, y, width, height)
+                       for i in self.objects):
+                self.obj.sprite.x = x
+                self.obj.sprite.y = y
+                return
+        raise Exception('Could not assign position to object: '
+                        + str(obj))
+
+
+class LabeledField(Container):
+    def __init__(self, label, value_func, x, y):
+        self.label = pyglet.text.Label(
+            label + ':',
+            font_name='Times',
+            font_size=FONT_SIZE,
+            x=x, y=y)
+        self.value = pyglet.text.Label(
+            font_name='Times',
+            font_size=FONT_SIZE,
+            x = x + self.label.content_width + 15,
+            y = y)
+        self.value_func = value_func
+        self.contents = [self.label, self.value]
+
+    def draw(self):
+        self.value.text = str(self.value_func())
+        super(LabeledField, self).draw()
