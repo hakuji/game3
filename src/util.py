@@ -115,7 +115,7 @@ class Object(Drawable):
     """Actual object on the screen"""
     @classmethod
     def from_list(cls, l):
-        return flatten(map(lambda x: x[0].toScreenObject(x[1]), l))
+        return list(flatten(map(lambda x: x[0].toScreenObject(x[1]), l)))
     def __init__(self, definition):
         sprite = pyglet.text.Label(
             definition.symbol,
@@ -142,7 +142,7 @@ class Stage(Container):
         """Set initial arrangement of the objects"""
         for obj in self.objects:
             self.set_location(obj)
-    def get_random_position(width, height):
+    def get_random_position(self, width, height):
         """Returns a random point in the map"""
         x = random(0, ST_BOUND_X - width)
         y = random(0, ST_BOUND_Y - height)
@@ -150,12 +150,13 @@ class Stage(Container):
     def set_location(self, obj):
         """Assign a random free position to an object. Will try 10000 times
 before raising an exception"""
-        width = obj.sprite.width
-        height = obj.sprite.height
-        if obj.go_through:
-            x, y = self.get_position(width, height)
-            self.obj.sprite.x = x
-            self.obj.sprite.y = y
+        width = obj.sprite.content_width
+        height = obj.sprite.content_height
+        if obj.definition.go_through:
+            x, y = self.get_random_position(width, height)
+            obj.sprite.x = x
+            obj.sprite.y = y
+            return
         for i in range(10000):
             x, y = self.get_position(width, height)
             if not any(i.contains(x, y, width, height)
