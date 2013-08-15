@@ -19,7 +19,8 @@
 
 import pyglet
 from pyglet.window import key
-from constants import FIELD_FONT_SIZE as FONT_SIZE, OBJECT_FONT_SIZE, ST_BOUND_Y, ST_BOUND_X
+from constants import (FIELD_FONT_SIZE as FONT_SIZE, OBJECT_FONT_SIZE,
+                       ST_BOUND_Y, ST_BOUND_X, OBJECT_FONT_FACE)
 import itertools
 from random import randint as random
 flatten = itertools.chain.from_iterable
@@ -86,28 +87,6 @@ class Screen(Container):
             except AttributeError:
                 pass
 
-class Hero(Drawable):
-    def __init__(self, khandler, lvl = 0, inv = None):
-        self.sprite = pyglet.text.Label(
-            '@',
-            font_name='Monospace',
-            font_size=12)
-        self.lvl = inv
-        self.khandler = khandler
-        self.speed = 3
-        if inv is None:
-            self.inv = []
-    def update(self, dt):
-        if self.khandler[key.UP]:
-            self.sprite.y += self.speed
-        if self.khandler[key.DOWN]:
-            self.sprite.y -= self.speed
-        if self.khandler[key.LEFT]:
-            self.sprite.x -= self.speed
-        if self.khandler[key.RIGHT]:
-            self.sprite.x += self.speed
-
-
 class ObjectDefinition(object):
     """The common properties of a type of object"""
     def __init__(self, id, go_through, symbol, description):
@@ -126,7 +105,7 @@ class Object(Drawable):
     def __init__(self, definition):
         sprite = pyglet.text.Label(
             definition.symbol,
-            font_name='Monospace',
+            font_name=OBJECT_FONT_FACE,
             font_size=OBJECT_FONT_SIZE)
         super(Object, self).__init__(sprite)
         self.definition = definition
@@ -134,20 +113,42 @@ class Object(Drawable):
         """Used to detect collision"""
         return False
 
+class Hero(Object):
+    def __init__(self, khandler, lvl = 0, inv = None):
+        d = ObjectDefinition(2, False, '@', 'You, the traveler')
+        super(Hero, self).__init__(d)
+        self.lvl = lvl
+        self.inv = inv
+        self.khandler = khandler
+        self.speed = 3
+        if inv is None:
+            self.inv = []
+    def update(self, dt):
+        if self.khandler[key.UP]:
+            self.sprite.y += self.speed
+        if self.khandler[key.DOWN]:
+            self.sprite.y -= self.speed
+        if self.khandler[key.LEFT]:
+            self.sprite.x -= self.speed
+        if self.khandler[key.RIGHT]:
+            self.sprite.x += self.speed
+
 class Stage(Container):
-    def __init__(self, object_list, walls, creatures):
-        self.walls = walls
+    def __init__(self, object_list, rooms, creatures):
+        self.rooms = rooms
         self.objects = Object.from_list(object_list)
         self.creatures = creatures
         self.contents = []
-        self.contents.extend(walls)
+        self.contents.extend(rooms)
         self.contents.extend(self.objects)
         self.contents.extend(creatures)
         super(Stage, self).__init__(self.contents)
         self.arrange_objects()
+    def placeable_objects(self):
+        return itertools.chain(self.objects, self.creatures)
     def arrange_objects(self):
         """Set initial arrangement of the objects"""
-        for obj in self.objects:
+        for obj in self.placeable_objects():
             self.set_location(obj)
     def get_random_position(self, width, height):
         """Returns a random point in the map"""
@@ -167,7 +168,7 @@ before raising an exception"""
         for i in range(10000):
             x, y = self.get_random_position(width, height)
             if not any(i.contains(x, y, width, height)
-                       for i in self.objects):
+                       for i in self.placeable_objects()):
                 obj.sprite.x = x
                 obj.sprite.y = y
                 return

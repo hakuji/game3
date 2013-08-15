@@ -25,3 +25,4 @@ ST_BOUND_Y = 470
 NORMAL = True
 HARD = False
 GAME_NAME = 'GAME 3'
+OBJECT_FONT_FACE = 'Monospace'
