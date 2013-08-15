@@ -46,6 +46,9 @@ def init():
         KeySubscription(state.back_one_screen, key.ESCAPE),
         KeySubscription(state.quit, key.C, key.MOD_CTRL)
     ])
+    keys = key.KeyStateHandler()
+    window.push_handlers(keys)
+    state.khandler = keys
     state.screens.append(MAIN_MENU)
     MAIN_MENU.contents.append(Option(
         state.subs[0:1],
@@ -55,7 +58,7 @@ def init():
             font_size=12,
             x=WINDOW_WIDTH//2, y=WINDOW_HEIGHT//2 - 92,
             anchor_x='center', anchor_y='center')))
-
+    pyglet.clock.schedule_interval(state.update, 0.1)
     pyglet.app.run()
 
 if __name__ == '__main__':

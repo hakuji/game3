@@ -37,7 +37,7 @@ class GameController(Reactable):
     def start_game(self, dificulty, hero = None, stage_no = 0):
         """Where the magic starts"""
         if hero is None:
-            hero = Hero()
+            hero = Hero(self.khandler)
         self.game_state = GameState(dificulty, hero, stage_no)
         self.screens.append(CommonScreen(self.game_state))
     def back_one_screen(self):
@@ -52,8 +52,12 @@ class GameController(Reactable):
     def draw(self):
         """Draws the current screen"""
         self.top_screen().draw()
+    def update(self, dt):
+        """Update the game"""
+        pass
     def react(self, key, modifiers):
-        """Calls default reactions and screen specific reactions"""
+        """Calls default reactions and screen specific reactions to keyboard
+events"""
         super(GameController, self).react(key, modifiers)
         self.top_screen().react(key, modifiers)
 
@@ -63,6 +67,6 @@ class GameState(object):
         self.dificulty = dificulty
         self.hero = hero
         self.stage_no = stage_no
-        self.stage = Stage(STAGES[stage_no], [], [])
+        self.stage = Stage(STAGES[stage_no], [], [hero])
 
 state = GameController()

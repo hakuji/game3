@@ -87,14 +87,17 @@ class Screen(Container):
                 pass
 
 class Hero(Drawable):
-    def __init__(self, lvl = 0, inv = None):
+    def __init__(self, khandler, lvl = 0, inv = None):
         self.sprite = pyglet.text.Label(
             '@',
             font_name='Monospace',
             font_size=12)
         self.lvl = inv
+        self.khandler = khandler
         if inv is None:
             self.inv = []
+    def update(self):
+        pass
     def move_left(self):
         self.sprite.x = max(1, self.sprite.x - 1) #TODO: Real boundary check
 
