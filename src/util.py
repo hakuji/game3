@@ -106,11 +106,7 @@ class Hero(Drawable):
             self.sprite.x -= self.speed
         if self.khandler[key.RIGHT]:
             self.sprite.x += self.speed
-    def move_left(self):
-        self.sprite.x = max(1, self.sprite.x - 1) #TODO: Real boundary check
 
-    def move_right(self):
-        self.sprite.x = self.sprite.x + 1
 
 class ObjectDefinition(object):
     """The common properties of a type of object"""
