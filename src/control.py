@@ -54,7 +54,10 @@ class GameController(Reactable):
         self.top_screen().draw()
     def update(self, dt):
         """Update the game"""
-        pass
+        try:
+            self.top_screen().update(dt)
+        except AttributeError:
+            pass
     def react(self, key, modifiers):
         """Calls default reactions and screen specific reactions to keyboard
 events"""
@@ -68,5 +71,7 @@ class GameState(object):
         self.hero = hero
         self.stage_no = stage_no
         self.stage = Stage(STAGES[stage_no], [], [hero])
+    def update(self, dt):
+        self.hero.update(dt)
 
 state = GameController()

@@ -94,10 +94,18 @@ class Hero(Drawable):
             font_size=12)
         self.lvl = inv
         self.khandler = khandler
+        self.speed = 3
         if inv is None:
             self.inv = []
-    def update(self):
-        pass
+    def update(self, dt):
+        if self.khandler[key.UP]:
+            self.sprite.y += self.speed
+        if self.khandler[key.DOWN]:
+            self.sprite.y -= self.speed
+        if self.khandler[key.LEFT]:
+            self.sprite.x -= self.speed
+        if self.khandler[key.RIGHT]:
+            self.sprite.x += self.speed
     def move_left(self):
         self.sprite.x = max(1, self.sprite.x - 1) #TODO: Real boundary check
 
