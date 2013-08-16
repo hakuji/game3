@@ -72,6 +72,6 @@ class GameState(object):
         self.stage_no = stage_no
         self.stage = Stage(STAGES[stage_no], hero)
     def update(self, dt):
-        self.hero.update(dt)
+        self.stage.update(dt)
 
 state = GameController()

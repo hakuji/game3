@@ -145,7 +145,7 @@ class Creature(Object):
     def attack(self):
         pass
     def chase(self):
-        print 'Here'
+        pass
 
 class Hero(Object):
     def __init__(self, khandler, lvl = 0, inv = None):
@@ -186,6 +186,12 @@ class Stage(Container):
         self.contents.extend(self.creatures)
         super(Stage, self).__init__(self.contents)
         self.arrange_objects()
+    def update(self, dt):
+        for obj in self.placeable_objects():
+            try:
+                obj.update(dt)
+            except AttributeError:
+                pass
     def placeable_objects(self):
         return itertools.chain(self.objects, self.creatures)
     def arrange_objects(self):
