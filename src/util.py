@@ -17,11 +17,10 @@
 
 """Helper classes"""
 
-import pyglet
+import pyglet, itertools, math
 from pyglet.window import key
 from constants import (FIELD_FONT_SIZE as FONT_SIZE, OBJECT_FONT_SIZE,
                        ST_BOUND_Y, ST_BOUND_X, OBJECT_FONT_FACE)
-import itertools
 from random import randint as random
 flatten = itertools.chain.from_iterable
 
@@ -121,35 +120,60 @@ class Object(Drawable):
             font_size=OBJECT_FONT_SIZE)
         super(Object, self).__init__(sprite)
         self.definition = definition
-    def contains(self, x, y, height, width):
-        """Used to detect collision"""
-        return False
+    def intersect(self, x, y, height, width):
+        ox = self.sprite.x
+        oy = self.sprite.y
+        owidth = self.sprite.content_width
+        oheight = self.sprite.content_height
+        # Top left corner with bottom right corner
+        if oy + oheight >= y and ox <= x + width and oy <= y and ox + owidth >= x + width:
+            print 'A'
+            return True
+        # Top right corner with bottom left corner
+        elif oy + oheight >= y and ox + owidth >= x and oy <= y and ox <= x:
+            print 'B'
+            return True
+        # Bottom left corner with top right corner
+        elif oy <= y + height and ox <= x + width and oy + oheight >= y + height and ox + owidth >= x + width:
+            print 'C'
+            return True
+        # Bottom right corner with top left corner
+        elif oy <= y + height and ox + owidth >= x and oy + oheight >= y + height and ox <= x:
+            print 'D'
+            return True
+        else:
+            return False
 
 class Creature(Object):
     """Actual creature on the screen"""
     def __init__(self, definition):
         super(Creature, self).__init__(definition)
     def update(self, dt):
-        if self.definition.stationary:
-            pass
-        else:
+        if not self.definition.stationary:
             if self.definition.hostile:
                 if self.within_range():
                     self.attack()
                 else:
-                    self.chase()
+                    if self.target is not None:
+                        self.chase()
             else:
                 self.roam()
     def within_range(self):
-        return False
+        s = self.target.sprite
+        return self.intersect(s.x, s.y, s.content_height, s.content_width)
     def attack(self):
         pass
     def chase(self):
-        pass
+        x = self.sprite.x
+        y = self.sprite.y
+        mov_x = min(self.target.sprite.x - x, self.definition.speed)
+        mov_y = min(self.target.sprite.y - y, self.definition.speed)
+        self.sprite.x += mov_x
+        self.sprite.y += mov_y
 
 class Hero(Object):
     def __init__(self, khandler, lvl = 0, inv = None):
-        d = ObjectDefinition(2, False, '@', 'You, the traveler')
+        d = ObjectDefinition(2, False, '@', 'You, the painter')
         super(Hero, self).__init__(d)
         self.lvl = lvl
         self.inv = inv
@@ -181,11 +205,20 @@ class Stage(Container):
         self.creatures = Creature.from_list(stage_def.creature_definitions)
         self.creatures.append(hero)
         self.contents = []
+        self.hero = hero
         self.contents.extend(self.rooms)
         self.contents.extend(self.objects)
         self.contents.extend(self.creatures)
         super(Stage, self).__init__(self.contents)
         self.arrange_objects()
+        self.set_enemies()
+    def set_enemies(self):
+        for i in self.creatures:
+            try:
+                if i.definition.hostile:
+                    i.target = self.hero
+            except AttributeError:
+                pass
     def update(self, dt):
         for obj in self.placeable_objects():
             try:
@@ -215,7 +248,7 @@ before raising an exception"""
             return
         for i in range(10000):
             x, y = self.get_random_position(width, height)
-            if not any(i.contains(x, y, width, height)
+            if not any(i.intersect(x, y, width, height)
                        for i in self.placeable_objects()):
                 obj.sprite.x = x
                 obj.sprite.y = y
