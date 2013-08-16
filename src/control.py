@@ -70,7 +70,7 @@ class GameState(object):
         self.dificulty = dificulty
         self.hero = hero
         self.stage_no = stage_no
-        self.stage = Stage(STAGES[stage_no], [], [hero])
+        self.stage = Stage(STAGES[stage_no], hero)
     def update(self, dt):
         self.hero.update(dt)
 

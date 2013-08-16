@@ -15,10 +15,14 @@
 # You should have received a copy of the GNU General Public License
 # along with game 3.  If not, see <http://www.gnu.org/licenses/>.
 
-from util import ObjectDefinition
+from util import ObjectDefinition, CreatureDefinition, StageDefinition
 
 DESC_STAIRS = ObjectDefinition(1, False, '>', 'Descending stairs')
 
-STAGES =[[
-    (DESC_STAIRS, 1)
-]]
+WOLF = CreatureDefinition(1, 'W', 'Wolf', 10, 1, 1)
+
+ST1 = StageDefinition([(DESC_STAIRS, 1)], [], [(WOLF, 1)])
+
+STAGES = [
+    ST1
+]

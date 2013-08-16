@@ -94,14 +94,26 @@ class ObjectDefinition(object):
         self.go_through = go_through
         self.symbol = symbol
         self.description = description
-    def toScreenObject(self, count):
+    def toScreen(self, count):
         return [Object(self) for i in range(count)]
+
+class CreatureDefinition(ObjectDefinition):
+    """The common properties of a creature"""
+    def __init__(self, id, symbol, description, health, speed, strength,
+                 stationary = False, hostile = True, go_through = False):
+        super(CreatureDefinition, self).__init__(id, go_through, symbol, description)
+        self.health = health
+        self.speed = speed
+        self.hostile = hostile
+        self.stationary = stationary
+    def toScreen(self, count):
+        return [Creature(self) for i in range(count)]
 
 class Object(Drawable):
     """Actual object on the screen"""
     @classmethod
     def from_list(cls, l):
-        return list(flatten(map(lambda x: x[0].toScreenObject(x[1]), l)))
+        return list(flatten(map(lambda x: x[0].toScreen(x[1]), l)))
     def __init__(self, definition):
         sprite = pyglet.text.Label(
             definition.symbol,
@@ -112,6 +124,28 @@ class Object(Drawable):
     def contains(self, x, y, height, width):
         """Used to detect collision"""
         return False
+
+class Creature(Object):
+    """Actual creature on the screen"""
+    def __init__(self, definition):
+        super(Creature, self).__init__(definition)
+    def update(self, dt):
+        if self.definition.stationary:
+            pass
+        else:
+            if self.definition.hostile:
+                if self.within_range():
+                    self.attack()
+                else:
+                    self.chase()
+            else:
+                self.roam()
+    def within_range(self):
+        return False
+    def attack(self):
+        pass
+    def chase(self):
+        print 'Here'
 
 class Hero(Object):
     def __init__(self, khandler, lvl = 0, inv = None):
@@ -133,15 +167,23 @@ class Hero(Object):
         if self.khandler[key.RIGHT]:
             self.sprite.x += self.speed
 
+class StageDefinition(object):
+    def __init__(self, obj_definitions, room_definitions,
+                 creature_definitions):
+        self.obj_definitions = obj_definitions
+        self.room_definitions = room_definitions
+        self.creature_definitions = creature_definitions
+
 class Stage(Container):
-    def __init__(self, object_list, rooms, creatures):
-        self.rooms = rooms
-        self.objects = Object.from_list(object_list)
-        self.creatures = creatures
+    def __init__(self, stage_def, hero):
+        self.rooms = stage_def.room_definitions
+        self.objects = Object.from_list(stage_def.obj_definitions)
+        self.creatures = Creature.from_list(stage_def.creature_definitions)
+        self.creatures.append(hero)
         self.contents = []
-        self.contents.extend(rooms)
+        self.contents.extend(self.rooms)
         self.contents.extend(self.objects)
-        self.contents.extend(creatures)
+        self.contents.extend(self.creatures)
         super(Stage, self).__init__(self.contents)
         self.arrange_objects()
     def placeable_objects(self):
