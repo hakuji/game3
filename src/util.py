@@ -127,19 +127,15 @@ class Object(Drawable):
         oheight = self.sprite.content_height
         # Top left corner with bottom right corner
         if oy + oheight >= y and ox <= x + width and oy <= y and ox + owidth >= x + width:
-            print 'A'
             return True
         # Top right corner with bottom left corner
         elif oy + oheight >= y and ox + owidth >= x and oy <= y and ox <= x:
-            print 'B'
             return True
         # Bottom left corner with top right corner
         elif oy <= y + height and ox <= x + width and oy + oheight >= y + height and ox + owidth >= x + width:
-            print 'C'
             return True
         # Bottom right corner with top left corner
         elif oy <= y + height and ox + owidth >= x and oy + oheight >= y + height and ox <= x:
-            print 'D'
             return True
         else:
             return False
@@ -164,12 +160,14 @@ class Creature(Object):
     def attack(self):
         pass
     def chase(self):
-        x = self.sprite.x
-        y = self.sprite.y
-        mov_x = min(self.target.sprite.x - x, self.definition.speed)
-        mov_y = min(self.target.sprite.y - y, self.definition.speed)
-        self.sprite.x += mov_x
-        self.sprite.y += mov_y
+        ox = self.sprite.x
+        oy = self.sprite.y
+        x = self.target.sprite.x
+        y = self.target.sprite.y
+        mov_x = min(abs(x - ox), self.definition.speed)
+        mov_y = min(abs(y - oy), self.definition.speed)
+        self.sprite.x += mov_x * (1 if x > ox else -1)
+        self.sprite.y += mov_y * (1 if y > oy else -1)
 
 class Hero(Object):
     def __init__(self, khandler, lvl = 0, inv = None):
