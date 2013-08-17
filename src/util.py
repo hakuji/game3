@@ -187,13 +187,13 @@ class Hero(Object):
             self.inv = []
     def update(self, dt):
         if self.khandler[key.UP]:
-            self.sprite.y += self.speed
+            self.intended_y = self.sprite.y + self.speed
         if self.khandler[key.DOWN]:
-            self.sprite.y -= self.speed
+            self.intended_y = self.sprite.y - self.speed
         if self.khandler[key.LEFT]:
-            self.sprite.x -= self.speed
+            self.intended_x = self.sprite.x - self.speed
         if self.khandler[key.RIGHT]:
-            self.sprite.x += self.speed
+            self.intended_x = self.sprite.x + self.speed
 
 class StageDefinition(object):
     def __init__(self, obj_definitions, room_definitions,
@@ -227,13 +227,14 @@ class Stage(Container):
         for obj in self.placeable_objects():
             try:
                 obj.update(dt)
-                x = obj.intended_x
-                y = obj.intended_y
-                w = obj.sprite.content_width
-                h = obj.sprite.content_height
-                if not self.collide_with_objects(x, y, w, h, obj):
-                    obj.sprite.x = x
-                    obj.sprite.y = y
+                if not obj.definition.go_through:
+                    x = obj.intended_x
+                    y = obj.intended_y
+                    w = obj.sprite.content_width
+                    h = obj.sprite.content_height
+                    if not self.collide_with_objects(x, y, w, h, obj):
+                        obj.sprite.x = x
+                        obj.sprite.y = y
             except AttributeError:
                 pass
     def placeable_objects(self):
