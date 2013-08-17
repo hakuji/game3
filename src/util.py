@@ -144,6 +144,8 @@ class Creature(Object):
     """Actual creature on the screen"""
     def __init__(self, definition):
         super(Creature, self).__init__(definition)
+        self.intended_x = None
+        self.intended_y = None
     def update(self, dt):
         if not self.definition.stationary:
             if self.definition.hostile:
@@ -166,8 +168,12 @@ class Creature(Object):
         y = self.target.sprite.y
         mov_x = min(abs(x - ox), self.definition.speed)
         mov_y = min(abs(y - oy), self.definition.speed)
-        self.sprite.x += mov_x * (1 if x > ox else -1)
-        self.sprite.y += mov_y * (1 if y > oy else -1)
+        nx = self.sprite.x + mov_x * (1 if x > ox else -1)
+        ny = self.sprite.y + mov_y * (1 if y > oy else -1)
+        self.move_to(nx, ny)
+    def move_to(self, x, y):
+        self.intended_x = x
+        self.intended_y = y
 
 class Hero(Object):
     def __init__(self, khandler, lvl = 0, inv = None):
@@ -221,6 +227,13 @@ class Stage(Container):
         for obj in self.placeable_objects():
             try:
                 obj.update(dt)
+                x = obj.intended_x
+                y = obj.intended_y
+                w = obj.sprite.content_width
+                h = obj.sprite.content_height
+                if not self.collide_with_objects(x, y, w, h, obj):
+                    obj.sprite.x = x
+                    obj.sprite.y = y
             except AttributeError:
                 pass
     def placeable_objects(self):
@@ -234,6 +247,11 @@ class Stage(Container):
         x = random(0, ST_BOUND_X - width)
         y = random(0, ST_BOUND_Y - height)
         return x, y
+    def collide_with_objects(self, x, y, w, h, ex = None):
+        if ex is not None:
+            return any(i.intersect(x, y, w, h) for i in self.placeable_objects() if i != ex)
+        else:
+            return any(i.intersect(x, y, w, h) for i in self.placeable_objects())
     def set_location(self, obj):
         """Assign a random free position to an object. Will try 10000 times
 before raising an exception"""
@@ -246,8 +264,7 @@ before raising an exception"""
             return
         for i in range(10000):
             x, y = self.get_random_position(width, height)
-            if not any(i.intersect(x, y, width, height)
-                       for i in self.placeable_objects()):
+            if not self.collide_with_objects(x, y, width, height):
                 obj.sprite.x = x
                 obj.sprite.y = y
                 return

@@ -19,9 +19,9 @@ from util import ObjectDefinition, CreatureDefinition, StageDefinition
 
 DESC_STAIRS = ObjectDefinition(1, False, '>', 'Descending stairs')
 
-WOLF = CreatureDefinition(1, 'W', 'Wolf', 10, 1, 1)
+WOLF = CreatureDefinition(2, 'W', 'Wolf', 10, 1, 1)
 
-ST1 = StageDefinition([(DESC_STAIRS, 1)], [], [(WOLF, 1)])
+ST1 = StageDefinition([(DESC_STAIRS, 1)], [], [(WOLF, 2)])
 
 STAGES = [
     ST1
