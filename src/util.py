@@ -17,12 +17,48 @@
 
 """Helper classes"""
 
-import pyglet, itertools, math
+import pyglet, itertools
 from pyglet.window import key
 from constants import (FIELD_FONT_SIZE as FONT_SIZE, OBJECT_FONT_SIZE,
                        ST_BOUND_Y, ST_BOUND_X, OBJECT_FONT_FACE)
 from random import randint as random
 flatten = itertools.chain.from_iterable
+ran = range
+def range(*args):
+    """Beefed out version of range that automatically deals
+with reverse direction"""
+    if len(args) == 3:
+        return ran(*args)
+    elif len(args) == 2:
+        if args[0] <= args[1]:
+            return ran(args[0], args[1])
+        else:
+            return ran(args[0] - 1, args[1] - 1, -1)
+    elif len(args) == 1:
+        return ran(args[0])
+    elif len(args) == 0:
+        raise TypeError('range takes at least 1 argument (0 given)')
+    else:
+        raise TypeError('range takes at most 3 arguments (0 given)'.format([str(len(args))]))
+
+def range_inc(*args):
+    """Like range but inclusive"""
+    if len(args) == 3:
+        if args[0] <= args[1]:
+            return ran(args[0], args[1] + 1, args[2])
+        else:
+            return ran(args[0], args[1] - 1, args[2])
+    elif len(args) == 2:
+        if args[0] <= args[1]:
+            return ran(args[0], args[1] + 1)
+        else:
+            return ran(args[0], args[1] - 1, -1)
+    elif len(args) == 1:
+        return ran(args[0] + 1)
+    elif len(args) == 0:
+        raise TypeError('range takes at least 1 argument (0 given)')
+    else:
+        raise TypeError('range takes at most 3 arguments (0 given)'.format([str(len(args))]))
 
 class SubscriptionFound(Exception):
     pass
@@ -139,13 +175,16 @@ class Object(Drawable):
             return True
         else:
             return False
+    def set_location(self, x, y):
+        self.sprite.x = x
+        self.sprite.y = y
 
 class Creature(Object):
     """Actual creature on the screen"""
     def __init__(self, definition):
         super(Creature, self).__init__(definition)
-        self.intended_x = None
-        self.intended_y = None
+        self.intended_x = self.sprite.x
+        self.intended_y = self.sprite.y
     def update(self, dt):
         if not self.definition.stationary:
             if self.definition.hostile:
@@ -170,14 +209,25 @@ class Creature(Object):
         mov_y = min(abs(y - oy), self.definition.speed)
         nx = self.sprite.x + mov_x * (1 if x > ox else -1)
         ny = self.sprite.y + mov_y * (1 if y > oy else -1)
-        self.move_to(nx, ny)
-    def move_to(self, x, y):
+        self.intent(nx, ny)
+    def movements(self):
+        """Iterator function that returns all the possible positions in the
+intended direction"""
+        for i in reversed(range_inc(self.sprite.x,
+                                    self.intended_x)):
+            for j in reversed(range_inc(self.sprite.y,
+                                        self.intended_y)):
+                yield (i, j)
+    def set_location(self, x, y):
+        super(Creature, self).set_location(x, y)
+        self.intent(x, y)
+    def intent(self, x, y):
         self.intended_x = x
         self.intended_y = y
 
-class Hero(Object):
+class Hero(Creature):
     def __init__(self, khandler, lvl = 0, inv = None):
-        d = ObjectDefinition(2, False, '@', 'You, the painter')
+        d = ObjectDefinition(-1, False, '@', 'You, the painter')
         super(Hero, self).__init__(d)
         self.lvl = lvl
         self.inv = inv
@@ -228,13 +278,15 @@ class Stage(Container):
             try:
                 obj.update(dt)
                 if not obj.definition.go_through:
-                    x = obj.intended_x
-                    y = obj.intended_y
                     w = obj.sprite.content_width
                     h = obj.sprite.content_height
-                    if not self.collide_with_objects(x, y, w, h, obj):
-                        obj.sprite.x = x
-                        obj.sprite.y = y
+                    for i in obj.movements():
+                        if not self.collide_with_objects(i[0], i[1], w, h, obj):
+                            obj.sprite.x = i[0]
+                            obj.sprite.y = i[1]
+                            break
+                        else:
+                            pass
             except AttributeError:
                 pass
     def placeable_objects(self):
@@ -260,14 +312,12 @@ before raising an exception"""
         height = obj.sprite.content_height
         if obj.definition.go_through:
             x, y = self.get_random_position(width, height)
-            obj.sprite.x = x
-            obj.sprite.y = y
+            obj.set_location(x, y)
             return
         for i in range(10000):
             x, y = self.get_random_position(width, height)
             if not self.collide_with_objects(x, y, width, height):
-                obj.sprite.x = x
-                obj.sprite.y = y
+                obj.set_location(x, y)
                 return
         raise Exception('Could not assign a position to object: '
                         + str(obj))
