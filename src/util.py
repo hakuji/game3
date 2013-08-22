@@ -20,7 +20,7 @@
 import pyglet, itertools
 from pyglet.window import key
 from constants import (FIELD_FONT_SIZE as FONT_SIZE, OBJECT_FONT_SIZE,
-                       ST_BOUND_Y, ST_BOUND_X, OBJECT_FONT_FACE)
+                       ST_BOUND_Y, ST_BOUND_X, OBJECT_FONT_FACE, WALL_WIDTH)
 from random import randint as random
 flatten = itertools.chain.from_iterable
 ran = range
@@ -254,7 +254,7 @@ class StageDefinition(object):
 
 class Stage(Container):
     def __init__(self, stage_def, hero):
-        self.rooms = stage_def.room_definitions
+        self.rooms = [Room(50, 100, 100, 100)]
         self.objects = Object.from_list(stage_def.obj_definitions)
         self.creatures = Creature.from_list(stage_def.creature_definitions)
         self.creatures.append(hero)
@@ -322,6 +322,21 @@ before raising an exception"""
         raise Exception('Could not assign a position to object: '
                         + str(obj))
 
+class Room(Container):
+    def __init__(self, x, y, w, h):
+        self.x = x
+        self.y = y
+        self.w = w
+        self.h = h
+        self.lwall = pyglet.graphics.vertex_list(4, ('v2i', (x, y, x + WALL_WIDTH, y, x, y + h, x + WALL_WIDTH, y + h)))
+        self.twall = pyglet.graphics.vertex_list(4, ('v2i', (x, y + h, x + w, y + h, x, y + h + WALL_WIDTH, x + w, y + h + WALL_WIDTH)))
+        self.bwall = pyglet.graphics.vertex_list(4, ('v2i', (x, y, x + w, y, x, y + WALL_WIDTH, x + w, y + WALL_WIDTH)))
+        self.rwall = pyglet.graphics.vertex_list(4, ('v2i', (x + w, y, x + w + WALL_WIDTH, y, x + w, y + h + WALL_WIDTH, x + w + WALL_WIDTH, y + h + WALL_WIDTH)))
+    def draw(self):
+        self.lwall.draw(pyglet.gl.GL_QUAD_STRIP)
+        self.twall.draw(pyglet.gl.GL_QUAD_STRIP)
+        self.bwall.draw(pyglet.gl.GL_QUAD_STRIP)
+        self.rwall.draw(pyglet.gl.GL_QUAD_STRIP)
 
 class LabeledField(Container):
     def __init__(self, label, value_func, x, y):
