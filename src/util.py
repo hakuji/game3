@@ -217,7 +217,7 @@ intended direction"""
 
 class Hero(Creature):
     def __init__(self, khandler, lvl = 0, inv = None):
-        d = ObjectDefinition(-1, False, '@', 'You, the painter')
+        d = ObjectDefinition(-1, False, '@', 'You')
         super(Hero, self).__init__(d)
         self.lvl = lvl
         self.inv = inv
