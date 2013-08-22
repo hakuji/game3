@@ -299,6 +299,14 @@ class Stage(Container):
                                                obj.sprite.content_width,
                                                obj.sprite.content_height)
         return self.rect_1.overlaps(self.rect_2)
+    def contained_in_room(self, x, y, w, h):
+        """True if the rect defined by the given dimensions is inside a room"""
+        self.rect_1.set_points_from_dimensions(x, y, w, h)
+        for i in self.rooms:
+            self.rect_2.set_points_from_dimensions(i.x, i.y, i.w, i.h)
+            if self.rect_2.contains(self.rect_1):
+                return True
+        return False
     def collide_with_objects(self, x, y, w, h, ex = None):
         self.rect_1.set_points_from_dimensions(x, y, w, h)
         if ex is not None:
@@ -306,19 +314,19 @@ class Stage(Container):
         else:
             return any(self.collide_with_rect(i) for i in self.placeable_objects())
     def set_location(self, obj):
-        """Assign a random free position to an object. Will try 10000 times
-before raising an exception"""
+        """Assign a random free position to an object. Will try at most 10000
+times before raising an exception"""
         width = obj.sprite.content_width
         height = obj.sprite.content_height
-        if obj.definition.go_through:
-            x, y = self.get_random_position(width, height)
-            obj.set_location(x, y)
-            return
         for i in range(10000):
             x, y = self.get_random_position(width, height)
-            if not self.collide_with_objects(x, y, width, height):
-                obj.set_location(x, y)
-                return
+            if (self.contained_in_room(x, y, width, height)):
+                if obj.definition.go_through:
+                    obj.set_location(x, y)
+                    return
+                elif not self.collide_with_objects(x, y, width, height):
+                    obj.set_location(x, y)
+                    return
         raise Exception('Could not assign a position to object: '
                         + str(obj))
 
