@@ -157,11 +157,14 @@ class Rect(object):
         self.bottom = y
         self.right = x + w
         self.top = y + h
-    def contains(self, pt):
+    def contains(self, o):
         """Return true if a point is inside the rectangle."""
-        return (self.left <= pt.x <= self.right and
-                self.bottom <= pt.y <= self.top)
-
+        try:
+            return (self.left <= o.x <= self.right and
+                    self.bottom <= o.y <= self.top)
+        except AttributeError:
+            return (self.right >= o.right and self.left <= o.left and
+                    self.bottom <= o.bottom and self.top >= self.top)
     def overlaps(self, other):
         """Return true if a rectangle overlaps this rectangle."""
         return (self.right >= other.left and self.left <= other.right and
