@@ -307,9 +307,11 @@ class Stage(Container):
     def collide_with_objects(self, x, y, w, h, ex = None):
         self.rect_1.set_points_from_dimensions(x, y, w, h)
         if ex is not None:
-            return any(self.collide_with_rect(i) for i in self.placeable_objects() if i != ex)
+            return any(self.collide_with_rect(i) for i in self.placeable_objects()
+                       if i != ex and not i.definition.go_through)
         else:
-            return any(self.collide_with_rect(i) for i in self.placeable_objects())
+            return any(self.collide_with_rect(i) for i in self.placeable_objects()
+                       if not i.definition.go_through)
     def set_location(self, obj):
         """Assign a random free position to an object. Will try at most 10000
 times before raising an exception"""

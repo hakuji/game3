@@ -17,7 +17,7 @@
 
 from util import ObjectDefinition, CreatureDefinition, StageDefinition
 
-DESC_STAIRS = ObjectDefinition(1, False, '>', 'Descending stairs')
+DESC_STAIRS = ObjectDefinition(1, True, '>', 'Descending stairs')
 
 WOLF = CreatureDefinition(2, 'W', 'Wolf', 10, 1, 1)
 
