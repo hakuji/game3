@@ -22,8 +22,10 @@ from pyglet.window import key
 from constants import (FIELD_FONT_SIZE as FONT_SIZE, OBJECT_FONT_SIZE,
                        ST_BOUND_Y, ST_BOUND_X, OBJECT_FONT_FACE, WALL_WIDTH)
 from random import randint as random
-from rect import Rect
+from rect import Rect, Point
 
+pointa = Point(0, 0)
+pointb = Point(0, 0)
 flatten = itertools.chain.from_iterable
 ran = range
 def range(*args):
@@ -137,12 +139,13 @@ class ObjectDefinition(object):
 class CreatureDefinition(ObjectDefinition):
     """The common properties of a creature"""
     def __init__(self, id, symbol, description, health, speed, strength,
-                 stationary = False, hostile = True, go_through = False):
+                 stationary = False, hostile = True, go_through = False, range = 1):
         super(CreatureDefinition, self).__init__(id, go_through, symbol, description)
         self.health = health
         self.speed = speed
         self.hostile = hostile
         self.stationary = stationary
+        self.range = range
     def toScreen(self, count):
         return [Creature(self) for i in range(count)]
 
@@ -158,25 +161,6 @@ class Object(Drawable):
             font_size=OBJECT_FONT_SIZE)
         super(Object, self).__init__(sprite)
         self.definition = definition
-    def intersect(self, x, y, height, width):
-        ox = self.sprite.x
-        oy = self.sprite.y
-        owidth = self.sprite.content_width
-        oheight = self.sprite.content_height
-        # Top left corner with bottom right corner
-        if oy + oheight >= y and ox <= x + width and oy <= y and ox + owidth >= x + width:
-            return True
-        # Top right corner with bottom left corner
-        elif oy + oheight >= y and ox + owidth >= x and oy <= y and ox <= x:
-            return True
-        # Bottom left corner with top right corner
-        elif oy <= y + height and ox <= x + width and oy + oheight >= y + height and ox + owidth >= x + width:
-            return True
-        # Bottom right corner with top left corner
-        elif oy <= y + height and ox + owidth >= x and oy + oheight >= y + height and ox <= x:
-            return True
-        else:
-            return False
     def set_location(self, x, y):
         self.sprite.x = x
         self.sprite.y = y
@@ -198,8 +182,12 @@ class Creature(Object):
             else:
                 self.roam()
     def within_range(self):
-        s = self.target.sprite
-        return self.intersect(s.x, s.y, s.content_height, s.content_width)
+        pointa.x = self.sprite.x + self.sprite.content_width / 2
+        pointa.y = self.sprite.y + self.sprite.content_height / 2
+        pointb.x = self.target.sprite.x + self.sprite.content_width / 2
+        pointb.y = self.target.sprite.y + self.sprite.content_height / 2
+        return (pointa.distance_to(pointb) <= self.definition.range
+                +  max(self.sprite.content_height, self.sprite.content_width) / 2)
     def attack(self):
         pass
     def chase(self):
