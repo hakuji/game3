@@ -144,21 +144,25 @@ class Rect(object):
     def __init__(self, pt1, pt2):
         """Initialize a rectangle from two points."""
         self.set_points(pt1, pt2)
-
+    @classmethod
+    def from_dimensions(self, x, y, w, h):
+        return Rect(Point(x, y), Point(x + w, y + h))
     def set_points(self, pt1, pt2):
         """Reset the rectangle coordinates."""
-        (x1, y1) = pt1.as_tuple()
-        (x2, y2) = pt2.as_tuple()
-        self.left = min(x1, x2)
-        self.top = max(y1, y2)
-        self.right = max(x1, x2)
-        self.bottom = min(y1, y2)
-
+        self.left = min(pt1.x, pt2.x)
+        self.top = max(pt1.y, pt2.y)
+        self.right = max(pt1.x, pt2.x)
+        self.bottom = min(pt1.y, pt2.y)
+    def set_points_from_dimensions(self, x, y, w, h):
+        """Cheaper and faster set points operation"""
+        self.left = x
+        self.bottom = y
+        self.right = x + w
+        self.top = y + h
     def contains(self, pt):
         """Return true if a point is inside the rectangle."""
-        x,y = pt.as_tuple()
-        return (self.left <= x <= self.right and
-                self.bottom <= y <= self.top)
+        return (self.left <= pt.x <= self.right and
+                self.bottom <= pt.y <= self.top)
 
     def overlaps(self, other):
         """Return true if a rectangle overlaps this rectangle."""
