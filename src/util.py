@@ -340,7 +340,7 @@ class Room(Container):
         self.bwall = pyglet.graphics.vertex_list(4, ('v2i', (x, y, x + w, y, x, y + WALL_WIDTH, x + w, y + WALL_WIDTH)))
         self.rwall = pyglet.graphics.vertex_list(4, ('v2i', (x + w, y, x + w + WALL_WIDTH, y, x + w, y + h + WALL_WIDTH, x + w + WALL_WIDTH, y + h + WALL_WIDTH)))
         self.inner_rect = Rect(Point(x + WALL_WIDTH, y + WALL_WIDTH),
-                               Point(x + w + WALL_WIDTH, y + h + WALL_WIDTH))
+                               Point(x + w, y + h))
     def draw(self):
         self.lwall.draw(pyglet.gl.GL_QUAD_STRIP)
         self.twall.draw(pyglet.gl.GL_QUAD_STRIP)
