@@ -22,6 +22,8 @@ from pyglet.window import key
 from constants import (FIELD_FONT_SIZE as FONT_SIZE, OBJECT_FONT_SIZE,
                        ST_BOUND_Y, ST_BOUND_X, OBJECT_FONT_FACE, WALL_WIDTH)
 from random import randint as random
+from rect import Rect
+
 flatten = itertools.chain.from_iterable
 ran = range
 def range(*args):
@@ -264,6 +266,8 @@ class Stage(Container):
         self.contents.extend(self.objects)
         self.contents.extend(self.creatures)
         super(Stage, self).__init__(self.contents)
+        self.rect_1 = Rect.from_dimensions(0, 0, 0, 0)
+        self.rect_2 = Rect.from_dimensions(0, 0, 0, 0)
         self.arrange_objects()
         self.set_enemies()
     def set_enemies(self):
@@ -300,11 +304,19 @@ class Stage(Container):
         x = random(0, ST_BOUND_X - width)
         y = random(0, ST_BOUND_Y - height)
         return x, y
+    def collide_with_rect(self, obj):
+        """Ugly bit of code that requires a previous state to be set"""
+        self.rect_2.set_points_from_dimensions(obj.sprite.x,
+                                               obj.sprite.y,
+                                               obj.sprite.content_width,
+                                               obj.sprite.content_height)
+        return self.rect_1.overlaps(self.rect_2)
     def collide_with_objects(self, x, y, w, h, ex = None):
+        self.rect_1.set_points_from_dimensions(x, y, w, h)
         if ex is not None:
-            return any(i.intersect(x, y, w, h) for i in self.placeable_objects() if i != ex)
+            return any(self.collide_with_rect(i) for i in self.placeable_objects() if i != ex)
         else:
-            return any(i.intersect(x, y, w, h) for i in self.placeable_objects())
+            return any(self.collide_with_rect(i) for i in self.placeable_objects())
     def set_location(self, obj):
         """Assign a random free position to an object. Will try 10000 times
 before raising an exception"""

@@ -25,7 +25,6 @@ Rect  -- two points, forming a rectangle
 
 import math
 
-
 class Point(object):
     """A point identified by (x,y) coordinates.
     
@@ -120,7 +119,6 @@ class Point(object):
         result.translate(p.x, p.y)
         return result
 
-
 class Rect(object):
     """A rectangle identified by two points.
 
@@ -145,7 +143,7 @@ class Rect(object):
         """Initialize a rectangle from two points."""
         self.set_points(pt1, pt2)
     @classmethod
-    def from_dimensions(self, x, y, w, h):
+    def from_dimensions(cls, x, y, w, h):
         return Rect(Point(x, y), Point(x + w, y + h))
     def set_points(self, pt1, pt2):
         """Reset the rectangle coordinates."""
