@@ -303,10 +303,7 @@ class Stage(Container):
     def contained_in_room(self, x, y, w, h):
         """True if the rect defined by the given dimensions is inside a room"""
         self.rect_1.set_points_from_dimensions(x, y, w, h)
-        for i in self.rooms:
-            if i.inner_rect.contains(self.rect_1):
-                return True
-        return False
+        return any(i.inner_rect.contains(self.rect_1) for i in self.rooms)
     def collide_with_objects(self, x, y, w, h, ex = None):
         self.rect_1.set_points_from_dimensions(x, y, w, h)
         if ex is not None:
