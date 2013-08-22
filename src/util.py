@@ -273,7 +273,8 @@ class Stage(Container):
                     w = obj.sprite.content_width
                     h = obj.sprite.content_height
                     for i in obj.movements():
-                        if not self.collide_with_objects(i[0], i[1], w, h, obj):
+                        if (self.contained_in_room(i[0], i[1], w, h)
+                            and not self.collide_with_objects(i[0], i[1], w, h, obj)):
                             obj.sprite.x = i[0]
                             obj.sprite.y = i[1]
                             break
@@ -303,8 +304,7 @@ class Stage(Container):
         """True if the rect defined by the given dimensions is inside a room"""
         self.rect_1.set_points_from_dimensions(x, y, w, h)
         for i in self.rooms:
-            self.rect_2.set_points_from_dimensions(i.x, i.y, i.w, i.h)
-            if self.rect_2.contains(self.rect_1):
+            if i.inner_rect.contains(self.rect_1):
                 return True
         return False
     def collide_with_objects(self, x, y, w, h, ex = None):
@@ -340,6 +340,8 @@ class Room(Container):
         self.twall = pyglet.graphics.vertex_list(4, ('v2i', (x, y + h, x + w, y + h, x, y + h + WALL_WIDTH, x + w, y + h + WALL_WIDTH)))
         self.bwall = pyglet.graphics.vertex_list(4, ('v2i', (x, y, x + w, y, x, y + WALL_WIDTH, x + w, y + WALL_WIDTH)))
         self.rwall = pyglet.graphics.vertex_list(4, ('v2i', (x + w, y, x + w + WALL_WIDTH, y, x + w, y + h + WALL_WIDTH, x + w + WALL_WIDTH, y + h + WALL_WIDTH)))
+        self.inner_rect = Rect(Point(x + WALL_WIDTH, y + WALL_WIDTH),
+                               Point(x + w + WALL_WIDTH, y + h + WALL_WIDTH))
     def draw(self):
         self.lwall.draw(pyglet.gl.GL_QUAD_STRIP)
         self.twall.draw(pyglet.gl.GL_QUAD_STRIP)
