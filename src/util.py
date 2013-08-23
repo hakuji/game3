@@ -260,7 +260,8 @@ class Stage(Container):
         self.set_enemies()
     def create_rooms(self, defs):
         for i in defs:
-            yield Room(i, 50, 100)
+            x, y = self.get_random_position(i.w, i.h)
+            yield Room(i, x, y)
     def set_enemies(self):
         for i in self.creatures:
             try:
