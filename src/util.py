@@ -244,7 +244,7 @@ class StageDefinition(object):
 
 class Stage(Container):
     def __init__(self, stage_def, hero):
-        self.rooms = [Room(50, 100, 100, 100)]
+        self.rooms = list(self.create_rooms(stage_def.room_definitions))
         self.objects = Object.from_list(stage_def.obj_definitions)
         self.creatures = Creature.from_list(stage_def.creature_definitions)
         self.creatures.append(hero)
@@ -258,6 +258,9 @@ class Stage(Container):
         self.rect_2 = Rect.from_dimensions(0, 0, 0, 0)
         self.arrange_objects()
         self.set_enemies()
+    def create_rooms(self, defs):
+        for i in defs:
+            yield Room(i, 50, 100)
     def set_enemies(self):
         for i in self.creatures:
             try:
@@ -329,10 +332,20 @@ times before raising an exception"""
         raise Exception('Could not assign a position to object: '
                         + str(obj))
 
+class RoomDefinition(object):
+    def __init__(self, w, h, obj_definitions = [], creature_definitions = []):
+        self.obj_definitions = obj_definitions
+        self.creature_definitions = creature_definitions
+        self.w = w
+        self.h = h
+
 class Room(Container):
-    def __init__(self, x, y, w, h):
+    def __init__(self, room_def, x, y):
+        self.room_def = room_def
         self.x = x
         self.y = y
+        w = room_def.w
+        h = room_def.h
         self.w = w
         self.h = h
         self.lwall = pyglet.graphics.vertex_list(4, ('v2i', (x, y, x + WALL_WIDTH, y, x, y + h, x + WALL_WIDTH, y + h)))
