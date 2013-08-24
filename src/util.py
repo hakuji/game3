@@ -17,11 +17,12 @@
 
 """Helper classes"""
 
-import pyglet, itertools
+import pyglet, itertools, random
 from pyglet.window import key
 from constants import (FIELD_FONT_SIZE as FONT_SIZE, OBJECT_FONT_SIZE,
-                       ST_BOUND_Y, ST_BOUND_X, OBJECT_FONT_FACE, WALL_WIDTH)
-from random import randint as random
+                       ST_BOUND_Y, ST_BOUND_X, OBJECT_FONT_FACE, WALL_WIDTH,
+                       EDGES)
+from random import randint
 from rect import Rect, Point
 
 pointa = Point(0, 0)
@@ -243,8 +244,13 @@ class StageDefinition(object):
         self.creature_definitions = creature_definitions
 
 class Stage(Container):
-    def __init__(self, stage_def, hero):
-        self.rooms = list(self.create_rooms(stage_def.room_definitions))
+    def __init__(self, stage_def, hero, min_room_dim = (50, 50),
+                 max_room_dim = (100, 100), rand_room_no = 0):
+        self.min_room_dim = min_room_dim
+        self.max_room_dim = max_room_dim
+        self.random_room_no = rand_room_no
+        self.rooms = []
+        self.create_rooms(stage_def.room_definitions)
         self.objects = Object.from_list(stage_def.obj_definitions)
         self.creatures = Creature.from_list(stage_def.creature_definitions)
         self.creatures.append(hero)
@@ -258,10 +264,36 @@ class Stage(Container):
         self.rect_2 = Rect.from_dimensions(0, 0, 0, 0)
         self.arrange_objects()
         self.set_enemies()
-    def create_rooms(self, defs):
-        for i in defs:
-            x, y = self.get_random_position(i.w, i.h)
-            yield Room(i, x, y)
+    def create_rooms(self, room_definitions):
+        d = self.random_room_dimension()
+        x = (ST_BOUND_X - d[0]) / 2
+        y = (ST_BOUND_Y - d[1]) / 2
+        free_edges = []
+        self.place_room(None, d, (x, y), free_edges, None)
+        print self.random_room_no
+        for i in random.shuffle(list(itertools.chain(
+                room_definitions,
+                range(self.random_room_no)))):
+            pass
+    def random_room_dimension(self):
+        """Returns a random height and width for a room"""
+        w = randint(self.min_room_dim[0], self.max_room_dim[0])
+        h = randint(self.min_room_dim[1], self.max_room_dim[1])
+        return w, h
+    def place_room(self, definition, dimension, pos, free_edges, parent):
+        """Place a random or predefined room"""
+        if type(definition) != RoomDefinition:
+            definition = RoomDefinition(dimension[0], dimension[1])
+        room = Room(definition, pos[0], pos[1])
+        self.rooms.append(room)
+        def edge_tups():
+            return map(lambda x: (room, x), EDGES)
+        if(parent is None):
+            free_edges.extend(edge_tups())
+        else:
+            free_edges.extend(filter(lambda x: parent[1] != x[1], edge_tups()))
+            room.add_entrance(-parent[1])
+            free_edges.remove(parent)
     def set_enemies(self):
         for i in self.creatures:
             try:
@@ -294,8 +326,8 @@ class Stage(Container):
             self.set_location(obj)
     def get_random_position(self, width, height):
         """Returns a random point in the map"""
-        x = random(0, ST_BOUND_X - width)
-        y = random(0, ST_BOUND_Y - height)
+        x = randint(0, ST_BOUND_X - width)
+        y = randint(0, ST_BOUND_Y - height)
         return x, y
     def collide_with_rect(self, obj):
         """Ugly bit of code that requires a previous state to be set"""
@@ -360,6 +392,8 @@ class Room(Container):
         self.twall.draw(pyglet.gl.GL_QUAD_STRIP)
         self.bwall.draw(pyglet.gl.GL_QUAD_STRIP)
         self.rwall.draw(pyglet.gl.GL_QUAD_STRIP)
+    def add_entrance(self, entrance):
+        pass
 
 class LabeledField(Container):
     def __init__(self, label, value_func, x, y):
