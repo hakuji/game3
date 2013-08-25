@@ -23,9 +23,10 @@ DESC_STAIRS = ObjectDefinition(1, True, '>', 'Descending stairs')
 WOLF = CreatureDefinition(2, 'W', 'Wolf', 10, 1, 1)
 
 ST1 = StageDefinition(
-    [(DESC_STAIRS, 1)],
-    [RoomDefinition(100, 100)],
-    [(WOLF, 2)])
+    obj_definitions = [(DESC_STAIRS, 1)],
+    room_definitions = [RoomDefinition(100, 100)],
+    creature_definitions = [(WOLF, 2)],
+    random_room_no=2)
 
 STAGES = [
     ST1

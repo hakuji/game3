@@ -28,6 +28,9 @@ from rect import Rect, Point
 pointa = Point(0, 0)
 pointb = Point(0, 0)
 flatten = itertools.chain.from_iterable
+rect1 = Rect.from_dimensions(0, 0, 0, 0)
+rect2 = Rect.from_dimensions(0, 0, 0, 0)
+
 ran = range
 def range(*args):
     """Beefed out version of range that automatically deals
@@ -241,17 +244,20 @@ class Hero(Creature):
 
 class StageDefinition(object):
     def __init__(self, obj_definitions, room_definitions,
-                 creature_definitions):
+                 creature_definitions, min_room_dim = (50, 50),
+                 max_room_dim = (100, 100), random_room_no = 0):
         self.obj_definitions = obj_definitions
         self.room_definitions = room_definitions
         self.creature_definitions = creature_definitions
-
-class Stage(Container):
-    def __init__(self, stage_def, hero, min_room_dim = (50, 50),
-                 max_room_dim = (100, 100), rand_room_no = 0):
         self.min_room_dim = min_room_dim
         self.max_room_dim = max_room_dim
-        self.random_room_no = rand_room_no
+        self.random_room_no = random_room_no
+
+class Stage(Container):
+    def __init__(self, stage_def, hero):
+        self.min_room_dim = stage_def.min_room_dim
+        self.max_room_dim = stage_def.max_room_dim
+        self.random_room_no = stage_def.random_room_no
         self.rooms = []
         self.create_rooms(stage_def.room_definitions)
         self.objects = Object.from_list(stage_def.obj_definitions)
@@ -263,8 +269,6 @@ class Stage(Container):
         self.contents.extend(self.objects)
         self.contents.extend(self.creatures)
         super(Stage, self).__init__(self.contents)
-        self.rect_1 = Rect.from_dimensions(0, 0, 0, 0)
-        self.rect_2 = Rect.from_dimensions(0, 0, 0, 0)
         self.arrange_objects()
         self.set_enemies()
     def create_rooms(self, room_definitions):
@@ -276,6 +280,7 @@ class Stage(Container):
         l = list(itertools.chain(room_definitions,
                                  range(self.random_room_no)))
         random.shuffle(l)
+        stop_iter = False
         for i in l:
             try:
                 edges_clone = free_edges [:]
@@ -302,7 +307,12 @@ class Stage(Container):
                 else:
                     pass
     def placement_possible(self, dimension, position):
-        return True
+        rect1.set_points_from_dimensions(
+            position[0],
+            position[1],
+            dimension[0] + 2 * WALL_WIDTH,
+            dimension[1] + 2 * WALL_WIDTH)
+        return any(rect1.overlaps(r.outer_rect) for r in self.rooms)
     def get_random_room_position(self, edge, dimension):
         """Returns a random room position relative to an edge"""
         if edge[1] == 1: #Left position
@@ -380,17 +390,17 @@ class Stage(Container):
         return x, y
     def collide_with_rect(self, obj):
         """Ugly bit of code that requires a previous state to be set"""
-        self.rect_2.set_points_from_dimensions(obj.sprite.x,
+        rect2.set_points_from_dimensions(obj.sprite.x,
                                                obj.sprite.y,
                                                obj.sprite.content_width,
                                                obj.sprite.content_height)
-        return self.rect_1.overlaps(self.rect_2)
+        return rect1.overlaps(rect2)
     def contained_in_room(self, x, y, w, h):
         """True if the rect defined by the given dimensions is inside a room"""
-        self.rect_1.set_points_from_dimensions(x, y, w, h)
-        return any(i.inner_rect.contains(self.rect_1) for i in self.rooms)
+        rect1.set_points_from_dimensions(x, y, w, h)
+        return any(i.inner_rect.contains(rect1) for i in self.rooms)
     def collide_with_objects(self, x, y, w, h, ex = None):
-        self.rect_1.set_points_from_dimensions(x, y, w, h)
+        rect1.set_points_from_dimensions(x, y, w, h)
         if ex is not None:
             return any(self.collide_with_rect(i) for i in self.placeable_objects()
                        if i != ex and not i.definition.go_through)
@@ -436,6 +446,8 @@ class Room(Container):
         self.rwall = pyglet.graphics.vertex_list(4, ('v2i', (x + w, y, x + w + WALL_WIDTH, y, x + w, y + h + WALL_WIDTH, x + w + WALL_WIDTH, y + h + WALL_WIDTH)))
         self.inner_rect = Rect(Point(x + WALL_WIDTH, y + WALL_WIDTH),
                                Point(x + w, y + h))
+        self.outer_rect = Rect(Point(x, y),
+                               Point(x + 2 * WALL_WIDTH + w, y + 2 * WALL_WIDTH + h))
     def draw(self):
         self.lwall.draw(pyglet.gl.GL_QUAD_STRIP)
         self.twall.draw(pyglet.gl.GL_QUAD_STRIP)
