@@ -68,6 +68,9 @@ def range_inc(*args):
 class SubscriptionFound(Exception):
     pass
 
+class UnplaceableRoomException(Exception):
+    pass
+
 class KeySubscription(object):
     """Keyboard inputs combination that trigger an event"""
     def __init__(self, action, key, modifiers=0):
@@ -270,11 +273,43 @@ class Stage(Container):
         y = (ST_BOUND_Y - d[1]) / 2
         free_edges = []
         self.place_room(None, d, (x, y), free_edges, None)
-        print self.random_room_no
-        for i in random.shuffle(list(itertools.chain(
-                room_definitions,
-                range(self.random_room_no)))):
-            pass
+        l = list(itertools.chain(room_definitions,
+                                 range(self.random_room_no)))
+        random.shuffle(l)
+        for i in l:
+            try:
+                edges_clone = free_edges [:]
+                random.shuffle(edges_clone)
+                for edge in edges_clone:
+                    dim_counter = 100
+                    while dim_counter > 0:
+                        dim_counter -= 1
+                        dim = self.get_room_dimension(i)
+                        pos_counter = min(100, self.min_room_dim[0], self.min_room_dim[1])
+                        while pos_counter > 0:
+                            pos_counter -= 1
+                            pos = self.get_random_room_position(edge, dim)
+                            if self.placement_possible(dim, pos):
+                                pos_counter = 0
+                                dim_counter = 0
+                                stop_iter = True
+                    if stop_iter:
+                        break
+                self.place_room(i, dim, pos, free_edges, edge)
+            except UnplaceableRoomException, ex:
+                if type(i) == RoomDefinition:
+                    raise ex
+                else:
+                    pass
+    def placement_possible(self, dimension, position):
+        return True
+    def get_random_room_position(self, edge, dimension):
+        return self.get_random_position(dimension[0], dimension[1])
+    def get_room_dimension(self, definition = None):
+        if type(definition) == RoomDefinition:
+            return (definition.w, definition.h)
+        else:
+            return self.random_room_dimension()
     def random_room_dimension(self):
         """Returns a random height and width for a room"""
         w = randint(self.min_room_dim[0], self.max_room_dim[0])
