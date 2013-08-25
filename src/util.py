@@ -304,7 +304,21 @@ class Stage(Container):
     def placement_possible(self, dimension, position):
         return True
     def get_random_room_position(self, edge, dimension):
-        return self.get_random_position(dimension[0], dimension[1])
+        """Returns a random room position relative to an edge"""
+        if edge[1] == 1: #Left position
+            y = randint(edge[0].y, edge[0].y + edge[0].h)
+            x = edge[0].x - (2 * WALL_WIDTH + dimension[0])
+        elif edge[1] == 2: #Top
+            x = randint(edge[0].x, edge[0].x + edge[0].w)
+            y = edge[0].y + edge[0].h + 2 * WALL_WIDTH
+        elif edge[1] == -1: #Right
+            y = randint(edge[0].y, edge[0].y + edge[0].h)
+            x = edge[0].x + edge[0].h + 2 * WALL_WIDTH + dimension[0]
+        elif edge[1] == -2: #Bottom
+            x = randint(edge[0].x, edge[0].x + edge[0].w)
+            y = edge[0].y - (2 * WALL_WIDTH - dimension[1])
+        return x, y
+        #return self.get_random_position(dimension[0], dimension[1])
     def get_room_dimension(self, definition = None):
         if type(definition) == RoomDefinition:
             return (definition.w, definition.h)
