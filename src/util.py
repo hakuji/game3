@@ -280,8 +280,8 @@ class Stage(Container):
         l = list(itertools.chain(room_definitions,
                                  range(self.random_room_no)))
         random.shuffle(l)
-        stop_iter = False
         for i in l:
+            stop_iter = False
             try:
                 edges_clone = free_edges [:]
                 random.shuffle(edges_clone)
@@ -312,23 +312,25 @@ class Stage(Container):
             position[1],
             dimension[0] + 2 * WALL_WIDTH,
             dimension[1] + 2 * WALL_WIDTH)
-        return any(rect1.overlaps(r.outer_rect) for r in self.rooms)
+        rect2.set_points_from_dimensions(0, 0, ST_BOUND_X, ST_BOUND_Y)
+        inside_stage = rect2.contains(rect1)
+        return inside_stage and not any(rect1.overlaps(r.outer_rect)
+                                        for r in self.rooms)
     def get_random_room_position(self, edge, dimension):
         """Returns a random room position relative to an edge"""
         if edge[1] == 1: #Left position
-            y = randint(edge[0].y, edge[0].y + edge[0].h)
-            x = edge[0].x - (2 * WALL_WIDTH + dimension[0])
+            y = randint(edge[0].inner_rect.bottom, edge[0].inner_rect.top)
+            x = edge[0].outer_rect.left - (2 * WALL_WIDTH + dimension[0])
         elif edge[1] == 2: #Top
-            x = randint(edge[0].x, edge[0].x + edge[0].w)
-            y = edge[0].y + edge[0].h + 2 * WALL_WIDTH
+            x = randint(edge[0].inner_rect.left, edge[0].inner_rect.right)
+            y = edge[0].outer_rect.top + 2 * WALL_WIDTH
         elif edge[1] == -1: #Right
-            y = randint(edge[0].y, edge[0].y + edge[0].h)
-            x = edge[0].x + edge[0].h + 2 * WALL_WIDTH + dimension[0]
+            y = randint(edge[0].inner_rect.bottom, edge[0].inner_rect.top)
+            x = edge[0].outer_rect.right + 2 * WALL_WIDTH
         elif edge[1] == -2: #Bottom
-            x = randint(edge[0].x, edge[0].x + edge[0].w)
-            y = edge[0].y - (2 * WALL_WIDTH - dimension[1])
+            x = randint(edge[0].inner_rect.left, edge[0].inner_rect.right)
+            y = edge[0].outer_rect.bottom - (2 * WALL_WIDTH + dimension[1])
         return x, y
-        #return self.get_random_position(dimension[0], dimension[1])
     def get_room_dimension(self, definition = None):
         if type(definition) == RoomDefinition:
             return (definition.w, definition.h)
