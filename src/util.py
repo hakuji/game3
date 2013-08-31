@@ -260,6 +260,8 @@ class Stage(Container):
         self.random_room_no = stage_def.random_room_no
         self.rooms = []
         self.create_rooms(stage_def.room_definitions)
+        self.pathways = []
+        self.generate_pathways()
         self.objects = Object.from_list(stage_def.obj_definitions)
         self.creatures = Creature.from_list(stage_def.creature_definitions)
         self.creatures.append(hero)
@@ -271,6 +273,58 @@ class Stage(Container):
         super(Stage, self).__init__(self.contents)
         self.arrange_objects()
         self.set_enemies()
+    def generate_pathways(self):
+        generated = []
+        for r1 in self.rooms:
+            for conn in r1.connections:
+                s = set([r1, conn[0]])
+                if s not in generated:
+                    self.create_pathway(r1, conn)
+                    generated.append(s)
+    def create_pathway(self, r1, conn):
+        rooms = filter(lambda r: r != r1 and r != conn[0], self.rooms)
+        pathway_thickness = Pathway.thickness()
+        if abs(conn[1]) == 1: #Left or right position
+            #get dimensions of the pathway
+            if conn[1] == 1: #Left
+                rightmost = r1
+                leftmost = conn[0]
+            else: # Right
+                rightmost = conn[0]
+                leftmost = r1
+            x = rightmost.inner_rect.right
+            w = leftmost.inner_rect.left - x
+            h = pathway_thickness
+            #create a list from the possible positions of the pathway
+            min_y = max(r1.inner_rect.bottom, conn[0].inner_rect.bottom)
+            max_y = min(r1.inner_rect.top, conn[0].inner_rect.top)
+            ly = range(min_y, max_y, h)
+            for y in ly:
+                if self.placement_possible([x, y], [w, h], rooms):
+                    self.pathways.append(Pathway(x, y, w, h))
+                    return #place and return
+                else:
+                    pass #take next position
+        elif abs(conn[1]) == 2: #Top or Bottom
+            if conn[1] == 2: #Top
+                topmost = r1
+                bottom = conn[0]
+            else:
+                topmost = conn[0]
+                bottom = r1
+            y = bottom.inner_rect.bottom
+            h = topmost.inner_rect.top - y
+            w = pathway_thickness
+            #create a list from the possible positions of the pathway
+            min_x = max(r1.inner_rect.left, conn[0].inner_rect.left)
+            max_x = min(r1.inner_rect.right, conn[0].inner_rect.right)
+            lx = range(min_x, max_x, h)
+            for x in lx:
+                if self.placement_possible([x, y], [w, h], rooms):
+                    self.pathways.append(Pathway(x, y, w, h))
+                    return #place and return
+                else:
+                    pass #take next position
     def create_rooms(self, room_definitions):
         d = self.random_room_dimension()
         x = (ST_BOUND_X - d[0]) / 2
@@ -280,8 +334,8 @@ class Stage(Container):
         l = list(itertools.chain(room_definitions,
                                  range(self.random_room_no)))
         random.shuffle(l)
+        stop_iter = False
         for i in l:
-            stop_iter = False
             try:
                 edges_clone = free_edges [:]
                 random.shuffle(edges_clone)
@@ -299,14 +353,17 @@ class Stage(Container):
                                 dim_counter = 0
                                 stop_iter = True
                     if stop_iter:
+                        stop_iter = False
+                        self.place_room(i, dim, pos, free_edges, edge)
                         break
-                self.place_room(i, dim, pos, free_edges, edge)
             except UnplaceableRoomException, ex:
                 if type(i) == RoomDefinition:
                     raise ex
                 else:
                     pass
-    def placement_possible(self, dimension, position):
+    def placement_possible(self, dimension, position, rooms = None):
+        if rooms is None:
+            rooms = self.rooms
         rect1.set_points_from_dimensions(
             position[0],
             position[1],
@@ -315,7 +372,7 @@ class Stage(Container):
         rect2.set_points_from_dimensions(0, 0, ST_BOUND_X, ST_BOUND_Y)
         inside_stage = rect2.contains(rect1)
         return inside_stage and not any(rect1.overlaps(r.outer_rect)
-                                        for r in self.rooms)
+                                        for r in rooms)
     def get_random_room_position(self, edge, dimension):
         """Returns a random room position relative to an edge"""
         if edge[1] == 1: #Left position
@@ -353,7 +410,7 @@ class Stage(Container):
             free_edges.extend(edge_tups())
         else:
             free_edges.extend(filter(lambda x: parent[1] != x[1], edge_tups()))
-            room.add_entrance(-parent[1])
+            room.add_connection(parent)
             free_edges.remove(parent)
     def set_enemies(self):
         for i in self.creatures:
@@ -426,6 +483,13 @@ times before raising an exception"""
         raise Exception('Could not assign a position to object: '
                         + str(obj))
 
+class Pathway(object):
+    def __init__(self, x1, y1, w, h):
+        pass
+    @classmethod
+    def thickness(cls):
+        return WALL_WIDTH * 3
+
 class RoomDefinition(object):
     def __init__(self, w, h, obj_definitions = [], creature_definitions = []):
         self.obj_definitions = obj_definitions
@@ -436,6 +500,7 @@ class RoomDefinition(object):
 class Room(Container):
     def __init__(self, room_def, x, y):
         self.room_def = room_def
+        self.connections = []
         self.x = x
         self.y = y
         w = room_def.w
@@ -455,8 +520,8 @@ class Room(Container):
         self.twall.draw(pyglet.gl.GL_QUAD_STRIP)
         self.bwall.draw(pyglet.gl.GL_QUAD_STRIP)
         self.rwall.draw(pyglet.gl.GL_QUAD_STRIP)
-    def add_entrance(self, entrance):
-        pass
+    def add_connection(self, conn):
+        self.connections.append(conn)
 
 class LabeledField(Container):
     def __init__(self, label, value_func, x, y):
