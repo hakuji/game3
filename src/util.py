@@ -270,6 +270,7 @@ class Stage(Container):
         self.contents.extend(self.rooms)
         self.contents.extend(self.objects)
         self.contents.extend(self.creatures)
+        self.contents.extend(self.pathways)
         super(Stage, self).__init__(self.contents)
         self.arrange_objects()
         self.set_enemies()
@@ -455,9 +456,10 @@ class Stage(Container):
                                                obj.sprite.content_height)
         return rect1.overlaps(rect2)
     def contained_in_room(self, x, y, w, h):
-        """True if the rect defined by the given dimensions is inside a room"""
+        """True if the rect defined by the given dimensions is inside a room or pathway"""
         rect1.set_points_from_dimensions(x, y, w, h)
-        return any(i.inner_rect.contains(rect1) for i in self.rooms)
+        return (any(i.inner_rect.contains(rect1) for i in self.rooms)
+                or any(i.inner_rect.contains(rect1) for i in self.pathways))
     def collide_with_objects(self, x, y, w, h, ex = None):
         rect1.set_points_from_dimensions(x, y, w, h)
         if ex is not None:
@@ -484,8 +486,27 @@ times before raising an exception"""
                         + str(obj))
 
 class Pathway(object):
-    def __init__(self, x1, y1, w, h):
-        pass
+    def __init__(self, x, y, w, h):
+        self.x = x
+        self.y = y
+        self.w = w
+        self.h = h
+        self.horizontal = w > h
+        self.lwall = pyglet.graphics.vertex_list(4, ('v2i', (x, y, x + WALL_WIDTH, y, x, y + h, x + WALL_WIDTH, y + h)))
+        self.twall = pyglet.graphics.vertex_list(4, ('v2i', (x, y + h, x + w, y + h, x, y + h + WALL_WIDTH, x + w, y + h + WALL_WIDTH)))
+        self.bwall = pyglet.graphics.vertex_list(4, ('v2i', (x, y, x + w, y, x, y + WALL_WIDTH, x + w, y + WALL_WIDTH)))
+        self.rwall = pyglet.graphics.vertex_list(4, ('v2i', (x + w, y, x + w + WALL_WIDTH, y, x + w, y + h + WALL_WIDTH, x + w + WALL_WIDTH, y + h + WALL_WIDTH)))
+        self.inner_rect = Rect(Point(x + WALL_WIDTH, y + WALL_WIDTH),
+                               Point(x + w, y + h))
+        self.outer_rect = Rect(Point(x, y),
+                               Point(x + 2 * WALL_WIDTH + w, y + 2 * WALL_WIDTH + h))
+    def draw(self):
+        if self.horizontal:
+            self.twall.draw(pyglet.gl.GL_QUAD_STRIP)
+            self.bwall.draw(pyglet.gl.GL_QUAD_STRIP)
+        else:
+            self.lwall.draw(pyglet.gl.GL_QUAD_STRIP)
+            self.rwall.draw(pyglet.gl.GL_QUAD_STRIP)
     @classmethod
     def thickness(cls):
         return WALL_WIDTH * 3
@@ -497,7 +518,7 @@ class RoomDefinition(object):
         self.w = w
         self.h = h
 
-class Room(Container):
+class Room(object):
     def __init__(self, room_def, x, y):
         self.room_def = room_def
         self.connections = []
