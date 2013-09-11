@@ -26,7 +26,7 @@ ST1 = StageDefinition(
     obj_definitions = [(DESC_STAIRS, 1)],
     room_definitions = [RoomDefinition(100, 100)],
     creature_definitions = [(WOLF, 2)],
-    random_room_no=2)
+    random_room_no = 2)
 
 STAGES = [
     ST1
