@@ -281,8 +281,8 @@ class Stage(Container):
         self.contents = []
         self.hero = hero
         self.contents.extend(self.rooms)
-        self.contents.extend(self.objects)
         self.contents.extend(self.pathways)
+        self.contents.extend(self.objects)
         self.contents.extend(self.creatures)
         super(Stage, self).__init__(self.contents)
         self.arrange_objects()
@@ -299,15 +299,15 @@ class Stage(Container):
         rooms = filter(lambda r: r != r1 and r != conn[0], self.rooms)
         pathway_thickness = Pathway.thickness()
         if abs(conn[1]) == 1: #Left or right position
-            #get dimensions of the pathway
+            #get dimension of the pathway
             if conn[1] == 1: #Left
-                rightmost = r1
-                leftmost = conn[0]
-            else: # Right
-                rightmost = conn[0]
                 leftmost = r1
-            x = rightmost.inner_rect.right - pathway_thickness
-            w = leftmost.inner_rect.left - x
+                rightmost = conn[0]
+            else: # Right
+                leftmost = conn[0]
+                rightmost = r1
+            x = leftmost.inner_rect.right - 2 * WALL_WIDTH
+            w = rightmost.inner_rect.left - x - WALL_WIDTH
             h = pathway_thickness
             #create a list from the possible positions of the pathway
             min_y = max(r1.inner_rect.bottom, conn[0].inner_rect.bottom)
