@@ -68,6 +68,13 @@ def range_inc(*args):
     else:
         raise TypeError('range takes at most 3 arguments (0 given)'.format([str(len(args))]))
 
+def vertex_list_from_rect(x, y, w, h):
+    return pyglet.graphics.vertex_list(
+        4, ('v2i', (x,     y,
+                    x + w, y,
+                    x,     y + h,
+                    x + w, y + h)))
+
 class SubscriptionFound(Exception):
     pass
 
@@ -528,10 +535,10 @@ class Room(object):
         h = room_def.h
         self.w = w
         self.h = h
-        self.lwall = pyglet.graphics.vertex_list(4, ('v2i', (x, y, x + WALL_WIDTH, y, x, y + h, x + WALL_WIDTH, y + h)))
-        self.twall = pyglet.graphics.vertex_list(4, ('v2i', (x, y + h, x + w, y + h, x, y + h + WALL_WIDTH, x + w, y + h + WALL_WIDTH)))
-        self.bwall = pyglet.graphics.vertex_list(4, ('v2i', (x, y, x + w, y, x, y + WALL_WIDTH, x + w, y + WALL_WIDTH)))
-        self.rwall = pyglet.graphics.vertex_list(4, ('v2i', (x + w, y, x + w + WALL_WIDTH, y, x + w, y + h + WALL_WIDTH, x + w + WALL_WIDTH, y + h + WALL_WIDTH)))
+        self.lwall = vertex_list_from_rect(x, y, WALL_WIDTH, h)
+        self.twall = vertex_list_from_rect(x, y + h, w, WALL_WIDTH)
+        self.bwall = vertex_list_from_rect(x, y, w, WALL_WIDTH)
+        self.rwall = vertex_list_from_rect(x + w, y, WALL_WIDTH, WALL_WIDTH + h)
         self.inner_rect = Rect(Point(x + WALL_WIDTH, y + WALL_WIDTH),
                                Point(x + w, y + h))
         self.outer_rect = Rect(Point(x, y),
