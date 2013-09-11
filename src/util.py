@@ -307,7 +307,7 @@ class Stage(Container):
                 rightmost = conn[0]
                 leftmost = r1
             x = rightmost.inner_rect.right - pathway_thickness
-            w = leftmost.inner_rect.left - x + pathway_thickness
+            w = leftmost.inner_rect.left - x
             h = pathway_thickness
             #create a list from the possible positions of the pathway
             min_y = max(r1.inner_rect.bottom, conn[0].inner_rect.bottom)
