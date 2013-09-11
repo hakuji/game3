@@ -498,22 +498,27 @@ class Pathway(object):
         self.y = y
         self.w = w
         self.h = h
-        self.horizontal = w > h
-        self.lwall = vertex_list_from_rect(x, y, WALL_WIDTH, h)
-        self.twall = vertex_list_from_rect(x, y + h, w, WALL_WIDTH)
-        self.bwall = vertex_list_from_rect(x, y, w, WALL_WIDTH)
-        self.rwall = vertex_list_from_rect(x + w, y, WALL_WIDTH, WALL_WIDTH + h)
-        self.inner_rect = Rect(Point(x + WALL_WIDTH, y + WALL_WIDTH),
-                               Point(x + w, y + h))
-        self.outer_rect = Rect(Point(x, y),
-                               Point(x + 2 * WALL_WIDTH + w, y + 2 * WALL_WIDTH + h))
+        if w > h: #horizontal
+            self.inner_rect = Rect.from_dimensions(x + WALL_WIDTH, y + WALL_WIDTH,
+                                                   w + WALL_WIDTH, h + WALL_WIDTH)
+            self.outer_rect = Rect.from_dimensions(x + 3 * WALL_WIDTH, y,
+                                                   w - 6 * WALL_WIDTH,
+                                                   WALL_WIDTH + h)
+            walls = Room.walls_from_rect(self.outer_rect)
+            self.awall = walls[1]
+            self.bwall = walls[2]
+        else: #vertical
+            self.inner_rect = Rect.from_dimensions(x + WALL_WIDTH, y + WALL_WIDTH,
+                                                   w + WALL_WIDTH, h + WALL_WIDTH)
+            self.outer_rect = Rect.from_dimensions(x, y + 3 * WALL_WIDTH,
+                                                   WALL_WIDTH + w,
+                                                   h - 6 * WALL_WIDTH)
+            walls = Room.walls_from_rect(self.outer_rect)
+            self.awall = walls[0]
+            self.bwall = walls[3]
     def draw(self):
-        if self.horizontal:
-            self.twall.draw(pyglet.gl.GL_QUAD_STRIP)
-            self.bwall.draw(pyglet.gl.GL_QUAD_STRIP)
-        else:
-            self.lwall.draw(pyglet.gl.GL_QUAD_STRIP)
-            self.rwall.draw(pyglet.gl.GL_QUAD_STRIP)
+        self.awall.draw(pyglet.gl.GL_QUAD_STRIP)
+        self.bwall.draw(pyglet.gl.GL_QUAD_STRIP)
     @classmethod
     def thickness(cls):
         return WALL_WIDTH * 3
