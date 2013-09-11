@@ -68,12 +68,18 @@ def range_inc(*args):
     else:
         raise TypeError('range takes at most 3 arguments (0 given)'.format([str(len(args))]))
 
-def vertex_list_from_rect(x, y, w, h):
+def vertex_list_from_rect(x, y, w, h, color = (0, 0, 255)):
+    r, g, b = color
     return pyglet.graphics.vertex_list(
         4, ('v2i', (x,     y,
                     x + w, y,
                     x,     y + h,
-                    x + w, y + h)))
+                    x + w, y + h)),
+        ('c3B', (r, g, b,
+                 r, g, b,
+                 r, g, b,
+                 r, g, b)
+        ))
 
 class SubscriptionFound(Exception):
     pass
@@ -546,6 +552,7 @@ class Room(object):
                                                2 * WALL_WIDTH + w,
                                                2 * WALL_WIDTH + h)
         self.walls = self.walls_from_rect(self.outer_rect)
+        self.floor = vertex_list_from_rect(*self.inner_rect.dimension())
     def draw(self):
         for w in self.walls:
             w.draw(pyglet.gl.GL_QUAD_STRIP)
