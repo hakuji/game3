@@ -522,7 +522,10 @@ class Pathway(object):
             walls = Room.walls_from_rect(self.outer_rect)
             self.awall = walls[0]
             self.bwall = walls[3]
+        d = self.inner_rect.dimension()
+        self.floor = vertex_list_from_rect(d[0], d[1], d[2], d[3], (150, 100, 255))
     def draw(self):
+        self.floor.draw(pyglet.gl.GL_QUAD_STRIP)
         self.awall.draw(pyglet.gl.GL_QUAD_STRIP)
         self.bwall.draw(pyglet.gl.GL_QUAD_STRIP)
     @classmethod
