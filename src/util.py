@@ -282,8 +282,8 @@ class Stage(Container):
         self.hero = hero
         self.contents.extend(self.rooms)
         self.contents.extend(self.objects)
-        self.contents.extend(self.creatures)
         self.contents.extend(self.pathways)
+        self.contents.extend(self.creatures)
         super(Stage, self).__init__(self.contents)
         self.arrange_objects()
         self.set_enemies()
