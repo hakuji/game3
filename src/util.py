@@ -552,8 +552,10 @@ class Room(object):
                                                2 * WALL_WIDTH + w,
                                                2 * WALL_WIDTH + h)
         self.walls = self.walls_from_rect(self.outer_rect)
-        self.floor = vertex_list_from_rect(*self.inner_rect.dimension())
+        d = self.inner_rect.dimension()
+        self.floor = vertex_list_from_rect(d[0], d[1], d[2], d[3], (150, 50, 255))
     def draw(self):
+        self.floor.draw(pyglet.gl.GL_QUAD_STRIP)
         for w in self.walls:
             w.draw(pyglet.gl.GL_QUAD_STRIP)
     def add_connection(self, conn):
