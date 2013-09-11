@@ -499,10 +499,10 @@ class Pathway(object):
         self.w = w
         self.h = h
         self.horizontal = w > h
-        self.lwall = pyglet.graphics.vertex_list(4, ('v2i', (x, y, x + WALL_WIDTH, y, x, y + h, x + WALL_WIDTH, y + h)))
-        self.twall = pyglet.graphics.vertex_list(4, ('v2i', (x, y + h, x + w, y + h, x, y + h + WALL_WIDTH, x + w, y + h + WALL_WIDTH)))
-        self.bwall = pyglet.graphics.vertex_list(4, ('v2i', (x, y, x + w, y, x, y + WALL_WIDTH, x + w, y + WALL_WIDTH)))
-        self.rwall = pyglet.graphics.vertex_list(4, ('v2i', (x + w, y, x + w + WALL_WIDTH, y, x + w, y + h + WALL_WIDTH, x + w + WALL_WIDTH, y + h + WALL_WIDTH)))
+        self.lwall = vertex_list_from_rect(x, y, WALL_WIDTH, h)
+        self.twall = vertex_list_from_rect(x, y + h, w, WALL_WIDTH)
+        self.bwall = vertex_list_from_rect(x, y, w, WALL_WIDTH)
+        self.rwall = vertex_list_from_rect(x + w, y, WALL_WIDTH, WALL_WIDTH + h)
         self.inner_rect = Rect(Point(x + WALL_WIDTH, y + WALL_WIDTH),
                                Point(x + w, y + h))
         self.outer_rect = Rect(Point(x, y),
@@ -535,21 +535,25 @@ class Room(object):
         h = room_def.h
         self.w = w
         self.h = h
-        self.lwall = vertex_list_from_rect(x, y, WALL_WIDTH, h)
-        self.twall = vertex_list_from_rect(x, y + h, w, WALL_WIDTH)
-        self.bwall = vertex_list_from_rect(x, y, w, WALL_WIDTH)
-        self.rwall = vertex_list_from_rect(x + w, y, WALL_WIDTH, WALL_WIDTH + h)
-        self.inner_rect = Rect(Point(x + WALL_WIDTH, y + WALL_WIDTH),
-                               Point(x + w, y + h))
-        self.outer_rect = Rect(Point(x, y),
-                               Point(x + 2 * WALL_WIDTH + w, y + 2 * WALL_WIDTH + h))
+        self.inner_rect = Rect.from_dimensions(x + WALL_WIDTH, y + int(WALL_WIDTH * 1.25),
+                                               w + WALL_WIDTH, h + int(WALL_WIDTH * 1.5))
+        self.outer_rect = Rect.from_dimensions(x, y,
+                                               2 * WALL_WIDTH + w,
+                                               2 * WALL_WIDTH + h)
+        self.walls = self.walls_from_rect(self.outer_rect)
     def draw(self):
-        self.lwall.draw(pyglet.gl.GL_QUAD_STRIP)
-        self.twall.draw(pyglet.gl.GL_QUAD_STRIP)
-        self.bwall.draw(pyglet.gl.GL_QUAD_STRIP)
-        self.rwall.draw(pyglet.gl.GL_QUAD_STRIP)
+        for w in self.walls:
+            w.draw(pyglet.gl.GL_QUAD_STRIP)
     def add_connection(self, conn):
         self.connections.append(conn)
+    @classmethod
+    def walls_from_rect(cls, rect):
+        x, y, w, h = rect.dimension()
+        left = vertex_list_from_rect(x, y, WALL_WIDTH, h)
+        top = vertex_list_from_rect(x, y + h, w, WALL_WIDTH)
+        bottom = vertex_list_from_rect(x, y, w, WALL_WIDTH)
+        right = vertex_list_from_rect(x + w, y, WALL_WIDTH, WALL_WIDTH + h)
+        return (left, top, bottom, right)
 
 class LabeledField(Container):
     def __init__(self, label, value_func, x, y):

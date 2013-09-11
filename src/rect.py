@@ -170,15 +170,15 @@ class Rect(object):
         """Return true if a rectangle overlaps this rectangle."""
         return (self.right >= other.left and self.left <= other.right and
                 self.top >= other.bottom and self.bottom <= other.top)
-    
-    def top_left(self):
-        """Return the top-left corner as a Point."""
-        return Point(self.left, self.top)
-    
-    def bottom_right(self):
-        """Return the bottom-right corner as a Point."""
-        return Point(self.right, self.bottom)
-    
+    def bottom_left(self):
+        """Return the bottom-left corner as a Point."""
+        return Point(self.left, self.bottom)
+    def top_right(self):
+        """Return the top-right corner as a Point."""
+        return Point(self.right, self.top)
+    def dimension(self):
+        """Return x, y, w, h in this order"""
+        return self.left, self.bottom, self.right - self.left, self.top - self.bottom
     def expanded_by(self, n):
         """Return a rectangle with extended borders.
 
@@ -188,11 +188,9 @@ class Rect(object):
         p1 = Point(self.left-n, self.top+n)
         p2 = Point(self.right+n, self.bottom-n)
         return Rect(p1, p2)
-    
     def __str__( self ):
         return "<Rect ({0},{1})-({2},{3})>".format(self.left,self.top,
                                            self.right,self.bottom)
-    
     def __repr__(self):
         return "{0}({1}, {2})".format(self.__class__.__name__,
                                Point(self.left, self.top),
