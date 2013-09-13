@@ -34,7 +34,15 @@ rect2 = Rect.from_dimensions(0, 0, 0, 0)
 ran = range
 def range(*args):
     """Beefed out version of range that automatically deals
-with reverse direction"""
+    with reverse direction
+
+    range([start,] stop[, step]) -> list of integers
+
+    Return a list containing an arithmetic progression of integers.
+    range(i, j) returns [i, i+1, i+2, ..., j-1]; start (!) defaults to 0.
+    When step is given, it specifies the increment (or decrement).
+    For example, range(4) returns [0, 1, 2, 3].  The end point is omitted!
+    These are exactly the valid indices for a list of 4 elements."""
     if len(args) == 3:
         return ran(*args)
     elif len(args) == 2:
@@ -312,7 +320,7 @@ class Stage(Container):
             #create a list from the possible positions of the pathway
             min_y = max(r1.inner_rect.bottom, conn[0].inner_rect.bottom)
             max_y = min(r1.inner_rect.top, conn[0].inner_rect.top)
-            ly = range(min_y, max_y, h)
+            ly = range(min_y, max_y)
             for y in ly:
                 if self.placement_possible([x, y], [w, h], rooms):
                     self.pathways.append(Pathway(x, y, w, h))
@@ -332,7 +340,7 @@ class Stage(Container):
             #create a list from the possible positions of the pathway
             min_x = max(r1.inner_rect.left, conn[0].inner_rect.left)
             max_x = min(r1.inner_rect.right, conn[0].inner_rect.right)
-            lx = range(min_x, max_x, h)
+            lx = range(min_x, max_x)
             for x in lx:
                 if self.placement_possible([x, y], [w, h], rooms):
                     self.pathways.append(Pathway(x, y, w, h))
