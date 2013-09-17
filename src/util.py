@@ -264,7 +264,7 @@ class Hero(Creature):
             self.intended_x = self.sprite.x + self.speed
 
 class StageDefinition(object):
-    def __init__(self, obj_definitions, room_definitions,
+    def __init__(self, obj_definitions, room_definitions, pathway_definitions,
                  creature_definitions, min_room_dim = (50, 50),
                  max_room_dim = (100, 100), random_room_no = 0):
         self.obj_definitions = obj_definitions
@@ -273,16 +273,14 @@ class StageDefinition(object):
         self.min_room_dim = min_room_dim
         self.max_room_dim = max_room_dim
         self.random_room_no = random_room_no
+        self.pathway_definitions = pathway_definitions
 
 class Stage(Container):
     def __init__(self, stage_def, hero):
-        self.min_room_dim = stage_def.min_room_dim
-        self.max_room_dim = stage_def.max_room_dim
-        self.random_room_no = stage_def.random_room_no
-        self.rooms = []
-        self.create_rooms(stage_def.room_definitions)
-        self.pathways = []
-        self.generate_pathways()
+        self.pathways = map(lambda d: Pathway(*d), stage_def.pathway_definitions)
+        print 'Here'
+        self.rooms = stage_def.room_definitions
+        self.init_rooms()
         self.objects = Object.from_list(stage_def.obj_definitions)
         self.creatures = Creature.from_list(stage_def.creature_definitions)
         self.creatures.append(hero)
@@ -295,94 +293,10 @@ class Stage(Container):
         super(Stage, self).__init__(self.contents)
         self.arrange_objects()
         self.set_enemies()
-    def generate_pathways(self):
-        generated = []
-        for r1 in self.rooms:
-            for conn in r1.connections:
-                s = set([r1, conn[0]])
-                if s not in generated:
-                    self.create_pathway(r1, conn)
-                    generated.append(s)
-    def create_pathway(self, r1, conn):
-        rooms = filter(lambda r: r != r1 and r != conn[0], self.rooms)
-        pathway_thickness = Pathway.thickness()
-        if abs(conn[1]) == 1: #Left or right position
-            #get dimension of the pathway
-            if conn[1] == 1: #Left
-                leftmost = r1
-                rightmost = conn[0]
-            else: # Right
-                leftmost = conn[0]
-                rightmost = r1
-            x = leftmost.inner_rect.right - 2 * WALL_WIDTH
-            w = rightmost.inner_rect.left - x - WALL_WIDTH
-            h = pathway_thickness
-            #create a list from the possible positions of the pathway
-            min_y = max(r1.inner_rect.bottom, conn[0].inner_rect.bottom)
-            max_y = min(r1.inner_rect.top, conn[0].inner_rect.top)
-            ly = range(min_y, max_y)
-            for y in ly:
-                if self.placement_possible([x, y], [w, h], rooms):
-                    self.pathways.append(Pathway(x, y, w, h))
-                    return #place and return
-                else:
-                    pass #take next position
-        elif abs(conn[1]) == 2: #Top or Bottom
-            if conn[1] == 2: #Top
-                topmost = r1
-                bottom = conn[0]
-            else:
-                topmost = conn[0]
-                bottom = r1
-            y = bottom.inner_rect.top - 3 * WALL_WIDTH
-            h = topmost.inner_rect.bottom - y - int(0.5 * WALL_WIDTH)
-            w = pathway_thickness
-            #create a list from the possible positions of the pathway
-            min_x = max(r1.inner_rect.left, conn[0].inner_rect.left)
-            max_x = min(r1.inner_rect.right, conn[0].inner_rect.right)
-            lx = range(min_x, max_x)
-            for x in lx:
-                if self.placement_possible([x, y], [w, h], rooms):
-                    self.pathways.append(Pathway(x, y, w, h))
-                    return #place and return
-                else:
-                    pass #take next position
-    def create_rooms(self, room_definitions):
-        d = self.random_room_dimension()
-        x = (ST_BOUND_X - d[0]) / 2
-        y = (ST_BOUND_Y - d[1]) / 2
-        free_edges = []
-        self.place_room(None, d, (x, y), free_edges, None)
-        l = list(itertools.chain(room_definitions,
-                                 range(self.random_room_no)))
-        random.shuffle(l)
-        stop_iter = False
-        for i in l:
-            try:
-                edges_clone = free_edges [:]
-                random.shuffle(edges_clone)
-                for edge in edges_clone:
-                    dim_counter = 100
-                    while dim_counter > 0:
-                        dim_counter -= 1
-                        dim = self.get_room_dimension(i)
-                        pos_counter = min(100, self.min_room_dim[0], self.min_room_dim[1])
-                        while pos_counter > 0:
-                            pos_counter -= 1
-                            pos = self.get_random_room_position(edge, dim)
-                            if self.placement_possible(dim, pos):
-                                pos_counter = 0
-                                dim_counter = 0
-                                stop_iter = True
-                    if stop_iter:
-                        stop_iter = False
-                        self.place_room(i, dim, pos, free_edges, edge)
-                        break
-            except UnplaceableRoomException, ex:
-                if type(i) == RoomDefinition:
-                    raise ex
-                else:
-                    pass
+    def init_rooms(self):
+        for r in self.rooms:
+            pass
+            #objects, creatures
     def placement_possible(self, dimension, position, rooms = None):
         if rooms is None:
             rooms = self.rooms
@@ -395,45 +309,6 @@ class Stage(Container):
         inside_stage = rect2.contains(rect1)
         return inside_stage and not any(rect1.overlaps(r.outer_rect)
                                         for r in rooms)
-    def get_random_room_position(self, edge, dimension):
-        """Returns a random room position relative to an edge"""
-        if edge[1] == 1: #Left position
-            y = randint(edge[0].inner_rect.bottom, edge[0].inner_rect.top)
-            x = edge[0].outer_rect.left - (2 * WALL_WIDTH + dimension[0])
-        elif edge[1] == 2: #Top
-            x = randint(edge[0].inner_rect.left, edge[0].inner_rect.right)
-            y = edge[0].outer_rect.top + 2 * WALL_WIDTH
-        elif edge[1] == -1: #Right
-            y = randint(edge[0].inner_rect.bottom, edge[0].inner_rect.top)
-            x = edge[0].outer_rect.right + 2 * WALL_WIDTH
-        elif edge[1] == -2: #Bottom
-            x = randint(edge[0].inner_rect.left, edge[0].inner_rect.right)
-            y = edge[0].outer_rect.bottom - (2 * WALL_WIDTH + dimension[1])
-        return x, y
-    def get_room_dimension(self, definition = None):
-        if type(definition) == RoomDefinition:
-            return (definition.w, definition.h)
-        else:
-            return self.random_room_dimension()
-    def random_room_dimension(self):
-        """Returns a random height and width for a room"""
-        w = randint(self.min_room_dim[0], self.max_room_dim[0])
-        h = randint(self.min_room_dim[1], self.max_room_dim[1])
-        return w, h
-    def place_room(self, definition, dimension, pos, free_edges, parent):
-        """Place a random or predefined room"""
-        if type(definition) != RoomDefinition:
-            definition = RoomDefinition(dimension[0], dimension[1])
-        room = Room(definition, pos[0], pos[1])
-        self.rooms.append(room)
-        def edge_tups():
-            return map(lambda x: (room, x), EDGES)
-        if(parent is None):
-            free_edges.extend(edge_tups())
-        else:
-            free_edges.extend(filter(lambda x: parent[1] != x[1], edge_tups()))
-            room.add_connection(parent)
-            free_edges.remove(parent)
     def set_enemies(self):
         for i in self.creatures:
             try:
@@ -507,27 +382,27 @@ times before raising an exception"""
                         + str(obj))
 
 class Pathway(object):
-    def __init__(self, x, y, w, h):
+    def __init__(self, horizontal, x, y, length):
         self.x = x
         self.y = y
-        self.w = w
-        self.h = h
-        if w > h: #horizontal
-            self.inner_rect = Rect.from_dimensions(x + WALL_WIDTH, y + WALL_WIDTH,
-                                                   w + WALL_WIDTH, h + WALL_WIDTH)
-            self.outer_rect = Rect.from_dimensions(x + 3 * WALL_WIDTH, y,
-                                                   w - 6 * WALL_WIDTH,
-                                                   WALL_WIDTH + h)
-            walls = Room.walls_from_rect(self.outer_rect)
+        self.length = length
+        self.horizontal = horizontal
+        if horizontal:
+            w = length
+            h = self.thickness()
+        else:
+            w = self.thickness()
+            h = length
+        self.inner_rect = Rect.from_dimensions(x + WALL_WIDTH, y + WALL_WIDTH,
+                                               w + WALL_WIDTH, h + WALL_WIDTH)
+        self.outer_rect = Rect.from_dimensions(x + 3 * WALL_WIDTH, y,
+                                               w - 6 * WALL_WIDTH,
+                                               WALL_WIDTH + h)
+        walls = Room.walls_from_rect(self.outer_rect)
+        if horizontal:
             self.awall = walls[1]
             self.bwall = walls[2]
-        else: #vertical
-            self.inner_rect = Rect.from_dimensions(x + WALL_WIDTH, y + WALL_WIDTH,
-                                                   w + WALL_WIDTH, h + WALL_WIDTH)
-            self.outer_rect = Rect.from_dimensions(x, y + 3 * WALL_WIDTH,
-                                                   WALL_WIDTH + w,
-                                                   h - 6 * WALL_WIDTH)
-            walls = Room.walls_from_rect(self.outer_rect)
+        else:
             self.awall = walls[0]
             self.bwall = walls[3]
         d = self.inner_rect.dimension()
@@ -540,21 +415,12 @@ class Pathway(object):
     def thickness(cls):
         return WALL_WIDTH * 3
 
-class RoomDefinition(object):
-    def __init__(self, w, h, obj_definitions = [], creature_definitions = []):
-        self.obj_definitions = obj_definitions
-        self.creature_definitions = creature_definitions
-        self.w = w
-        self.h = h
-
 class Room(object):
-    def __init__(self, room_def, x, y):
-        self.room_def = room_def
-        self.connections = []
+    def __init__(self, x, y, w, h, obj_def = [], creat_def = []):
+        self.object_def = obj_def
+        self.creature_def = creat_def
         self.x = x
         self.y = y
-        w = room_def.w
-        h = room_def.h
         self.w = w
         self.h = h
         self.inner_rect = Rect.from_dimensions(x + WALL_WIDTH, y + int(WALL_WIDTH * 1.25),
@@ -569,8 +435,6 @@ class Room(object):
         self.floor.draw(pyglet.gl.GL_QUAD_STRIP)
         for w in self.walls:
             w.draw(pyglet.gl.GL_QUAD_STRIP)
-    def add_connection(self, conn):
-        self.connections.append(conn)
     @classmethod
     def walls_from_rect(cls, rect):
         x, y, w, h = rect.dimension()
