@@ -278,7 +278,6 @@ class StageDefinition(object):
 class Stage(Container):
     def __init__(self, stage_def, hero):
         self.pathways = map(lambda d: Pathway(*d), stage_def.pathway_definitions)
-        print 'Here'
         self.rooms = stage_def.room_definitions
         self.init_rooms()
         self.objects = Object.from_list(stage_def.obj_definitions)
@@ -297,18 +296,6 @@ class Stage(Container):
         for r in self.rooms:
             pass
             #objects, creatures
-    def placement_possible(self, dimension, position, rooms = None):
-        if rooms is None:
-            rooms = self.rooms
-        rect1.set_points_from_dimensions(
-            position[0],
-            position[1],
-            dimension[0] + 2 * WALL_WIDTH,
-            dimension[1] + 2 * WALL_WIDTH)
-        rect2.set_points_from_dimensions(0, 0, ST_BOUND_X, ST_BOUND_Y)
-        inside_stage = rect2.contains(rect1)
-        return inside_stage and not any(rect1.overlaps(r.outer_rect)
-                                        for r in rooms)
     def set_enemies(self):
         for i in self.creatures:
             try:
