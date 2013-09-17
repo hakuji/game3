@@ -444,7 +444,7 @@ class Room(object):
     @classmethod
     def walls_from_rect(cls, rect):
         x, y, w, h = rect.dimension()
-        left = vertex_list_from_rect(x, y, WALL_WIDTH, h)
+        left = vertex_list_from_rect(x, y, WALL_WIDTH, WALL_WIDTH + h)
         top = vertex_list_from_rect(x, y + h, w, WALL_WIDTH)
         bottom = vertex_list_from_rect(x, y, w, WALL_WIDTH)
         right = vertex_list_from_rect(x + w, y, WALL_WIDTH, WALL_WIDTH + h)
