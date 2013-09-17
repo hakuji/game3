@@ -25,7 +25,8 @@ WOLF = CreatureDefinition(2, 'W', 'Wolf', 10, 1, 1)
 ST1 = StageDefinition(
     obj_definitions = [(DESC_STAIRS, 1)],
     room_definitions = [Room(100, 100, 100, 100)],
-    pathway_definitions = [(True, 200, 200, 100)],
+    pathway_definitions = [(True, 205, 150, 200),
+                           (False, 375, 200, 200)],
     creature_definitions = [(WOLF, 2)],
 )
 
