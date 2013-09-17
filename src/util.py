@@ -327,10 +327,15 @@ class Stage(Container):
         for obj in self.placeable_objects():
             self.set_location(obj)
     def get_random_position(self, width, height):
-        """Returns a random point in the map"""
-        x = randint(0, ST_BOUND_X - width)
-        y = randint(0, ST_BOUND_Y - height)
+        """Returns a random walkable point in the map"""
+        lc = list(self.get_containing_places())
+        rect = lc[randint(0, len(lc) - 1)].inner_rect
+        x = randint(rect.left, rect.right)
+        y = randint(rect.bottom, rect.top)
         return x, y
+    def get_containing_places(self):
+        """Returns all rooms an pathways"""
+        return itertools.chain(self.rooms, self.pathways)
     def collide_with_rect(self, obj):
         """Ugly bit of code that requires a previous state to be set"""
         rect2.set_points_from_dimensions(obj.sprite.x,
