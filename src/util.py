@@ -17,7 +17,7 @@
 
 """Helper classes"""
 
-import pyglet, itertools, random
+import pyglet, itertools
 from pyglet.window import key
 from constants import (FIELD_FONT_SIZE as FONT_SIZE, OBJECT_FONT_SIZE,
                        ST_BOUND_Y, ST_BOUND_X, OBJECT_FONT_FACE, WALL_WIDTH,
