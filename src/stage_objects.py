@@ -30,7 +30,7 @@ ST1 = StageDefinition(
                              creat_def=[(WOLF, 2)],
                              obj_def=[(PROP, 1)])],
     pathway_definitions = [(True, 205, 150, 200),
-                           (False, 375, 200, 200)],
+                           (False, 450, 200, 200)],
     creature_definitions = [],
 )
 

@@ -406,7 +406,7 @@ class Pathway(object):
             self.outer_rect = Rect.from_dimensions(
                 x + self.thickness() / 2,
                 y - WALL_WIDTH,
-                w - int(1.5 * self.thickness()),
+                w - int(1.08 * self.thickness()),
                 h + WALL_WIDTH)
         else:
             w = self.thickness()
@@ -415,7 +415,7 @@ class Pathway(object):
                 x - WALL_WIDTH,
                 y + self.thickness() / 2,
                 w + WALL_WIDTH,
-                h - int(1.5 * self.thickness()))
+                h - int(1.45 * self.thickness()))
         self.inner_rect = Rect.from_dimensions(x, y, w, h)
         walls = Room.walls_from_rect(self.outer_rect)
         if horizontal:
