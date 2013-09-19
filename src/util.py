@@ -167,13 +167,15 @@ class ObjectDefinition(object):
 class CreatureDefinition(ObjectDefinition):
     """The common properties of a creature"""
     def __init__(self, id, symbol, description, health, speed, strength,
-                 stationary = False, hostile = True, go_through = False, range = 1):
+                 light_radius, stationary = False, hostile = True,
+                 go_through = False, range = 1):
         super(CreatureDefinition, self).__init__(id, go_through, symbol, description)
         self.health = health
         self.speed = speed
         self.hostile = hostile
         self.stationary = stationary
         self.range = range
+        self.light_radius = light_radius
     def toScreen(self, count):
         return [Creature(self) for i in range(count)]
 
@@ -201,12 +203,14 @@ class Creature(Object):
         self.intended_y = self.sprite.y
     def update(self, dt):
         if not self.definition.stationary:
-            if self.definition.hostile:
+            if self.definition.hostile and self.target is not None:
                 if self.within_range():
                     self.attack()
                 else:
-                    if self.target is not None:
+                    if self.target_visible():
                         self.chase()
+                    else:
+                        self.roam()
             else:
                 self.roam()
     def within_range(self):
@@ -216,6 +220,14 @@ class Creature(Object):
         pointb.y = self.target.sprite.y + self.sprite.content_height / 2
         return (pointa.distance_to(pointb) <= self.definition.range
                 +  max(self.sprite.content_height, self.sprite.content_width) / 2)
+    def target_visible(self):
+        x1, y1 = self.target.sprite.x, self.target.sprite.y
+        x2, y2 = self.sprite.x, self.sprite.y
+        return abs((x1 - x2) + (y1 - y2)) <= self.definition.light_radius
+    def roam(self):
+        """Move randomly"""
+        x, y, s = self.sprite.x, self.sprite.y, self.definition.speed
+        self.intent(randint(x - s, x + s), randint(y - s, y + s))
     def attack(self):
         pass
     def chase(self):

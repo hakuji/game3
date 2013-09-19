@@ -21,7 +21,7 @@ from util import (ObjectDefinition, CreatureDefinition, StageDefinition,
 DESC_STAIRS = ObjectDefinition(1, True, '>', 'Descending stairs')
 PROP = ObjectDefinition(2, False, 'P', 'A test prop')
 
-WOLF = CreatureDefinition(2, 'W', 'Wolf', 10, 1, 1)
+WOLF = CreatureDefinition(2, 'W', 'Wolf', 10, 1, 1, 40)
 
 ST1 = StageDefinition(
     obj_definitions = [(DESC_STAIRS, 1)],
