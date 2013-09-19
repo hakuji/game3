@@ -298,6 +298,11 @@ class Stage(Container):
             for c in creatures:
                 self.creatures.append(c)
                 self.set_location(c, r)
+            objects = Object.from_list(r.object_def)
+            for o in objects:
+                self.objects.append(o)
+                self.set_location(o, r)
+
             #objects
     def set_enemies(self):
         for i in self.creatures:

@@ -19,6 +19,7 @@ from util import (ObjectDefinition, CreatureDefinition, StageDefinition,
                   Room)
 
 DESC_STAIRS = ObjectDefinition(1, True, '>', 'Descending stairs')
+PROP = ObjectDefinition(2, False, 'P', 'A test prop')
 
 WOLF = CreatureDefinition(2, 'W', 'Wolf', 10, 1, 1)
 
@@ -26,7 +27,8 @@ ST1 = StageDefinition(
     obj_definitions = [(DESC_STAIRS, 1)],
     room_definitions = [Room(50, 50, 100, 100),
                         Room(300, 200, 100, 150,
-                             creat_def=[(WOLF, 2)])],
+                             creat_def=[(WOLF, 2)],
+                             obj_def=[(PROP, 1)])],
     pathway_definitions = [(True, 205, 150, 200),
                            (False, 375, 200, 200)],
     creature_definitions = [],
