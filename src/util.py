@@ -279,23 +279,26 @@ class Stage(Container):
     def __init__(self, stage_def, hero):
         self.pathways = map(lambda d: Pathway(*d), stage_def.pathway_definitions)
         self.rooms = stage_def.room_definitions
-        self.init_rooms()
         self.objects = Object.from_list(stage_def.obj_definitions)
         self.creatures = Creature.from_list(stage_def.creature_definitions)
         self.creatures.append(hero)
-        self.contents = []
+        self.arrange_objects()
+        self.init_rooms()
         self.hero = hero
+        self.set_enemies()
+        self.contents = []
         self.contents.extend(self.rooms)
         self.contents.extend(self.pathways)
         self.contents.extend(self.objects)
         self.contents.extend(self.creatures)
         super(Stage, self).__init__(self.contents)
-        self.arrange_objects()
-        self.set_enemies()
     def init_rooms(self):
         for r in self.rooms:
-            pass
-            #objects, creatures
+            creatures = Creature.from_list(r.creature_def)
+            for c in creatures:
+                self.creatures.append(c)
+                self.set_location(c, r)
+            #objects
     def set_enemies(self):
         for i in self.creatures:
             try:
@@ -311,7 +314,7 @@ class Stage(Container):
                     w = obj.sprite.content_width
                     h = obj.sprite.content_height
                     for i in obj.movements():
-                        if (self.contained_in_room(i[0], i[1], w, h)
+                        if (self.contained_in_any_room(i[0], i[1], w, h)
                             and not self.collide_with_objects(i[0], i[1], w, h, obj)):
                             obj.sprite.x = i[0]
                             obj.sprite.y = i[1]
@@ -326,13 +329,17 @@ class Stage(Container):
         """Set initial arrangement of the objects"""
         for obj in self.placeable_objects():
             self.set_location(obj)
-    def get_random_position(self, width, height):
-        """Returns a random walkable point in the map"""
-        lc = list(self.get_containing_places())
-        rect = lc[randint(0, len(lc) - 1)].inner_rect
+    def get_random_position_in_room(self, width, height, room):
+        """Returns a random walkable point in a room"""
+        rect = room.inner_rect
         x = randint(rect.left, rect.right)
         y = randint(rect.bottom, rect.top)
         return x, y
+    def get_random_position(self, width, height):
+        """Returns a random walkable point in the map"""
+        lc = list(self.get_containing_places())
+        room = lc[randint(0, len(lc) - 1)]
+        return self.get_random_position_in_room(width, height, room)
     def get_containing_places(self):
         """Returns all rooms an pathways"""
         return itertools.chain(self.rooms, self.pathways)
@@ -343,11 +350,17 @@ class Stage(Container):
                                                obj.sprite.content_width,
                                                obj.sprite.content_height)
         return rect1.overlaps(rect2)
-    def contained_in_room(self, x, y, w, h):
-        """True if the rect defined by the given dimensions is inside a room or pathway"""
+    def contained_in_a_room(self, x, y, w, h, room):
+        """True if the rect defined by the given dimensions is inside the given
+room or pathway"""
         rect1.set_points_from_dimensions(x, y, w, h)
-        return (any(i.inner_rect.contains(rect1) for i in self.rooms)
-                or any(i.inner_rect.contains(rect1) for i in self.pathways))
+        return room.inner_rect.contains(rect1)
+    def contained_in_any_room(self, x, y, w, h):
+        """True if the rect defined by the given dimensions is inside a room or
+pathway"""
+        rect1.set_points_from_dimensions(x, y, w, h)
+        return any(self.contained_in_a_room(x, y, w, h, r)
+                   for r in itertools.chain(self.rooms, self.pathways))
     def collide_with_objects(self, x, y, w, h, ex = None):
         rect1.set_points_from_dimensions(x, y, w, h)
         if ex is not None:
@@ -356,14 +369,19 @@ class Stage(Container):
         else:
             return any(self.collide_with_rect(i) for i in self.placeable_objects()
                        if not i.definition.go_through)
-    def set_location(self, obj):
+    def set_location(self, obj, room = None):
         """Assign a random free position to an object. Will try at most 10000
 times before raising an exception"""
         width = obj.sprite.content_width
         height = obj.sprite.content_height
         for i in range(10000):
-            x, y = self.get_random_position(width, height)
-            if (self.contained_in_room(x, y, width, height)):
+            if room is None:
+                x, y = self.get_random_position(width, height)
+                contained = self.contained_in_any_room(x, y, width, height)
+            else:
+                x, y = self.get_random_position_in_room(width, height, room)
+                contained = self.contained_in_a_room(x, y, width, height, room)
+            if contained:
                 if obj.definition.go_through:
                     obj.set_location(x, y)
                     return
