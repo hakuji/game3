@@ -18,7 +18,7 @@
 
 import pyglet
 from control import state
-from constants import WINDOW_WIDTH, WINDOW_HEIGHT, GAME_NAME
+from constants import WINDOW_WIDTH, WINDOW_HEIGHT, GAME_NAME, INTERVAL
 from util import KeySubscription, Option, SubscriptionFound
 from pyglet.window import key
 from menu import MAIN_MENU
@@ -58,7 +58,7 @@ def init():
             font_size=12,
             x=WINDOW_WIDTH//2, y=WINDOW_HEIGHT//2 - 92,
             anchor_x='center', anchor_y='center')))
-    pyglet.clock.schedule_interval(state.update, 0.1)
+    pyglet.clock.schedule_interval(state.update, INTERVAL)
     pyglet.app.run()
 
 if __name__ == '__main__':

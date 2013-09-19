@@ -34,5 +34,5 @@ class CommonScreen(Screen):
         self.state = state
         self.contents = [STATS_PANEL,
                          state.stage]#message_box, tool_panel])
-    def update(self, dt):
-        self.state.update(dt)
+    def update(self):
+        self.state.update()

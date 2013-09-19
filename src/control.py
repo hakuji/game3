@@ -19,6 +19,7 @@ import pyglet
 from util import Reactable, Hero, Stage
 from screens import CommonScreen
 from stage_objects import STAGES
+from constants import INTERVAL
 
 class GameController(Reactable):
     """Ui controller"""
@@ -54,10 +55,8 @@ class GameController(Reactable):
         self.top_screen().draw()
     def update(self, dt):
         """Update the game"""
-        try:
-            self.top_screen().update(dt)
-        except AttributeError:
-            pass
+        for i in range(int(dt // INTERVAL)):
+            self.top_screen().update()
     def react(self, key, modifiers):
         """Calls default reactions and screen specific reactions to keyboard
 events"""
@@ -71,7 +70,7 @@ class GameState(object):
         self.hero = hero
         self.stage_no = stage_no
         self.stage = Stage(STAGES[stage_no], hero)
-    def update(self, dt):
-        self.stage.update(dt)
+    def update(self):
+        self.stage.update()
 
 state = GameController()

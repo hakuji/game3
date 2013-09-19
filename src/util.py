@@ -118,6 +118,8 @@ class Drawable(object):
 class Container(object):
     def __init__(self, contents):
         self.contents = contents
+    def update(self):
+        pass
     def draw(self):
         for i in self.contents:
             i.draw()
@@ -194,6 +196,8 @@ class Object(Drawable):
     def set_location(self, x, y):
         self.sprite.x = x
         self.sprite.y = y
+    def update(self):
+        pass
 
 class Creature(Object):
     """Actual creature on the screen"""
@@ -201,7 +205,7 @@ class Creature(Object):
         super(Creature, self).__init__(definition)
         self.intended_x = self.sprite.x
         self.intended_y = self.sprite.y
-    def update(self, dt):
+    def update(self):
         if not self.definition.stationary:
             if self.definition.hostile and self.target is not None:
                 if self.within_range():
@@ -263,17 +267,21 @@ class Hero(Creature):
         self.inv = inv
         self.khandler = khandler
         self.speed = 3
+        self.intended_interact = False
         if inv is None:
             self.inv = []
-    def update(self, dt):
-        if self.khandler[key.UP]:
+    def update(self):
+        self.intended_interact = False
+        if self.khandler[key.W]:
             self.intended_y = self.sprite.y + self.speed
-        if self.khandler[key.DOWN]:
+        if self.khandler[key.S]:
             self.intended_y = self.sprite.y - self.speed
-        if self.khandler[key.LEFT]:
+        if self.khandler[key.A]:
             self.intended_x = self.sprite.x - self.speed
-        if self.khandler[key.RIGHT]:
+        if self.khandler[key.D]:
             self.intended_x = self.sprite.x + self.speed
+        if self.khandler[key.J]:
+            self.intended_interact = True
 
 class StageDefinition(object):
     def __init__(self, obj_definitions, room_definitions, pathway_definitions,
@@ -321,23 +329,23 @@ class Stage(Container):
                     i.target = self.hero
             except AttributeError:
                 pass
-    def update(self, dt):
+    def update(self):
         for obj in self.placeable_objects():
-            try:
-                obj.update(dt)
-                if not obj.definition.go_through:
-                    w = obj.sprite.content_width
-                    h = obj.sprite.content_height
-                    for i in obj.movements():
-                        if (self.contained_in_any_room(i[0], i[1], w, h)
-                            and not self.collide_with_objects(i[0], i[1], w, h, obj)):
-                            obj.sprite.x = i[0]
-                            obj.sprite.y = i[1]
-                            break
-                        else:
-                            pass
-            except AttributeError:
-                pass
+            obj.update()
+        self.update_movements()
+    def update_movements(self):
+        for c in self.creatures:
+            if not c.definition.go_through:
+                w = c.sprite.content_width
+                h = c.sprite.content_height
+                for i in c.movements():
+                    if (self.contained_in_any_room(i[0], i[1], w, h)
+                        and not self.collide_with_objects(i[0], i[1], w, h, c)):
+                        c.sprite.x = i[0]
+                        c.sprite.y = i[1]
+                        break
+                    else:
+                        pass
     def placeable_objects(self):
         return itertools.chain(self.objects, self.creatures)
     def arrange_objects(self):
