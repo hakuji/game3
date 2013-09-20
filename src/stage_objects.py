@@ -16,21 +16,29 @@
 # along with game 3.  If not, see <http://www.gnu.org/licenses/>.
 
 from util import (ObjectDefinition, CreatureDefinition, StageDefinition,
-                  Room)
+                  Room, NextLevelException)
 
-def descend_stairs():
-    print 'Descended'
+def descend_stairs(self):
+    raise NextLevelException()
 
 DESC_STAIRS = ObjectDefinition(1, True, '>', 'Descending stairs',
                                interaction = descend_stairs)
-PROP = ObjectDefinition(2, False, 'P', 'A test prop', 20)
+PROP = ObjectDefinition(
+    id = 2,
+    go_through = False,
+    symbol = 'P',
+    description = 'A test prop',
+    range = 20)
 
-WOLF = CreatureDefinition(2, 'W', 'Wolf',
-                          health=10,
-                          speed=2,
-                          strength=1,
-                          light_radius=20,
-                          range=10)
+WOLF = CreatureDefinition(
+    id = 2,
+    symbol = 'W',
+    description = 'Wolf',
+    health=10,
+    speed=2,
+    strength=1,
+    light_radius=20,
+    range=10)
 
 ST1 = StageDefinition(
     obj_definitions = [],

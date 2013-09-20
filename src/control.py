@@ -16,7 +16,7 @@
 # along with game 3.  If not, see <http://www.gnu.org/licenses/>.
 
 import pyglet
-from util import Reactable, Hero, Stage
+from util import Reactable, Hero, Stage, NextLevelException, GameOverException
 from screens import CommonScreen
 from stage_objects import STAGES
 from constants import INTERVAL
@@ -55,8 +55,15 @@ class GameController(Reactable):
         self.top_screen().draw()
     def update(self, dt):
         """Update the game"""
-        for i in range(int(dt // INTERVAL)):
-            self.top_screen().update()
+        try:
+            for i in range(int(dt // INTERVAL)):
+                self.top_screen().update()
+        except GameOverException as ex:
+            if ex.defeat:
+                print 'Game over'
+            else:
+                print 'You are a winner'
+            self.back_one_screen()
     def react(self, key, modifiers):
         """Calls default reactions and screen specific reactions to keyboard
 events"""
@@ -70,7 +77,17 @@ class GameState(object):
         self.hero = hero
         self.stage_no = stage_no
         self.stage = Stage(STAGES[stage_no], hero)
+    def goto_next_level(self):
+        self.stage_no += 1
+        try:
+            st_def = STAGES[self.stage_no]
+        except IndexError:
+            raise GameOverException(False)
+        self.stage = Stage(st_def, self.hero)
     def update(self):
-        self.stage.update()
+        try:
+            self.stage.update()
+        except NextLevelException:
+            self.goto_next_level()
 
 state = GameController()

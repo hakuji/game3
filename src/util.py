@@ -17,7 +17,7 @@
 
 """Helper classes"""
 
-import pyglet, itertools
+import pyglet, itertools, types
 from pyglet.window import key
 from constants import (FIELD_FONT_SIZE as FONT_SIZE, OBJECT_FONT_SIZE,
                        ST_BOUND_Y, ST_BOUND_X, OBJECT_FONT_FACE, WALL_WIDTH,
@@ -95,6 +95,13 @@ class SubscriptionFound(Exception):
 class UnplaceableRoomException(Exception):
     pass
 
+class NextLevelException(Exception):
+    pass
+
+class GameOverException(Exception):
+    def __init__(self, defeat):
+        self.defeat = defeat
+
 class KeySubscription(object):
     """Keyboard inputs combination that trigger an event"""
     def __init__(self, action, key, modifiers=0):
@@ -156,7 +163,7 @@ class Screen(Container):
             except AttributeError:
                 pass
 
-def empty_interaction():
+def empty_interaction(self):
     pass
 
 class ObjectDefinition(object):
@@ -176,8 +183,9 @@ class CreatureDefinition(ObjectDefinition):
     """The common properties of a creature"""
     def __init__(self, id, symbol, description, health, speed, strength,
                  light_radius, stationary = False, hostile = True,
-                 go_through = False, range = 1):
-        super(CreatureDefinition, self).__init__(id, go_through, symbol, description, range)
+                 go_through = False, range = 1, interaction=empty_interaction):
+        super(CreatureDefinition, self).__init__(
+            id, go_through, symbol, description, interaction, range)
         self.health = health
         self.speed = speed
         self.hostile = hostile
@@ -196,6 +204,7 @@ class Object(Drawable):
             definition.symbol,
             font_name=OBJECT_FONT_FACE,
             font_size=OBJECT_FONT_SIZE)
+        self.interact = types.MethodType(definition.interaction, self)
         super(Object, self).__init__(sprite)
         self.definition = definition
     def set_location(self, x, y):
@@ -203,8 +212,6 @@ class Object(Drawable):
         self.sprite.y = y
     def update(self):
         pass
-    def interact(self):
-        self.definition.interaction()
     def within_distance(self, obj, distance):
         """If obj is at most distance from self return true"""
         pointa.x = self.sprite.x + self.sprite.content_width / 2
