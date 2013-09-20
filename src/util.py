@@ -158,11 +158,12 @@ class Screen(Container):
 
 class ObjectDefinition(object):
     """The common properties of a type of object"""
-    def __init__(self, id, go_through, symbol, description):
+    def __init__(self, id, go_through, symbol, description, range = 1):
         self.id = id
         self.go_through = go_through
         self.symbol = symbol
         self.description = description
+        self.range = range
     def toScreen(self, count):
         return [Object(self) for i in range(count)]
 
@@ -171,12 +172,11 @@ class CreatureDefinition(ObjectDefinition):
     def __init__(self, id, symbol, description, health, speed, strength,
                  light_radius, stationary = False, hostile = True,
                  go_through = False, range = 1):
-        super(CreatureDefinition, self).__init__(id, go_through, symbol, description)
+        super(CreatureDefinition, self).__init__(id, go_through, symbol, description, range)
         self.health = health
         self.speed = speed
         self.hostile = hostile
         self.stationary = stationary
-        self.range = range
         self.light_radius = light_radius
     def toScreen(self, count):
         return [Creature(self) for i in range(count)]
@@ -198,6 +198,16 @@ class Object(Drawable):
         self.sprite.y = y
     def update(self):
         pass
+    def within_distance(self, obj, distance):
+        """If obj is at most distance from self return true"""
+        pointa.x = self.sprite.x + self.sprite.content_width / 2
+        pointa.y = self.sprite.y + self.sprite.content_height / 2
+        pointb.x = obj.sprite.x + obj.sprite.content_width / 2
+        pointb.y = obj.sprite.y + obj.sprite.content_height / 2
+        return (pointa.distance_to(pointb) <= distance
+                +  max(self.sprite.content_height, self.sprite.content_width) / 2)
+    def within_range(self, obj):
+        return self.within_distance(obj, self.definition.range)
 
 class Creature(Object):
     """Actual creature on the screen"""
@@ -205,6 +215,7 @@ class Creature(Object):
         super(Creature, self).__init__(definition)
         self.intended_x = self.sprite.x
         self.intended_y = self.sprite.y
+        self.target = None
     def update(self):
         if not self.definition.stationary:
             if self.definition.hostile and self.target is not None:
@@ -217,17 +228,13 @@ class Creature(Object):
                         self.roam()
             else:
                 self.roam()
-    def within_range(self):
-        pointa.x = self.sprite.x + self.sprite.content_width / 2
-        pointa.y = self.sprite.y + self.sprite.content_height / 2
-        pointb.x = self.target.sprite.x + self.sprite.content_width / 2
-        pointb.y = self.target.sprite.y + self.sprite.content_height / 2
-        return (pointa.distance_to(pointb) <= self.definition.range
-                +  max(self.sprite.content_height, self.sprite.content_width) / 2)
+    def within_range(self, obj = None):
+        if obj is None:
+            return super(Creature, self).within_range(self.target)
+        else:
+            return super(Creature, self).within_range(obj)
     def target_visible(self):
-        x1, y1 = self.target.sprite.x, self.target.sprite.y
-        x2, y2 = self.sprite.x, self.sprite.y
-        return abs((x1 - x2) + (y1 - y2)) <= self.definition.light_radius
+        return self.within_distance(self.target, self.definition.light_radius)
     def roam(self):
         """Move randomly"""
         x, y, s = self.sprite.x, self.sprite.y, self.definition.speed
@@ -333,6 +340,15 @@ class Stage(Container):
         for obj in self.placeable_objects():
             obj.update()
         self.update_movements()
+        self.update_hero()
+    def update_hero(self):
+        if self.hero.intended_interact:
+            for o in self.placeable_objects():
+                if o == self.hero:
+                    continue
+                if o.within_range(self.hero):
+                    print o
+                    return
     def update_movements(self):
         for c in self.creatures:
             if not c.definition.go_through:
@@ -385,6 +401,8 @@ pathway"""
         return any(self.contained_in_a_room(x, y, w, h, r)
                    for r in itertools.chain(self.rooms, self.pathways))
     def collide_with_objects(self, x, y, w, h, ex = None):
+        """True if the rect defined by the given dimensions collide with any object
+except for ex"""
         rect1.set_points_from_dimensions(x, y, w, h)
         if ex is not None:
             return any(self.collide_with_rect(i) for i in self.placeable_objects()
