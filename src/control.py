@@ -80,6 +80,7 @@ class GameState(object):
         self.stage_no = stage_no
         self.stage = Stage(STAGES[stage_no], hero)
     def goto_next_level(self):
+        """Move to the next level or end the game"""
         self.stage_no += 1
         try:
             st_def = STAGES[self.stage_no]
