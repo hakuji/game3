@@ -63,7 +63,7 @@ class GameController(Reactable):
         except GameOverException as ex:
             self.back_one_screen()
             if ex.defeat:
-                print 'Game over'
+                self.screens.append(self.defeat)
             else:
                 self.screens.append(self.victory)
     def react(self, key, modifiers):

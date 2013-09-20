@@ -30,3 +30,4 @@ OBJECT_FONT_FACE = 'Monospace'
 EDGES = [1, 2, -1, -2] #Left, Top, Right, Bottom
 INTERVAL = 0.1
 VICTORY = 'YOU WIN!'
+GAME_OVER = 'GAME OVER'
