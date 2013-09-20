@@ -308,10 +308,9 @@ class Stage(Container):
         self.rooms = stage_def.room_definitions
         self.objects = Object.from_list(stage_def.obj_definitions)
         self.creatures = Creature.from_list(stage_def.creature_definitions)
-        self.creatures.append(hero)
         self.arrange_objects()
-        self.init_rooms()
         self.hero = hero
+        self.init_rooms()
         self.set_enemies()
         self.contents = []
         self.contents.extend(self.rooms)
@@ -321,6 +320,9 @@ class Stage(Container):
         super(Stage, self).__init__(self.contents)
     def init_rooms(self):
         for r in self.rooms:
+            if r.start:
+                self.set_location(self.hero, r)
+            self.creatures.append(self.hero)
             creatures = Creature.from_list(r.creature_def)
             for c in creatures:
                 self.creatures.append(c)
@@ -473,13 +475,14 @@ class Pathway(object):
         return WALL_WIDTH * 3
 
 class Room(object):
-    def __init__(self, x, y, w, h, obj_def = [], creat_def = []):
+    def __init__(self, x, y, w, h, obj_def = [], creat_def = [], start  = False):
         self.object_def = obj_def
         self.creature_def = creat_def
         self.x = x
         self.y = y
         self.w = w
         self.h = h
+        self.start = start
         self.inner_rect = Rect.from_dimensions(x + WALL_WIDTH, y + int(WALL_WIDTH * 1.25),
                                                w + WALL_WIDTH, h + int(WALL_WIDTH * 1.5))
         self.outer_rect = Rect.from_dimensions(x, y,
