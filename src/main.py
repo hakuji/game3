@@ -21,7 +21,7 @@ from control import state
 from constants import WINDOW_WIDTH, WINDOW_HEIGHT, GAME_NAME, INTERVAL
 from util import KeySubscription, Option, SubscriptionFound
 from pyglet.window import key
-from menu import MAIN_MENU
+from menu import MAIN_MENU, VICTORY_SCREEN
 
 window = pyglet.window.Window(
     caption = GAME_NAME,
@@ -50,6 +50,7 @@ def init():
     window.push_handlers(keys)
     state.khandler = keys
     state.screens.append(MAIN_MENU)
+    state.victory = VICTORY_SCREEN
     MAIN_MENU.contents.append(Option(
         state.subs[0:1],
         'Quit',

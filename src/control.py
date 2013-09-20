@@ -28,6 +28,8 @@ class GameController(Reactable):
             main_menu = []
         if subs is None:
             subs = []
+        self.victory = None
+        self.defeat = None
         self.screens = main_menu
         self.subs = subs
     def top_screen(self):
@@ -59,11 +61,11 @@ class GameController(Reactable):
             for i in range(int(dt // INTERVAL)):
                 self.top_screen().update()
         except GameOverException as ex:
+            self.back_one_screen()
             if ex.defeat:
                 print 'Game over'
             else:
-                print 'You are a winner'
-            self.back_one_screen()
+                self.screens.append(self.victory)
     def react(self, key, modifiers):
         """Calls default reactions and screen specific reactions to keyboard
 events"""

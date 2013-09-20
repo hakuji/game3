@@ -19,7 +19,8 @@
 import pyglet
 from util import KeySubscription, Screen, Option
 from pyglet.window import key
-from constants import WINDOW_WIDTH, WINDOW_HEIGHT, HARD, NORMAL, GAME_NAME
+from constants import (WINDOW_WIDTH, WINDOW_HEIGHT, HARD, NORMAL, GAME_NAME,
+                       VICTORY)
 from control import state
 
 def get_start(dificulty):
@@ -61,4 +62,12 @@ MAIN_MENU = Screen([
                           font_size=12,
                           x=WINDOW_WIDTH//2, y=WINDOW_HEIGHT//2 - 72,
                           anchor_x='center', anchor_y='center'))
+])
+
+VICTORY_SCREEN = Screen([
+    pyglet.text.Label(VICTORY,
+                          font_name='Times',
+                          font_size=36,
+                          x=WINDOW_WIDTH//2, y=WINDOW_HEIGHT//2,
+                          anchor_x='center', anchor_y='center')
 ])
