@@ -156,14 +156,19 @@ class Screen(Container):
             except AttributeError:
                 pass
 
+def empty_interaction():
+    pass
+
 class ObjectDefinition(object):
     """The common properties of a type of object"""
-    def __init__(self, id, go_through, symbol, description, range = 1):
+    def __init__(self, id, go_through, symbol, description,
+                 interaction = empty_interaction, range = 1):
         self.id = id
         self.go_through = go_through
         self.symbol = symbol
         self.description = description
         self.range = range
+        self.interaction = interaction
     def toScreen(self, count):
         return [Object(self) for i in range(count)]
 
@@ -198,6 +203,8 @@ class Object(Drawable):
         self.sprite.y = y
     def update(self):
         pass
+    def interact(self):
+        self.definition.interaction()
     def within_distance(self, obj, distance):
         """If obj is at most distance from self return true"""
         pointa.x = self.sprite.x + self.sprite.content_width / 2
@@ -342,14 +349,14 @@ class Stage(Container):
         for obj in self.placeable_objects():
             obj.update()
         self.update_movements()
-        self.update_hero()
-    def update_hero(self):
+        self.hero_interact()
+    def hero_interact(self):
         if self.hero.intended_interact:
             for o in self.placeable_objects():
                 if o == self.hero:
                     continue
                 if o.within_range(self.hero):
-                    print o
+                    o.interact()
                     return
     def update_movements(self):
         for c in self.creatures:

@@ -18,7 +18,11 @@
 from util import (ObjectDefinition, CreatureDefinition, StageDefinition,
                   Room)
 
-DESC_STAIRS = ObjectDefinition(1, True, '>', 'Descending stairs')
+def descend_stairs():
+    print 'Descended'
+
+DESC_STAIRS = ObjectDefinition(1, True, '>', 'Descending stairs',
+                               interaction = descend_stairs)
 PROP = ObjectDefinition(2, False, 'P', 'A test prop', 20)
 
 WOLF = CreatureDefinition(2, 'W', 'Wolf',
