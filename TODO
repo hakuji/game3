@@ -4,6 +4,7 @@ Alchemy(16H - 32H - 64H)
 Full first level(10H - 20H - 40H)
 Windows binary generator(???)
 Tutorial(10H - 20H - 40H)
-Dialogs(8H - 16H - 32H)
+Auto examine surroundings(8H - 16H - 32H)
+Shadows(10H - 20H - 40H)
 Level displayer (16H - 32H - 64H)
 Visual level generator (32H - 64H - 128H) # Probably never done
