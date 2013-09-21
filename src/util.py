@@ -105,6 +105,11 @@ class GameOverException(Exception):
 class ImpossiblePathwayException(Exception):
     pass
 
+class ReplaceObjectException(Exception):
+    def __init__(self, this, that):
+        self.this = this
+        self.that = that
+
 class KeySubscription(object):
     """Keyboard inputs combination that trigger an event"""
     def __init__(self, action, key, modifiers=0):
@@ -179,8 +184,11 @@ class ObjectDefinition(object):
         self.description = description
         self.range = range
         self.interaction = interaction
-    def toScreen(self, count):
-        return [Object(self) for i in range(count)]
+    def toScreen(self, count = None):
+        if count == None:
+            return Object(self)
+        else:
+            return [Object(self) for i in range(count)]
 
 class CreatureDefinition(ObjectDefinition):
     """The common properties of a creature"""
@@ -194,7 +202,7 @@ class CreatureDefinition(ObjectDefinition):
         self.hostile = hostile
         self.stationary = stationary
         self.light_radius = light_radius
-    def toScreen(self, count):
+    def toScreen(self, count = 1):
         return [Creature(self) for i in range(count)]
 
 class Object(Drawable):
@@ -386,11 +394,30 @@ class Stage(Container):
                     i.target = self.hero
             except AttributeError:
                 pass
+    def remove_object(self, obj):
+        self.objects.remove(obj)
+        self.contents.remove(obj)
+    def create_object(self, definition, x, y):
+        """Create and place an object"""
+        obj = definition.toScreen()
+        self.objects.append(obj)
+        self.contents.append(obj)
+        obj.set_location(x, y)
+    def replace_object(self, ex):
+        """Use a replace exception to replace an object"""
+        for o in self.objects:
+            if o.definition == ex.this:
+                self.remove_object(o)
+                self.create_object(ex.that, o.sprite.x, o.sprite.y)
+                return
     def update(self):
         for obj in self.placeable_objects():
             obj.update()
         self.update_movements()
-        self.hero_interact()
+        try:
+            self.hero_interact()
+        except ReplaceObjectException as ex:
+            self.replace_object(ex)
     def hero_interact(self):
         if self.hero.intended_interact:
             for o in self.placeable_objects():

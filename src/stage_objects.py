@@ -16,19 +16,31 @@
 # along with game 3.  If not, see <http://www.gnu.org/licenses/>.
 
 from util import (ObjectDefinition, CreatureDefinition, StageDefinition,
-                  Room, NextLevelException, MagneticPathway)
+                  Room, NextLevelException, MagneticPathway,
+                  ReplaceObjectException)
 
 def descend_stairs(self):
     raise NextLevelException()
 
+def replace_object(this, that):
+    """Replace this with that"""
+    def r(self):
+        raise ReplaceObjectException(this, that)
+    return r
+
+CLOSED_SHAFT = ObjectDefinition(-2, True, '|', 'Closed shaft')
+
 DESC_STAIRS = ObjectDefinition(1, True, '>', 'Descending stairs',
                                interaction = descend_stairs)
-PROP = ObjectDefinition(
+
+LEVER = ObjectDefinition(
     id = 2,
-    go_through = False,
-    symbol = 'P',
-    description = 'A test prop',
-    range = 20)
+    go_through = True,
+    symbol = 'L',
+    description = 'A lever',
+    range = 5,
+    interaction = replace_object(CLOSED_SHAFT, DESC_STAIRS)
+)
 
 WOLF = CreatureDefinition(
     id = 2,
@@ -41,12 +53,12 @@ WOLF = CreatureDefinition(
     range=10)
 
 room1 = Room(50, 50, 100, 100,
-             obj_def=[(DESC_STAIRS, 1)],
+             obj_def=[(CLOSED_SHAFT, 1)],
              start=True)
 
 room2 = Room(300, 200, 100, 150,
              creat_def=[(WOLF, 2)],
-             obj_def=[(PROP, 1)])
+             obj_def=[(LEVER, 1)])
 room3 = Room(50, 220, 100, 100)
 
 p1 = MagneticPathway(room1, room3)
