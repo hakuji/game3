@@ -233,6 +233,8 @@ class Creature(Object):
         self.intended_x = self.sprite.x
         self.intended_y = self.sprite.y
         self.target = None
+        self.last_desired_direction = [0, 0]
+        self.change_countdown = 0
     def update(self):
         if not self.definition.stationary:
             if self.definition.hostile and self.target is not None:
@@ -245,6 +247,10 @@ class Creature(Object):
                         self.roam()
             else:
                 self.roam()
+    def continue_last_desired(self):
+        """Return true if the creature should continue moving towards where it
+was moving before."""
+        return self.change_countdown > 0
     def within_range(self, obj = None):
         if obj is None:
             return super(Creature, self).within_range(self.target)
@@ -254,15 +260,32 @@ class Creature(Object):
         return self.within_distance(self.target, self.definition.light_radius)
     def roam(self):
         """Move randomly"""
-        x, y, s = self.sprite.x, self.sprite.y, self.definition.speed
-        self.intent(randint(x - s, x + s), randint(y - s, y + s))
+        x, y = self.sprite.x, self.sprite.y
+        self.change_countdown -= 1
+        if not self.continue_last_desired():
+            dx = randint(-1, 1)
+            dy = randint(-1, 1)
+            self.set_last_desired_direction(dx, dy)
+        self.move_towards(self.last_desired_direction[0] + x,
+                          self.last_desired_direction[1] + y)
+    def set_last_desired_direction(self, dx, dy):
+        self.last_desired_direction[0] = dx
+        self.last_desired_direction[1] = dy
+        self.change_countdown = self.definition.light_radius
     def attack(self):
         pass
     def chase(self):
-        ox = self.sprite.x
-        oy = self.sprite.y
+        """Chase and set the last desired point"""
         x = self.target.sprite.x
         y = self.target.sprite.y
+        dx = cmp(self.sprite.x - x, 0)
+        dy = cmp(self.sprite.y - y, 0)
+        self.set_last_desired_direction(dx , dy)
+        self.move_towards(x, y)
+    def move_towards(self, x, y):
+        """Move towards a point"""
+        ox = self.sprite.x
+        oy = self.sprite.y
         mov_x = min(abs(x - ox), self.definition.speed)
         mov_y = min(abs(y - oy), self.definition.speed)
         nx = self.sprite.x + mov_x * (1 if x > ox else -1)
@@ -285,7 +308,15 @@ intended direction"""
 
 class Hero(Creature):
     def __init__(self, khandler, lvl = 0, inv = None):
-        d = ObjectDefinition(-1, False, '@', 'You')
+        d = CreatureDefinition(id=-1,
+                               symbol='@',
+                               description='You',
+                               health=100,
+                               speed=3,
+                               strength=3,
+                               light_radius=20,
+                               go_through=False,
+                               range=6)
         super(Hero, self).__init__(d)
         self.lvl = lvl
         self.inv = inv

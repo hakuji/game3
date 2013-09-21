@@ -16,7 +16,7 @@
 # along with game 3.  If not, see <http://www.gnu.org/licenses/>.
 
 from util import (ObjectDefinition, CreatureDefinition, StageDefinition,
-                  Room, NextLevelException, Pathway, MagneticPathway)
+                  Room, NextLevelException, MagneticPathway)
 
 def descend_stairs(self):
     raise NextLevelException()
