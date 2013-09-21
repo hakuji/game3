@@ -1,5 +1,6 @@
 # Description (Estmate(min - med - max))
-Lever puzzle(6H - 12H - 24H)
+Generic toScreen method
+Rename ScreenDefinition variables
 Monster attack(12H - 24H - 48H)
 Alchemy(16H - 32H - 64H)
 Full first level(10H - 20H - 40H)
