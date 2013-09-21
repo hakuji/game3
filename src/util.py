@@ -519,15 +519,28 @@ class MagneticPathway(Pathway):
                 if b:
                     tr = self.r2
                     br = self.r1
-                if t:
+                else:
                     tr = self.r1
                     br = self.r2
                 y = br.inner_rect.top - int(1.5 * WALL_WIDTH)
                 height = tr.inner_rect.bottom - y + int(1.5 * WALL_WIDTH)
                 min_x = max(br.inner_rect.left, tr.inner_rect.left)
-                max_x = min(br.inner_rect.right, tr.inner_rect.right - self.thickness())
+                max_x = min(br.inner_rect.right, tr.inner_rect.right) - self.thickness()
                 x = randint(min_x, max_x)
                 super(MagneticPathway, self).__init__(False, x, y,  height)
+            else:
+                if l:
+                    lr = self.r1
+                    rr = self.r2
+                else:
+                    lr = self.r2
+                    rr = self.r1
+                x = lr.inner_rect.right - int(1.5 * WALL_WIDTH)
+                width = rr.inner_rect.left - x + int(1.5 * WALL_WIDTH)
+                min_y = max(lr.inner_rect.bottom, rr.inner_rect.bottom) - 2
+                max_y = min(lr.inner_rect.top, rr.inner_rect.top) - self.thickness() - WALL_WIDTH + 3
+                y = randint(min_y, max_y)
+                super(MagneticPathway, self).__init__(True, x, y,  width)
 
 
 class Room(object):
