@@ -514,6 +514,20 @@ class MagneticPathway(Pathway):
         elif (l or r) and (t or b):
             # A pathway at the corner of another
             raise ImpossiblePathwayException()
+        else:
+            if (b or t):
+                if b:
+                    tr = self.r2
+                    br = self.r1
+                if t:
+                    tr = self.r1
+                    br = self.r2
+                y = br.inner_rect.top - int(1.5 * WALL_WIDTH)
+                height = tr.inner_rect.bottom - y + int(1.5 * WALL_WIDTH)
+                min_x = max(br.inner_rect.left, tr.inner_rect.left)
+                max_x = min(br.inner_rect.right, tr.inner_rect.right - self.thickness())
+                x = randint(min_x, max_x)
+                super(MagneticPathway, self).__init__(False, x, y,  height)
 
 
 class Room(object):

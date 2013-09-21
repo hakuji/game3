@@ -47,19 +47,18 @@ room1 = Room(50, 50, 100, 100,
 room2 = Room(300, 200, 100, 150,
              creat_def=[(WOLF, 2)],
              obj_def=[(PROP, 1)])
-room3 = Room(50, 200, 100, 100)
+room3 = Room(50, 220, 100, 100)
 
-MagneticPathway(room2, room1)
+p1 = MagneticPathway(room3, room1)
 
 ST1 = StageDefinition(
     obj_definitions = [],
     room_definitions = [
         room1,
         room2,
-#        room3
+        room3
     ],
-    pathway_definitions = [Pathway(True, 205, 150, 200),
-                           Pathway(False, 450, 200, 200)],
+    pathway_definitions = [p1],
     creature_definitions = [],
 )
 
