@@ -49,7 +49,7 @@ room2 = Room(300, 200, 100, 150,
              obj_def=[(PROP, 1)])
 room3 = Room(50, 200, 100, 100)
 
-MagneticPathway(room1, room3)
+MagneticPathway(room2, room1)
 
 ST1 = StageDefinition(
     obj_definitions = [],

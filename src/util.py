@@ -102,6 +102,9 @@ class GameOverException(Exception):
     def __init__(self, defeat):
         self.defeat = defeat
 
+class ImpossiblePathwayException(Exception):
+    pass
+
 class KeySubscription(object):
     """Keyboard inputs combination that trigger an event"""
     def __init__(self, action, key, modifiers=0):
@@ -504,8 +507,14 @@ class MagneticPathway(Pathway):
     def __init__(self, room1, room2):
         self.r1 = room1
         self.r2 = room2
-        print self.is_left(), self.is_right(), self.is_bottom(), self.is_top()
-        pass
+        l, r, b, t = self.is_left(), self.is_right(), self.is_bottom(), self.is_top()
+        if not (l or r or b or t):
+            # A pathway on top of another
+            raise ImpossiblePathwayException()
+        elif (l or r) and (t or b):
+            # A pathway at the corner of another
+            raise ImpossiblePathwayException()
+
 
 class Room(object):
     def __init__(self, x, y, w, h, obj_def = [], creat_def = [], start  = False):
