@@ -184,11 +184,12 @@ class ObjectDefinition(object):
         self.description = description
         self.range = range
         self.interaction = interaction
+        self.screenClass = Object
     def toScreen(self, count = None):
         if count == None:
-            return Object(self)
+            return self.screenClass(self)
         else:
-            return [Object(self) for i in range(count)]
+            return [self.screenClass(self) for i in range(count)]
 
 class CreatureDefinition(ObjectDefinition):
     """The common properties of a creature"""
@@ -202,8 +203,7 @@ class CreatureDefinition(ObjectDefinition):
         self.hostile = hostile
         self.stationary = stationary
         self.light_radius = light_radius
-    def toScreen(self, count = 1):
-        return [Creature(self) for i in range(count)]
+        self.screenClass = Creature
 
 class Object(Drawable):
     """Actual object on the screen"""
