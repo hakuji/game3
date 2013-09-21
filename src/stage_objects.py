@@ -66,12 +66,12 @@ p2 = MagneticPathway(room2, room3)
 
 ST1 = StageDefinition(
     obj_definitions = [],
-    room_definitions = [
+    rooms = [
         room1,
         room2,
         room3
     ],
-    pathway_definitions = [p1, p2],
+    pathways = [p1, p2],
     creature_definitions = [],
 )
 

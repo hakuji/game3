@@ -347,21 +347,21 @@ class Hero(Creature):
             self.intended_interact = True
 
 class StageDefinition(object):
-    def __init__(self, obj_definitions, room_definitions, pathway_definitions,
+    def __init__(self, obj_definitions, rooms, pathways,
                  creature_definitions, min_room_dim = (50, 50),
                  max_room_dim = (100, 100), random_room_no = 0):
         self.obj_definitions = obj_definitions
-        self.room_definitions = room_definitions
+        self.rooms = rooms
         self.creature_definitions = creature_definitions
         self.min_room_dim = min_room_dim
         self.max_room_dim = max_room_dim
         self.random_room_no = random_room_no
-        self.pathway_definitions = pathway_definitions
+        self.pathways = pathways
 
 class Stage(Container):
     def __init__(self, stage_def, hero):
-        self.pathways = stage_def.pathway_definitions
-        self.rooms = stage_def.room_definitions
+        self.pathways = stage_def.pathways
+        self.rooms = stage_def.rooms
         self.objects = Object.from_list(stage_def.obj_definitions)
         self.creatures = Creature.from_list(stage_def.creature_definitions)
         self.arrange_objects()
