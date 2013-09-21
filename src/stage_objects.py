@@ -16,7 +16,7 @@
 # along with game 3.  If not, see <http://www.gnu.org/licenses/>.
 
 from util import (ObjectDefinition, CreatureDefinition, StageDefinition,
-                  Room, NextLevelException)
+                  Room, NextLevelException, Pathway, MagneticPathway)
 
 def descend_stairs(self):
     raise NextLevelException()
@@ -40,16 +40,26 @@ WOLF = CreatureDefinition(
     light_radius=20,
     range=10)
 
+room1 = Room(50, 50, 100, 100,
+             obj_def=[(DESC_STAIRS, 1)],
+             start=True)
+
+room2 = Room(300, 200, 100, 150,
+             creat_def=[(WOLF, 2)],
+             obj_def=[(PROP, 1)])
+room3 = Room(50, 200, 100, 100)
+
+MagneticPathway(room1, room3)
+
 ST1 = StageDefinition(
     obj_definitions = [],
-    room_definitions = [Room(50, 50, 100, 100,
-                             obj_def=[(DESC_STAIRS, 1)],
-                             start=True),
-                        Room(300, 200, 100, 150,
-                             creat_def=[(WOLF, 2)],
-                             obj_def=[(PROP, 1)])],
-    pathway_definitions = [(True, 205, 150, 200),
-                           (False, 450, 200, 200)],
+    room_definitions = [
+        room1,
+        room2,
+#        room3
+    ],
+    pathway_definitions = [Pathway(True, 205, 150, 200),
+                           Pathway(False, 450, 200, 200)],
     creature_definitions = [],
 )
 

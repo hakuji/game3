@@ -318,7 +318,7 @@ class StageDefinition(object):
 
 class Stage(Container):
     def __init__(self, stage_def, hero):
-        self.pathways = map(lambda d: Pathway(*d), stage_def.pathway_definitions)
+        self.pathways = stage_def.pathway_definitions
         self.rooms = stage_def.room_definitions
         self.objects = Object.from_list(stage_def.obj_definitions)
         self.creatures = Creature.from_list(stage_def.creature_definitions)
@@ -487,6 +487,25 @@ class Pathway(object):
     @classmethod
     def thickness(cls):
         return WALL_WIDTH * 3
+
+class MagneticPathway(Pathway):
+    def is_left(self):
+        """Return true if r1 is left of r2"""
+        return self.r1.inner_rect.right < self.r2.inner_rect.left
+    def is_right(self):
+        """Return true if r1 is right of r2"""
+        return self.r2.inner_rect.right < self.r1.inner_rect.left
+    def is_bottom(self):
+        """Return true if r1 is bottom of r2"""
+        return self.r1.inner_rect.top < self.r2.inner_rect.bottom
+    def is_top(self):
+        """Return true if r1 is top of r2"""
+        return self.r2.inner_rect.top < self.r1.inner_rect.bottom
+    def __init__(self, room1, room2):
+        self.r1 = room1
+        self.r2 = room2
+        print self.is_left(), self.is_right(), self.is_bottom(), self.is_top()
+        pass
 
 class Room(object):
     def __init__(self, x, y, w, h, obj_def = [], creat_def = [], start  = False):
