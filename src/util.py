@@ -249,6 +249,8 @@ class Creature(Object):
     def be_attacked(self, other):
         """Be attacked by another creature"""
         self.health -= other.definition.strength
+    def dead(self):
+        return self.health <= 0
     def update(self):
         if not self.definition.stationary:
             if self.definition.hostile and self.target is not None:
@@ -342,6 +344,8 @@ class Hero(Creature):
         if inv is None:
             self.inv = []
     def update(self):
+        if self.dead():
+            raise GameOverException(True)
         self.intended_interact = False
         if self.khandler[key.W]:
             self.intended_y = self.sprite.y + self.speed

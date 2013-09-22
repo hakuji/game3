@@ -48,7 +48,7 @@ WOLF = CreatureDefinition(
     description = 'Wolf',
     health=10,
     speed=2,
-    strength=1,
+    strength=20,
     light_radius=20,
     range=10)
 
