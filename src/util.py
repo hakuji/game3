@@ -17,11 +17,11 @@
 
 """Helper classes"""
 
-import pyglet, itertools, types
+import pyglet, itertools, types, random
 from pyglet.window import key
 from constants import (FIELD_FONT_SIZE as FONT_SIZE, OBJECT_FONT_SIZE,
                        ST_BOUND_Y, ST_BOUND_X, OBJECT_FONT_FACE, WALL_WIDTH,
-                       EDGES)
+                       EDGES, ROAM_LIST)
 from random import randint
 from rect import Rect, Point
 
@@ -271,12 +271,13 @@ was moving before."""
         x, y = self.sprite.x, self.sprite.y
         self.change_countdown -= 1
         if not self.continue_last_desired():
-            dx = randint(-1, 1)
-            dy = randint(-1, 1)
+            dx = random.choice(ROAM_LIST)
+            dy = random.choice(ROAM_LIST)
             self.set_last_desired_direction(dx, dy)
         self.move_towards(self.last_desired_direction[0] + x,
                           self.last_desired_direction[1] + y)
     def set_last_desired_direction(self, dx, dy):
+        """Set the last direction followed and the time until change"""
         self.last_desired_direction[0] = dx
         self.last_desired_direction[1] = dy
         self.change_countdown = self.definition.light_radius
