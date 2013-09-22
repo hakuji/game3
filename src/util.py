@@ -243,6 +243,7 @@ class Creature(Object):
         self.target = None
         self.last_desired_direction = [0, 0]
         self.change_countdown = 0
+        self.last_desired_speed = 1
     def update(self):
         if not self.definition.stationary:
             if self.definition.hostile and self.target is not None:
@@ -273,13 +274,15 @@ was moving before."""
         if not self.continue_last_desired():
             dx = random.choice(ROAM_LIST)
             dy = random.choice(ROAM_LIST)
-            self.set_last_desired_direction(dx, dy)
-        self.move_towards(self.last_desired_direction[0] + x,
-                          self.last_desired_direction[1] + y)
-    def set_last_desired_direction(self, dx, dy):
+            self.set_last_desired_direction(dx, dy, 1)
+        self.move_towards(
+            (self.last_desired_direction[0] * self.last_desired_speed) + x,
+            (self.last_desired_direction[1] * self.last_desired_speed) + y)
+    def set_last_desired_direction(self, dx, dy, speed):
         """Set the last direction followed and the time until change"""
         self.last_desired_direction[0] = dx
         self.last_desired_direction[1] = dy
+        self.last_desired_speed = speed
         self.change_countdown = self.definition.light_radius
     def attack(self):
         pass
@@ -287,9 +290,9 @@ was moving before."""
         """Chase and set the last desired point"""
         x = self.target.sprite.x
         y = self.target.sprite.y
-        dx = cmp(self.sprite.x - x, 0)
-        dy = cmp(self.sprite.y - y, 0)
-        self.set_last_desired_direction(dx , dy)
+        dx = - cmp(self.sprite.x - x, 0)
+        dy = - cmp(self.sprite.y - y, 0)
+        self.set_last_desired_direction(dx, dy, self.definition.speed)
         self.move_towards(x, y)
     def move_towards(self, x, y):
         """Move towards a point"""
