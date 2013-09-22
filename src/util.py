@@ -204,6 +204,7 @@ class CreatureDefinition(ObjectDefinition):
         self.stationary = stationary
         self.light_radius = light_radius
         self.screenClass = Creature
+        self.strength = strength
 
 class Object(Drawable):
     """Actual object on the screen"""
@@ -244,6 +245,10 @@ class Creature(Object):
         self.last_desired_direction = [0, 0]
         self.change_countdown = 0
         self.last_desired_speed = 1
+        self.health = self.definition.health
+    def be_attacked(self, other):
+        """Be attacked by another creature"""
+        self.health -= other.definition.strength
     def update(self):
         if not self.definition.stationary:
             if self.definition.hostile and self.target is not None:
@@ -285,7 +290,7 @@ was moving before."""
         self.last_desired_speed = speed
         self.change_countdown = self.definition.light_radius
     def attack(self):
-        pass
+        self.target.be_attacked(self)
     def chase(self):
         """Chase and set the last desired point"""
         x = self.target.sprite.x
@@ -330,7 +335,6 @@ class Hero(Creature):
                                go_through=False,
                                range=6)
         super(Hero, self).__init__(d)
-        self.health = self.definition.health
         self.inv = inv
         self.khandler = khandler
         self.speed = 3
