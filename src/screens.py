@@ -16,16 +16,16 @@
 # along with game 3.  If not, see <http://www.gnu.org/licenses/>.
 
 from util import Screen, LabeledField
-from constants import STATS_PANEL_X
+from constants import STATS_PANEL_X, STATS_PANEL_Y
 
 class CommonScreen(Screen):
     def __init__(self, state):
         self.state = state
         hfunc = lambda : self.state.hero.health
-        hfield = LabeledField('Health', hfunc, STATS_PANEL_X, 460)
+        hfield = LabeledField('Health', hfunc, STATS_PANEL_X, STATS_PANEL_Y)
         def pfunc():
             return str(self.state.stage_no)
-        pfield = LabeledField('Level', pfunc, STATS_PANEL_X, 430)
+        pfield = LabeledField('Level', pfunc, STATS_PANEL_X, STATS_PANEL_Y - 30)
         self.contents = [hfield, pfield,
                          state.stage]#message_box
     def update(self):
