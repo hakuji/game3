@@ -15,24 +15,20 @@
 # You should have received a copy of the GNU General Public License
 # along with game 3.  If not, see <http://www.gnu.org/licenses/>.
 
-from util import Screen, Container, LabeledField
+from util import Screen, LabeledField
 from constants import STATS_PANEL_X
 
-def health():
-    return 10
 
 def place():
     return 'Nowhere'
 
-STATS_PANEL = Container([
-    LabeledField('Health', health, STATS_PANEL_X, 460),
-    LabeledField('Place', place, STATS_PANEL_X, 430)
-])
-
 class CommonScreen(Screen):
     def __init__(self, state):
         self.state = state
-        self.contents = [STATS_PANEL,
+        hfunc = lambda : self.state.hero.health
+        hfield = LabeledField('Health', hfunc, STATS_PANEL_X, 460)
+        pfield = LabeledField('Place', place, STATS_PANEL_X, 430)
+        self.contents = [hfield, pfield,
                          state.stage]#message_box, tool_panel])
     def update(self):
         self.state.update()

@@ -315,7 +315,7 @@ intended direction"""
         self.intended_y = y
 
 class Hero(Creature):
-    def __init__(self, khandler, lvl = 0, inv = None):
+    def __init__(self, khandler, inv = None):
         d = CreatureDefinition(id=-1,
                                symbol='@',
                                description='You',
@@ -326,7 +326,7 @@ class Hero(Creature):
                                go_through=False,
                                range=6)
         super(Hero, self).__init__(d)
-        self.lvl = lvl
+        self.health = self.definition.health
         self.inv = inv
         self.khandler = khandler
         self.speed = 3
