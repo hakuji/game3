@@ -18,17 +18,15 @@
 from util import Screen, LabeledField
 from constants import STATS_PANEL_X
 
-
-def place():
-    return 'Nowhere'
-
 class CommonScreen(Screen):
     def __init__(self, state):
         self.state = state
         hfunc = lambda : self.state.hero.health
         hfield = LabeledField('Health', hfunc, STATS_PANEL_X, 460)
-        pfield = LabeledField('Place', place, STATS_PANEL_X, 430)
+        def pfunc():
+            return str(self.state.stage_no)
+        pfield = LabeledField('Level', pfunc, STATS_PANEL_X, 430)
         self.contents = [hfield, pfield,
-                         state.stage]#message_box, tool_panel])
+                         state.stage]#message_box
     def update(self):
         self.state.update()

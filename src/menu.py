@@ -19,7 +19,7 @@
 import pyglet
 from util import KeySubscription, Screen, Option
 from pyglet.window import key
-from constants import (WINDOW_WIDTH, WINDOW_HEIGHT, HARD, NORMAL, GAME_NAME,
+from constants import (WINDOW_WIDTH, WINDOW_HEIGHT, NORMAL_DIFICULTY, GAME_NAME,
                        VICTORY, GAME_OVER)
 from control import state
 
@@ -35,13 +35,13 @@ CHOOSE_DIFICULTY = Screen([
                           font_size=25,
                           x=WINDOW_WIDTH//2, y=WINDOW_HEIGHT//2,
                           anchor_x='center', anchor_y='center'),
-    Option([KeySubscription(get_start(NORMAL), key.N)],
+    Option([KeySubscription(get_start(NORMAL_DIFICULTY), key.N)],
            'Normal',
            pyglet.text.Label(font_name='Times',
                           font_size=12,
                           x=WINDOW_WIDTH//2, y=WINDOW_HEIGHT//2 - 52,
                           anchor_x='center', anchor_y='center')),
-    Option([KeySubscription(get_start(HARD), key.H)],
+    Option([KeySubscription(get_start(not NORMAL_DIFICULTY), key.H)],
            'Hard',
            pyglet.text.Label(font_name='Times',
                           font_size=12,
