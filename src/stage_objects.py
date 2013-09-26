@@ -33,7 +33,8 @@ CLOSED_SHAFT = partial(
     Object,
     True,
     '|',
-    'Closed shaft'
+    'Closed shaft',
+    id = 1
 )
 
 DESC_STAIRS = partial(
@@ -41,7 +42,8 @@ DESC_STAIRS = partial(
     True,
     '>',
     'Descending stairs',
-    interact = descend_stairs
+    interact = descend_stairs,
+    id = 2
 )
 
 LEVER = partial(
@@ -50,7 +52,7 @@ LEVER = partial(
     symbol = 'L',
     description = 'A lever',
     range = 5,
-    interact = replace_object(CLOSED_SHAFT, DESC_STAIRS)
+    interact = replace_object(1, DESC_STAIRS)
 )
 
 BASE_CHEST = partial(
@@ -79,7 +81,7 @@ WOLF = CreatureDefinition(
     description = 'Wolf',
     health=10,
     speed=2,
-    strength=20,
+    strength=0,
     light_radius=20,
     range=10)
 

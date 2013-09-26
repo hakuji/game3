@@ -211,7 +211,7 @@ class Object(Drawable):
         return list(fun())
     @autoset
     def __init__(self, go_through, symbol, description,
-                 interact = empty_interaction, range = 1):
+                 interact = empty_interaction, range = 1, id = None):
         sprite = pyglet.text.Label(
             symbol,
             font_name=OBJECT_FONT_FACE,
@@ -403,19 +403,21 @@ class Level(Container):
     def remove_object(self, obj):
         self.objects.remove(obj)
         self.contents.remove(obj)
-    def create_object(self, definition, x, y):
-        """Create and place an object"""
-        obj = definition.toScreen()
+    def add_object(self, obj, x, y):
+        """Add and place an object"""
         self.objects.append(obj)
         self.contents.append(obj)
         obj.set_location(x, y)
     def replace_object(self, ex):
-        """Use a replace exception to replace an object"""
-        for o in self.objects:
-            if o.definition == ex.this:
-                self.remove_object(o)
-                self.create_object(ex.that, o.sprite.x, o.sprite.y)
-                return
+        """Use a replace exception to replace an object, if the object
+does not exist. Fail silently"""
+        this = filter(lambda o: o.id == ex.this, self.objects)
+        if len(this) > 0:
+            this = this[0]
+        else:
+            return
+        self.remove_object(this)
+        self.add_object(ex.that(), this.sprite.x, this.sprite.y)
     def update(self):
         for obj in self.placeable_objects():
             obj.update()
