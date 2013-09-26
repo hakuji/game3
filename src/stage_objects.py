@@ -18,6 +18,7 @@
 from util import (ObjectDefinition, CreatureDefinition, StageDefinition,
                   Room, NextLevelException, MagneticPathway,
                   ReplaceObjectException)
+from functools import partial
 
 def descend_stairs(self):
     raise NextLevelException()
@@ -41,6 +42,24 @@ LEVER = ObjectDefinition(
     interaction = replace_object(CLOSED_SHAFT, DESC_STAIRS)
 )
 
+BASE_CHEST = partial(ObjectDefinition,
+    go_through = True,
+    symbol = 'C',
+    range = 5
+)
+
+DECORATIVE_CHEST = BASE_CHEST(
+    description = 'A decorative chest'
+)
+
+def debug(self):
+    print 'hello'
+
+TREASURE_CHEST = BASE_CHEST(
+    description = 'A treasure chest',
+    interaction = debug
+)
+
 WOLF = CreatureDefinition(
     symbol = 'W',
     description = 'Wolf',
@@ -57,7 +76,9 @@ room1 = Room(50, 50, 100, 100,
 room2 = Room(300, 200, 100, 150,
              creature_def=[(WOLF, 2)],
              object_def=[(LEVER, 1)])
-room3 = Room(50, 220, 100, 100)
+room3 = Room(50, 220, 100, 100,
+             object_def=[(DECORATIVE_CHEST, 1),
+                         (TREASURE_CHEST, 1)])
 
 p1 = MagneticPathway(room1, room3)
 p2 = MagneticPathway(room2, room3)

@@ -38,37 +38,3 @@ into attributes of the created object."""
         _autoset(f, self, *args, **kwargs)
         f(self, *args, **kwargs)
     return wrapper
-
-class __partial(object):
-    def __init__(self, func, *args, **kwargs):
-        self.func = func
-        self.args = args
-        self.kwargs = kwargs
-    def __call__(self, *nargs, **kwargs):
-        return partial(self, *nargs, **kwargs)
-
-def _partial(f, *nargs, **nkwargs):
-    if not inspect.isfunction(f):
-        args, kwargs = f.args, f.kwargs
-        spec = inspect.getargspec(f.func)
-        f = f.func
-    else:
-        args, kwargs = [], {}
-        spec = inspect.getargspec(f)
-    args += nargs
-    kwargs.update(nkwargs)
-    total = len(spec.args)
-    if spec.defaults is not None:
-        total -= len(spec.defaults)
-    if len(args) + len(kwargs) < total:
-        return _partial(f, *args, **kwargs)
-    else:
-        return f(*args, **kwargs)
-
-def partial(f):
-    """Decoration that gives haskell-ish powers to functions"""
-    @functools.wraps(f)
-    def wrapper(self, *args, **kwargs):
-        _partial(f, self, *args, **kwargs)
-        f(self, *args, **kwargs)
-    return wrapper

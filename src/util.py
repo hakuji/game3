@@ -24,7 +24,7 @@ from constants import (FIELD_FONT_SIZE as FONT_SIZE, OBJECT_FONT_SIZE,
                        EDGES, ROAM_LIST)
 from random import randint
 from rect import Rect, Point
-from decorations import autoset, partial
+from decorations import autoset
 
 pointa = Point(0, 0)
 pointb = Point(0, 0)
