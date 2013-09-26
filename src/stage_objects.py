@@ -29,6 +29,17 @@ def replace_object(this, that):
         raise ReplaceObjectException(this, that)
     return r
 
+def on_off_switch(f1, f2):
+    """Will call f1 if the switch set otherwise f2"""
+    def fun(self):
+        if getattr(self, 'on', False):
+            self.on = False
+            f2(self)
+        else:
+            self.on = True
+            f1(self)
+    return fun
+
 CLOSED_SHAFT = partial(
     Object,
     True,
@@ -52,7 +63,9 @@ LEVER = partial(
     symbol = 'L',
     description = 'A lever',
     range = 5,
-    interact = replace_object(1, DESC_STAIRS)
+    interact = on_off_switch(
+        partial(replace_object(1, DESC_STAIRS)),
+        partial(replace_object(2, CLOSED_SHAFT)))
 )
 
 BASE_CHEST = partial(
