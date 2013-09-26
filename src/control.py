@@ -16,10 +16,11 @@
 # along with game 3.  If not, see <http://www.gnu.org/licenses/>.
 
 import pyglet
-from util import Reactable, Hero, Stage, NextLevelException, GameOverException
+from util import Reactable, Hero, NextLevelException, GameOverException
 from screens import CommonScreen
-from stage_objects import STAGES
+from stage_objects import LEVELS
 from constants import INTERVAL
+from decorations import autoset
 
 class GameController(Reactable):
     """Ui controller"""
@@ -74,22 +75,20 @@ events"""
 
 class GameState(object):
     """State of the playable parts of the game"""
-    def __init__(self, dificulty, hero, stage_no):
-        self.dificulty = dificulty
-        self.hero = hero
-        self.stage_no = stage_no
-        self.stage = Stage(STAGES[stage_no], hero)
+    @autoset
+    def __init__(self, dificulty, hero, level_no):
+        self.level = LEVELS[level_no](hero)
     def goto_next_level(self):
         """Move to the next level or end the game"""
-        self.stage_no += 1
+        self.level_no += 1
         try:
-            st_def = STAGES[self.stage_no]
+            level = LEVELS[self.level_no]
         except IndexError:
             raise GameOverException(False)
-        self.stage = Stage(st_def, self.hero)
+        self.level = level(self.hero)
     def update(self):
         try:
-            self.stage.update()
+            self.level.update()
         except NextLevelException:
             self.goto_next_level()
 

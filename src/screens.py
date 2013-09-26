@@ -24,9 +24,9 @@ class CommonScreen(Screen):
         hfunc = lambda : self.state.hero.health
         hfield = LabeledField('Health', hfunc, STATS_PANEL_X, STATS_PANEL_Y)
         def pfunc():
-            return str(self.state.stage_no)
+            return str(self.state.level_no)
         pfield = LabeledField('Level', pfunc, STATS_PANEL_X, STATS_PANEL_Y - 30)
         self.contents = [hfield, pfield,
-                         state.stage]#message_box
+                         state.level]#message_box
     def update(self):
         self.state.update()

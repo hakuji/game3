@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with game 3.  If not, see <http://www.gnu.org/licenses/>.
 
-from util import (ObjectDefinition, CreatureDefinition, StageDefinition,
+from util import (ObjectDefinition, CreatureDefinition, Level,
                   Room, NextLevelException, MagneticPathway,
                   ReplaceObjectException)
 from functools import partial
@@ -83,7 +83,7 @@ room3 = Room(50, 220, 100, 100,
 p1 = MagneticPathway(room1, room3)
 p2 = MagneticPathway(room2, room3)
 
-ST1 = StageDefinition(
+L1 = partial(Level,
     obj_definitions = [],
     rooms = [
         room1,
@@ -91,9 +91,9 @@ ST1 = StageDefinition(
         room3
     ],
     pathways = [p1, p2],
-    creature_definitions = [],
+    creature_definitions = []
 )
 
-STAGES = [
-    ST1
+LEVELS = [
+    L1
 ]

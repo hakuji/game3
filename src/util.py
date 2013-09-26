@@ -354,19 +354,14 @@ class Hero(Creature):
         if self.khandler[key.J]:
             self.intended_interact = True
 
-class StageDefinition(object):
-    @autoset
-    def __init__(self, obj_definitions, rooms, pathways,
-                 creature_definitions, min_room_dim = (50, 50),
-                 max_room_dim = (100, 100), random_room_no = 0):
-        pass
-
-class Stage(Container):
-    def __init__(self, stage_def, hero):
-        self.pathways = stage_def.pathways
-        self.rooms = stage_def.rooms
-        self.objects = Object.from_list(stage_def.obj_definitions)
-        self.creatures = Creature.from_list(stage_def.creature_definitions)
+class Level(Container):
+    """A game level, stage etc"""
+    def __init__(self, hero, obj_definitions, rooms, pathways,
+                 creature_definitions):
+        self.pathways = pathways
+        self.rooms = rooms
+        self.objects = Object.from_list(obj_definitions)
+        self.creatures = Creature.from_list(creature_definitions)
         self.arrange_objects()
         self.hero = hero
         self.init_rooms()
@@ -376,7 +371,7 @@ class Stage(Container):
         self.contents.extend(self.pathways)
         self.contents.extend(self.objects)
         self.contents.extend(self.creatures)
-        super(Stage, self).__init__(self.contents)
+        super(Level, self).__init__(self.contents)
     def init_rooms(self):
         for r in self.rooms:
             if r.start:
