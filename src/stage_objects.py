@@ -28,13 +28,12 @@ def replace_object(this, that):
         raise ReplaceObjectException(this, that)
     return r
 
-CLOSED_SHAFT = ObjectDefinition(-2, True, '|', 'Closed shaft')
+CLOSED_SHAFT = ObjectDefinition(True, '|', 'Closed shaft')
 
-DESC_STAIRS = ObjectDefinition(1, True, '>', 'Descending stairs',
+DESC_STAIRS = ObjectDefinition(True, '>', 'Descending stairs',
                                interaction = descend_stairs)
 
 LEVER = ObjectDefinition(
-    id = 2,
     go_through = True,
     symbol = 'L',
     description = 'A lever',
@@ -43,7 +42,6 @@ LEVER = ObjectDefinition(
 )
 
 WOLF = CreatureDefinition(
-    id = 2,
     symbol = 'W',
     description = 'Wolf',
     health=10,

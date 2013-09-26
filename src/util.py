@@ -24,7 +24,7 @@ from constants import (FIELD_FONT_SIZE as FONT_SIZE, OBJECT_FONT_SIZE,
                        EDGES, ROAM_LIST)
 from random import randint
 from rect import Rect, Point
-from decorations import autoset
+from decorations import autoset, partial
 
 pointa = Point(0, 0)
 pointb = Point(0, 0)
@@ -178,7 +178,7 @@ def empty_interaction(self):
 class ObjectDefinition(object):
     """The common properties of a type of object"""
     @autoset
-    def __init__(self, id, go_through, symbol, description,
+    def __init__(self, go_through, symbol, description,
                  interaction = empty_interaction, range = 1):
         self.screenClass = Object
     def toScreen(self, count = None):
@@ -190,11 +190,11 @@ class ObjectDefinition(object):
 class CreatureDefinition(ObjectDefinition):
     """The common properties of a creature"""
     @autoset
-    def __init__(self, id, symbol, description, health, speed, strength,
+    def __init__(self, symbol, description, health, speed, strength,
                  light_radius, stationary = False, hostile = True,
                  go_through = False, range = 1, interaction=empty_interaction):
         super(CreatureDefinition, self).__init__(
-            id, go_through, symbol, description, interaction, range)
+            go_through, symbol, description, interaction, range)
         self.screenClass = Creature
 
 class Object(Drawable):
@@ -319,8 +319,7 @@ intended direction"""
 class Hero(Creature):
     @autoset
     def __init__(self, khandler, inv = None):
-        d = CreatureDefinition(id=-1,
-                               symbol='@',
+        d = CreatureDefinition(symbol='@',
                                description='You',
                                health=100,
                                speed=3,
