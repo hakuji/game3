@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with game 3.  If not, see <http://www.gnu.org/licenses/>.
 
-from util import (ObjectDefinition, CreatureDefinition, Level,
+from util import (Object, CreatureDefinition, Level,
                   Room, NextLevelException, MagneticPathway,
                   ReplaceObjectException)
 from functools import partial
@@ -29,35 +29,49 @@ def replace_object(this, that):
         raise ReplaceObjectException(this, that)
     return r
 
-CLOSED_SHAFT = ObjectDefinition(True, '|', 'Closed shaft')
+CLOSED_SHAFT = partial(
+    Object,
+    True,
+    '|',
+    'Closed shaft'
+)
 
-DESC_STAIRS = ObjectDefinition(True, '>', 'Descending stairs',
-                               interaction = descend_stairs)
+DESC_STAIRS = partial(
+    Object,
+    True,
+    '>',
+    'Descending stairs',
+    interact = descend_stairs
+)
 
-LEVER = ObjectDefinition(
+LEVER = partial(
+    Object,
     go_through = True,
     symbol = 'L',
     description = 'A lever',
     range = 5,
-    interaction = replace_object(CLOSED_SHAFT, DESC_STAIRS)
+    interact = replace_object(CLOSED_SHAFT, DESC_STAIRS)
 )
 
-BASE_CHEST = partial(ObjectDefinition,
+BASE_CHEST = partial(
+    Object,
     go_through = True,
     symbol = 'C',
     range = 5
 )
 
-DECORATIVE_CHEST = BASE_CHEST(
+DECORATIVE_CHEST = partial(
+    BASE_CHEST,
     description = 'A decorative chest'
 )
 
 def debug(self):
     print 'hello'
 
-TREASURE_CHEST = BASE_CHEST(
+TREASURE_CHEST = partial(
+    BASE_CHEST,
     description = 'A treasure chest',
-    interaction = debug
+    interact = debug
 )
 
 WOLF = CreatureDefinition(
@@ -84,7 +98,7 @@ p1 = MagneticPathway(room1, room3)
 p2 = MagneticPathway(room2, room3)
 
 L1 = partial(Level,
-    obj_definitions = [],
+    objects = [],
     rooms = [
         room1,
         room2,

@@ -210,12 +210,13 @@ class Object(Drawable):
                         yield o
         return list(fun())
     @autoset
-    def __init__(self, definition):
+    def __init__(self, go_through, symbol, description,
+                 interact = empty_interaction, range = 1):
         sprite = pyglet.text.Label(
-            definition.symbol,
+            symbol,
             font_name=OBJECT_FONT_FACE,
             font_size=OBJECT_FONT_SIZE)
-        self.interact = types.MethodType(definition.interaction, self)
+        self.interact = types.MethodType(interact, self)
         super(Object, self).__init__(sprite)
     def set_location(self, x, y):
         self.sprite.x = x
@@ -231,12 +232,19 @@ class Object(Drawable):
         return (pointa.distance_to(pointb) <= distance
                 +  max(self.sprite.content_height, self.sprite.content_width) / 2)
     def within_range(self, obj):
-        return self.within_distance(obj, self.definition.range)
+        return self.within_distance(obj, self.range)
 
 class Creature(Object):
     """Actual creature on the screen"""
-    def __init__(self, definition):
-        super(Creature, self).__init__(definition)
+    def __init__(self, d):
+        super(Creature, self).__init__(
+            d.go_through,
+            d.symbol,
+            d.description,
+            d.interaction,
+            d.range
+        )
+        self.definition = d
         self.intended_x = self.sprite.x
         self.intended_y = self.sprite.y
         self.target = None
@@ -356,11 +364,11 @@ class Hero(Creature):
 
 class Level(Container):
     """A game level, stage etc"""
-    def __init__(self, hero, obj_definitions, rooms, pathways,
+    def __init__(self, hero, objects, rooms, pathways,
                  creature_definitions):
         self.pathways = pathways
         self.rooms = rooms
-        self.objects = Object.from_list(obj_definitions)
+        self.objects = [o() for o in objects]
         self.creatures = Creature.from_list(creature_definitions)
         self.arrange_objects()
         self.hero = hero
@@ -381,7 +389,7 @@ class Level(Container):
             for c in creatures:
                 self.creatures.append(c)
                 self.set_location(c, r)
-            objects = Object.from_list(r.object_def)
+            objects = [o() for o in r.object_def]
             for o in objects:
                 self.objects.append(o)
                 self.set_location(o, r)
@@ -481,10 +489,10 @@ except for ex"""
         rect1.set_points_from_dimensions(x, y, w, h)
         if ex is not None:
             return any(self.collide_with_rect(i) for i in self.placeable_objects()
-                       if i != ex and not i.definition.go_through)
+                       if i != ex and not i.go_through)
         else:
             return any(self.collide_with_rect(i) for i in self.placeable_objects()
-                       if not i.definition.go_through)
+                       if not i.go_through)
     def set_location(self, obj, room = None):
         """Assign a random free position to an object. Will try at most 10000
 times before raising an exception"""
@@ -498,7 +506,7 @@ times before raising an exception"""
                 x, y = self.get_random_position_in_room(width, height, room)
                 contained = self.contained_in_a_room(x, y, width, height, room)
             if contained:
-                if obj.definition.go_through:
+                if obj.go_through:
                     obj.set_location(x, y)
                     return
                 elif not self.collide_with_objects(x, y, width, height):
