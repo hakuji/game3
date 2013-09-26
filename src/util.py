@@ -201,7 +201,14 @@ class Object(Drawable):
     """Actual object on the screen"""
     @classmethod
     def from_list(cls, l):
-        return list(flatten(map(lambda x: x[0].toScreen(x[1]), l)))
+        def fun():
+            for d in l:
+                if isinstance(d, ObjectDefinition):
+                    yield d.toScreen()
+                else:
+                    for o in d[0].toScreen(d[1]):
+                        yield o
+        return list(fun())
     @autoset
     def __init__(self, definition):
         sprite = pyglet.text.Label(

@@ -70,15 +70,15 @@ WOLF = CreatureDefinition(
     range=10)
 
 room1 = Room(50, 50, 100, 100,
-             object_def=[(CLOSED_SHAFT, 1)],
+             object_def=[CLOSED_SHAFT],
              start=True)
 
 room2 = Room(300, 200, 100, 150,
              creature_def=[(WOLF, 2)],
-             object_def=[(LEVER, 1)])
+             object_def=[LEVER])
 room3 = Room(50, 220, 100, 100,
-             object_def=[(DECORATIVE_CHEST, 1),
-                         (TREASURE_CHEST, 1)])
+             object_def=[DECORATIVE_CHEST,
+                         TREASURE_CHEST])
 
 p1 = MagneticPathway(room1, room3)
 p2 = MagneticPathway(room2, room3)
