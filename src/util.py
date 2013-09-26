@@ -24,6 +24,7 @@ from constants import (FIELD_FONT_SIZE as FONT_SIZE, OBJECT_FONT_SIZE,
                        EDGES, ROAM_LIST)
 from random import randint
 from rect import Rect, Point
+from decorations import autoset
 
 pointa = Point(0, 0)
 pointb = Point(0, 0)
@@ -112,10 +113,9 @@ class ReplaceObjectException(Exception):
 
 class KeySubscription(object):
     """Keyboard inputs combination that trigger an event"""
+    @autoset
     def __init__(self, action, key, modifiers=0):
-        self.key = key
-        self.modifiers = modifiers
-        self.action = action
+        pass
     def __str__(self):
         return key.symbol_string(self.key) + ' ' + key.modifiers_string(self.modifiers)
     def react(self, key, modifiers):
@@ -125,14 +125,16 @@ class KeySubscription(object):
 
 class Drawable(object):
     """Anything that can be drawn"""
+    @autoset
     def __init__(self, sprite):
-        self.sprite = sprite
+        pass
     def draw(self):
         self.sprite.draw()
 
 class Container(object):
+    @autoset
     def __init__(self, contents):
-        self.contents = contents
+        pass
     def update(self):
         pass
     def draw(self):
@@ -141,18 +143,17 @@ class Container(object):
 
 class Reactable(object):
     """Anything that can react to keyboard inputs"""
+    @autoset
     def __init__(self, subs):
-        self.subs = subs
+        pass
     def react(self, key, modifiers):
         for i in self.subs:
             i.react(key, modifiers)
 
 class Option(Drawable, Reactable):
     """Option accessed with a key"""
+    @autoset
     def __init__(self, subs, description, sprite):
-        self.subs = subs
-        self.description = description
-        self.sprite = sprite
         self.sprite.text = self.get_text()
     def keypart(self):
         keystr = [str(i) for i in self.subs]
@@ -176,14 +177,9 @@ def empty_interaction(self):
 
 class ObjectDefinition(object):
     """The common properties of a type of object"""
+    @autoset
     def __init__(self, id, go_through, symbol, description,
                  interaction = empty_interaction, range = 1):
-        self.id = id
-        self.go_through = go_through
-        self.symbol = symbol
-        self.description = description
-        self.range = range
-        self.interaction = interaction
         self.screenClass = Object
     def toScreen(self, count = None):
         if count == None:
@@ -193,24 +189,20 @@ class ObjectDefinition(object):
 
 class CreatureDefinition(ObjectDefinition):
     """The common properties of a creature"""
+    @autoset
     def __init__(self, id, symbol, description, health, speed, strength,
                  light_radius, stationary = False, hostile = True,
                  go_through = False, range = 1, interaction=empty_interaction):
         super(CreatureDefinition, self).__init__(
             id, go_through, symbol, description, interaction, range)
-        self.health = health
-        self.speed = speed
-        self.hostile = hostile
-        self.stationary = stationary
-        self.light_radius = light_radius
         self.screenClass = Creature
-        self.strength = strength
 
 class Object(Drawable):
     """Actual object on the screen"""
     @classmethod
     def from_list(cls, l):
         return list(flatten(map(lambda x: x[0].toScreen(x[1]), l)))
+    @autoset
     def __init__(self, definition):
         sprite = pyglet.text.Label(
             definition.symbol,
@@ -218,7 +210,6 @@ class Object(Drawable):
             font_size=OBJECT_FONT_SIZE)
         self.interact = types.MethodType(definition.interaction, self)
         super(Object, self).__init__(sprite)
-        self.definition = definition
     def set_location(self, x, y):
         self.sprite.x = x
         self.sprite.y = y
@@ -326,6 +317,7 @@ intended direction"""
         self.intended_y = y
 
 class Hero(Creature):
+    @autoset
     def __init__(self, khandler, inv = None):
         d = CreatureDefinition(id=-1,
                                symbol='@',
@@ -337,8 +329,6 @@ class Hero(Creature):
                                go_through=False,
                                range=6)
         super(Hero, self).__init__(d)
-        self.inv = inv
-        self.khandler = khandler
         self.speed = 3
         self.intended_interact = False
         if inv is None:
@@ -359,16 +349,11 @@ class Hero(Creature):
             self.intended_interact = True
 
 class StageDefinition(object):
+    @autoset
     def __init__(self, obj_definitions, rooms, pathways,
                  creature_definitions, min_room_dim = (50, 50),
                  max_room_dim = (100, 100), random_room_no = 0):
-        self.obj_definitions = obj_definitions
-        self.rooms = rooms
-        self.creature_definitions = creature_definitions
-        self.min_room_dim = min_room_dim
-        self.max_room_dim = max_room_dim
-        self.random_room_no = random_room_no
-        self.pathways = pathways
+        pass
 
 class Stage(Container):
     def __init__(self, stage_def, hero):
@@ -522,11 +507,8 @@ times before raising an exception"""
                         + str(obj))
 
 class Pathway(object):
+    @autoset
     def __init__(self, horizontal, x, y, length):
-        self.x = x
-        self.y = y
-        self.length = length
-        self.horizontal = horizontal
         if horizontal:
             w = length
             h = self.thickness()
@@ -614,14 +596,9 @@ class MagneticPathway(Pathway):
 
 
 class Room(object):
-    def __init__(self, x, y, w, h, obj_def = [], creat_def = [], start  = False):
-        self.object_def = obj_def
-        self.creature_def = creat_def
-        self.x = x
-        self.y = y
-        self.w = w
-        self.h = h
-        self.start = start
+    @autoset
+    def __init__(self, x, y, w, h, object_def = [], creature_def = [],
+                 start  = False):
         self.inner_rect = Rect.from_dimensions(x + WALL_WIDTH, y + int(WALL_WIDTH * 1.25),
                                                w + WALL_WIDTH, h + int(WALL_WIDTH * 1.5))
         self.outer_rect = Rect.from_dimensions(x, y,
