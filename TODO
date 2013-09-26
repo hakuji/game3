@@ -1,4 +1,5 @@
 # Description (Estmate(min - med - max))
+Hero facing visual cue
 Monster attack(12H - 24H - 48H)
 Alchemy(16H - 32H - 64H)
 Full first level(10H - 20H - 40H)
@@ -6,5 +7,8 @@ Windows binary generator(???)
 Tutorial(10H - 20H - 40H)
 Auto examine surroundings(8H - 16H - 32H)
 Shadows(10H - 20H - 40H)
+Animated healthbar
+Animations for attack
+Animations for damage taking
 Level displayer (16H - 32H - 64H)
 Visual level generator (32H - 64H - 128H) # Probably never done
