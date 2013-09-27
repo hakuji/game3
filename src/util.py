@@ -203,11 +203,11 @@ class Object(Drawable):
     def from_list(cls, l):
         def fun():
             for d in l:
-                if isinstance(d, ObjectDefinition):
-                    yield d.toScreen()
+                if isinstance(d, tuple):
+                    for i in range(d[1]):
+                        yield d[0]()
                 else:
-                    for o in d[0].toScreen(d[1]):
-                        yield o
+                    yield d()
         return list(fun())
     @autoset
     def __init__(self, go_through, symbol, description,
@@ -236,30 +236,32 @@ class Object(Drawable):
 
 class Creature(Object):
     """Actual creature on the screen"""
-    def __init__(self, d):
+    @autoset
+    def __init__(self, symbol, description, health, speed, strength,
+                 light_radius, stationary = False, hostile = True,
+                 go_through = False, range = 1, interaction=empty_interaction):
         super(Creature, self).__init__(
-            d.go_through,
-            d.symbol,
-            d.description,
-            d.interaction,
-            d.range
+            go_through,
+            symbol,
+            description,
+            interaction,
+            range
         )
-        self.definition = d
         self.intended_x = self.sprite.x
         self.intended_y = self.sprite.y
         self.target = None
         self.last_desired_direction = [0, 0]
         self.change_countdown = 0
         self.last_desired_speed = 1
-        self.health = self.definition.health
+        self.health = self.health
     def be_attacked(self, other):
         """Be attacked by another creature"""
-        self.health -= other.definition.strength
+        self.health -= other.strength
     def dead(self):
         return self.health <= 0
     def update(self):
-        if not self.definition.stationary:
-            if self.definition.hostile and self.target is not None:
+        if not self.stationary:
+            if self.hostile and self.target is not None:
                 if self.within_range():
                     self.attack()
                 else:
@@ -279,7 +281,7 @@ was moving before."""
         else:
             return super(Creature, self).within_range(obj)
     def target_visible(self):
-        return self.within_distance(self.target, self.definition.light_radius)
+        return self.within_distance(self.target, self.light_radius)
     def roam(self):
         """Move randomly"""
         x, y = self.sprite.x, self.sprite.y
@@ -296,7 +298,7 @@ was moving before."""
         self.last_desired_direction[0] = dx
         self.last_desired_direction[1] = dy
         self.last_desired_speed = speed
-        self.change_countdown = self.definition.light_radius
+        self.change_countdown = self.light_radius
     def attack(self):
         self.target.be_attacked(self)
     def chase(self):
@@ -305,14 +307,14 @@ was moving before."""
         y = self.target.sprite.y
         dx = - cmp(self.sprite.x - x, 0)
         dy = - cmp(self.sprite.y - y, 0)
-        self.set_last_desired_direction(dx, dy, self.definition.speed)
+        self.set_last_desired_direction(dx, dy, self.speed)
         self.move_towards(x, y)
     def move_towards(self, x, y):
         """Move towards a point"""
         ox = self.sprite.x
         oy = self.sprite.y
-        mov_x = min(abs(x - ox), self.definition.speed)
-        mov_y = min(abs(y - oy), self.definition.speed)
+        mov_x = min(abs(x - ox), self.speed)
+        mov_y = min(abs(y - oy), self.speed)
         nx = self.sprite.x + mov_x * (1 if x > ox else -1)
         ny = self.sprite.y + mov_y * (1 if y > oy else -1)
         self.intent(nx, ny)
@@ -334,7 +336,7 @@ intended direction"""
 class Hero(Creature):
     @autoset
     def __init__(self, khandler, inv = None):
-        d = CreatureDefinition(symbol='@',
+        super(Hero, self).__init__(symbol='@',
                                description='You',
                                health=100,
                                speed=3,
@@ -342,7 +344,6 @@ class Hero(Creature):
                                light_radius=20,
                                go_through=False,
                                range=6)
-        super(Hero, self).__init__(d)
         self.speed = 3
         self.intended_interact = False
         if inv is None:
@@ -365,11 +366,11 @@ class Hero(Creature):
 class Level(Container):
     """A game level, stage etc"""
     def __init__(self, hero, objects, rooms, pathways,
-                 creature_definitions):
+                 creatures):
         self.pathways = pathways
         self.rooms = rooms
-        self.objects = [o() for o in objects]
-        self.creatures = Creature.from_list(creature_definitions)
+        self.objects = Object.from_list(objects)
+        self.creatures = Object.from_list(creatures)
         self.arrange_objects()
         self.hero = hero
         self.init_rooms()
@@ -385,18 +386,18 @@ class Level(Container):
             if r.start:
                 self.set_location(self.hero, r)
             self.creatures.append(self.hero)
-            creatures = Creature.from_list(r.creature_def)
+            creatures = Object.from_list(r.creature_def)
             for c in creatures:
                 self.creatures.append(c)
                 self.set_location(c, r)
-            objects = [o() for o in r.object_def]
+            objects = Object.from_list(r.object_def)
             for o in objects:
                 self.objects.append(o)
                 self.set_location(o, r)
     def set_enemies(self):
         for i in self.creatures:
             try:
-                if i.definition.hostile:
+                if i.hostile:
                     i.target = self.hero
             except AttributeError:
                 pass
@@ -436,7 +437,7 @@ does not exist. Fail silently"""
                     return
     def update_movements(self):
         for c in self.creatures:
-            if not c.definition.go_through:
+            if not c.go_through:
                 w = c.sprite.content_width
                 h = c.sprite.content_height
                 for i in c.movements():

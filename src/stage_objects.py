@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with game 3.  If not, see <http://www.gnu.org/licenses/>.
 
-from util import (Object, CreatureDefinition, Level,
+from util import (Object, Creature, Level,
                   Room, NextLevelException, MagneticPathway,
                   ReplaceObjectException)
 from functools import partial
@@ -89,14 +89,16 @@ TREASURE_CHEST = partial(
     interact = debug
 )
 
-WOLF = CreatureDefinition(
+WOLF = partial(
+    Creature,
     symbol = 'W',
     description = 'Wolf',
     health=10,
     speed=2,
     strength=0,
     light_radius=20,
-    range=10)
+    range=10
+)
 
 room1 = Room(50, 50, 100, 100,
              object_def=[CLOSED_SHAFT],
@@ -120,7 +122,7 @@ L1 = partial(Level,
         room3
     ],
     pathways = [p1, p2],
-    creature_definitions = []
+    creatures = []
 )
 
 LEVELS = [
