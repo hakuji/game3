@@ -15,8 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with game 3.  If not, see <http://www.gnu.org/licenses/>.
 
-from util import Container, LabeledField
-from constants import STATS_PANEL_X, STATS_PANEL_Y
+from util import Container
+from constants import STATS_PANEL_X, STATS_PANEL_Y, FIELD_FONT_SIZE
+import pyglet
 
 class Screen(Container):
     def react(self, key, modifiers):
@@ -25,6 +26,24 @@ class Screen(Container):
                 i.react(key, modifiers)
             except AttributeError:
                 pass
+
+class LabeledField(Container):
+    def __init__(self, label, value_func, x, y):
+        self.label = pyglet.text.Label(
+            label + ':',
+            font_name='Times',
+            font_size=FIELD_FONT_SIZE,
+            x=x, y=y)
+        self.value = pyglet.text.Label(
+            font_name='Times',
+            font_size=FIELD_FONT_SIZE,
+            x = x + self.label.content_width + 15,
+            y = y)
+        self.value_func = value_func
+        self.contents = [self.label, self.value]
+    def draw(self):
+        self.value.text = str(self.value_func())
+        super(LabeledField, self).draw()
 
 class CommonScreen(Screen):
     def __init__(self, state):

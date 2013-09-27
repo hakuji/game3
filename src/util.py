@@ -601,22 +601,3 @@ class Room(object):
         bottom = vertex_list_from_rect(x, y, w, WALL_WIDTH)
         right = vertex_list_from_rect(x + w, y, WALL_WIDTH, WALL_WIDTH + h)
         return (left, top, bottom, right)
-
-class LabeledField(Container):
-    def __init__(self, label, value_func, x, y):
-        self.label = pyglet.text.Label(
-            label + ':',
-            font_name='Times',
-            font_size=FONT_SIZE,
-            x=x, y=y)
-        self.value = pyglet.text.Label(
-            font_name='Times',
-            font_size=FONT_SIZE,
-            x = x + self.label.content_width + 15,
-            y = y)
-        self.value_func = value_func
-        self.contents = [self.label, self.value]
-
-    def draw(self):
-        self.value.text = str(self.value_func())
-        super(LabeledField, self).draw()
