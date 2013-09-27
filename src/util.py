@@ -175,28 +175,6 @@ class Screen(Container):
 def empty_interaction(self):
     pass
 
-class ObjectDefinition(object):
-    """The common properties of a type of object"""
-    @autoset
-    def __init__(self, go_through, symbol, description,
-                 interaction = empty_interaction, range = 1):
-        self.screenClass = Object
-    def toScreen(self, count = None):
-        if count == None:
-            return self.screenClass(self)
-        else:
-            return [self.screenClass(self) for i in range(count)]
-
-class CreatureDefinition(ObjectDefinition):
-    """The common properties of a creature"""
-    @autoset
-    def __init__(self, symbol, description, health, speed, strength,
-                 light_radius, stationary = False, hostile = True,
-                 go_through = False, range = 1, interaction=empty_interaction):
-        super(CreatureDefinition, self).__init__(
-            go_through, symbol, description, interaction, range)
-        self.screenClass = Creature
-
 class Object(Drawable):
     """Actual object on the screen"""
     @classmethod
