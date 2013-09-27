@@ -19,12 +19,14 @@
 
 import pyglet, itertools, types, random
 from pyglet.window import key
-from constants import (FIELD_FONT_SIZE as FONT_SIZE, OBJECT_FONT_SIZE,
+from constants import (OBJECT_FONT_SIZE,
                        ST_BOUND_Y, ST_BOUND_X, OBJECT_FONT_FACE, WALL_WIDTH,
                        EDGES, ROAM_LIST)
 from random import randint
 from rect import Rect, Point
 from decorations import autoset
+from exception import (SubscriptionFound, GameOverException, ReplaceObjectException,
+                       ImpossiblePathwayException)
 
 pointa = Point(0, 0)
 pointb = Point(0, 0)
@@ -89,27 +91,6 @@ def vertex_list_from_rect(x, y, w, h, color = (0, 0, 255)):
                  r, g, b,
                  r, g, b)
         ))
-
-class SubscriptionFound(Exception):
-    pass
-
-class UnplaceableRoomException(Exception):
-    pass
-
-class NextLevelException(Exception):
-    pass
-
-class GameOverException(Exception):
-    def __init__(self, defeat):
-        self.defeat = defeat
-
-class ImpossiblePathwayException(Exception):
-    pass
-
-class ReplaceObjectException(Exception):
-    def __init__(self, this, that):
-        self.this = this
-        self.that = that
 
 class KeySubscription(object):
     """Keyboard inputs combination that trigger an event"""

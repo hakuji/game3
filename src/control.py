@@ -16,7 +16,8 @@
 # along with game 3.  If not, see <http://www.gnu.org/licenses/>.
 
 import pyglet
-from util import Reactable, Hero, NextLevelException, GameOverException
+from util import Reactable, Hero
+from exception import NextLevelException, GameOverException
 from screens import CommonScreen
 from stage_objects import LEVELS
 from constants import INTERVAL
