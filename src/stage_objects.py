@@ -101,14 +101,15 @@ WOLF = partial(
 )
 
 room1 = Room(50, 50, 100, 100,
-             object_def=[CLOSED_SHAFT],
+             objects=[CLOSED_SHAFT],
              start=True)
 
 room2 = Room(300, 200, 100, 150,
-             creature_def=[(WOLF, 2)],
-             object_def=[LEVER])
+             creatures=[(WOLF, 2)],
+             objects=[LEVER])
+
 room3 = Room(50, 220, 100, 100,
-             object_def=[DECORATIVE_CHEST,
+             objects=[DECORATIVE_CHEST,
                          TREASURE_CHEST])
 
 p1 = MagneticPathway(room1, room3)

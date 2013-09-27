@@ -364,11 +364,11 @@ class Level(Container):
             if r.start:
                 self.set_location(self.hero, r)
             self.creatures.append(self.hero)
-            creatures = Object.from_list(r.creature_def)
+            creatures = Object.from_list(r.creatures)
             for c in creatures:
                 self.creatures.append(c)
                 self.set_location(c, r)
-            objects = Object.from_list(r.object_def)
+            objects = Object.from_list(r.objects)
             for o in objects:
                 self.objects.append(o)
                 self.set_location(o, r)
@@ -587,7 +587,7 @@ class MagneticPathway(Pathway):
 
 class Room(object):
     @autoset
-    def __init__(self, x, y, w, h, object_def = [], creature_def = [],
+    def __init__(self, x, y, w, h, objects = [], creatures = [],
                  start  = False):
         self.inner_rect = Rect.from_dimensions(x + WALL_WIDTH, y + int(WALL_WIDTH * 1.25),
                                                w + WALL_WIDTH, h + int(WALL_WIDTH * 1.5))
