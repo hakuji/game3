@@ -17,7 +17,8 @@
 
 """List of game menus"""
 import pyglet
-from util import KeySubscription, Screen, Option
+from util import KeySubscription, Option
+from screens import Screen
 from pyglet.window import key
 from constants import (WINDOW_WIDTH, WINDOW_HEIGHT, NORMAL_DIFICULTY, GAME_NAME,
                        VICTORY, GAME_OVER)

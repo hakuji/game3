@@ -15,8 +15,16 @@
 # You should have received a copy of the GNU General Public License
 # along with game 3.  If not, see <http://www.gnu.org/licenses/>.
 
-from util import Screen, LabeledField
+from util import Container, LabeledField
 from constants import STATS_PANEL_X, STATS_PANEL_Y
+
+class Screen(Container):
+    def react(self, key, modifiers):
+        for i in self.contents:
+            try:
+                i.react(key, modifiers)
+            except AttributeError:
+                pass
 
 class CommonScreen(Screen):
     def __init__(self, state):

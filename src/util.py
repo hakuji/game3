@@ -164,14 +164,6 @@ class Option(Drawable, Reactable):
     def get_text(self):
         return self.keypart() + ' - ' + self.description
 
-class Screen(Container):
-    def react(self, key, modifiers):
-        for i in self.contents:
-            try:
-                i.react(key, modifiers)
-            except AttributeError:
-                pass
-
 def empty_interaction(self):
     pass
 
