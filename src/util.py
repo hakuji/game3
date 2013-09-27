@@ -27,70 +27,13 @@ from rect import Rect, Point
 from decorations import autoset
 from exception import (SubscriptionFound, GameOverException, ReplaceObjectException,
                        ImpossiblePathwayException)
+from function import range, range_inc, vertex_list_from_rect
 
 pointa = Point(0, 0)
 pointb = Point(0, 0)
 flatten = itertools.chain.from_iterable
 rect1 = Rect.from_dimensions(0, 0, 0, 0)
 rect2 = Rect.from_dimensions(0, 0, 0, 0)
-
-ran = range
-def range(*args):
-    """Beefed out version of range that automatically deals
-    with reverse direction
-
-    range([start,] stop[, step]) -> list of integers
-
-    Return a list containing an arithmetic progression of integers.
-    range(i, j) returns [i, i+1, i+2, ..., j-1]; start (!) defaults to 0.
-    When step is given, it specifies the increment (or decrement).
-    For example, range(4) returns [0, 1, 2, 3].  The end point is omitted!
-    These are exactly the valid indices for a list of 4 elements."""
-    if len(args) == 3:
-        return ran(*args)
-    elif len(args) == 2:
-        if args[0] <= args[1]:
-            return ran(args[0], args[1])
-        else:
-            return ran(args[0] - 1, args[1] - 1, -1)
-    elif len(args) == 1:
-        return ran(args[0])
-    elif len(args) == 0:
-        raise TypeError('range takes at least 1 argument (0 given)')
-    else:
-        raise TypeError('range takes at most 3 arguments (0 given)'.format([str(len(args))]))
-
-def range_inc(*args):
-    """Like range but inclusive"""
-    if len(args) == 3:
-        if args[0] <= args[1]:
-            return ran(args[0], args[1] + 1, args[2])
-        else:
-            return ran(args[0], args[1] - 1, args[2])
-    elif len(args) == 2:
-        if args[0] <= args[1]:
-            return ran(args[0], args[1] + 1)
-        else:
-            return ran(args[0], args[1] - 1, -1)
-    elif len(args) == 1:
-        return ran(args[0] + 1)
-    elif len(args) == 0:
-        raise TypeError('range takes at least 1 argument (0 given)')
-    else:
-        raise TypeError('range takes at most 3 arguments (0 given)'.format([str(len(args))]))
-
-def vertex_list_from_rect(x, y, w, h, color = (0, 0, 255)):
-    r, g, b = color
-    return pyglet.graphics.vertex_list(
-        4, ('v2i', (x,     y,
-                    x + w, y,
-                    x,     y + h,
-                    x + w, y + h)),
-        ('c3B', (r, g, b,
-                 r, g, b,
-                 r, g, b,
-                 r, g, b)
-        ))
 
 class KeySubscription(object):
     """Keyboard inputs combination that trigger an event"""
