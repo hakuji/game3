@@ -245,19 +245,19 @@ was moving before."""
         self.last_desired_direction[1] = dy
         self.last_desired_speed = speed
         self.change_countdown = self.light_radius
-        self.set_facing()
-    def set_facing(self):
-        if self.last_desired_direction == [0, 0]:
+        self.set_facing(self.last_desired_direction)
+    def set_facing(self, direction):
+        if direction == [0, 0]:
             return
-        if self.last_desired_direction[0] == 1:
+        if direction[0] == 1:
             self.facing[0] = Direction.EAST
-        elif self.last_desired_direction[0] == -1:
+        elif direction[0] == -1:
             self.facing[0] = Direction.WEST
         else:
             self.facing[0] = None
-        if self.last_desired_direction[1] == 1:
+        if direction[1] == 1:
             self.facing[1] = Direction.NORTH
-        elif self.last_desired_direction[1] == -1:
+        elif direction[1] == -1:
             self.facing[1] = Direction.SOUTH
         else:
             self.facing[1] = None
@@ -270,24 +270,27 @@ was moving before."""
     def set_hitbox(self):
         w = h = self.range
         x = self.x
+        y = self.y
         if self.facing[0] == Direction.EAST:
             x += self.w
         elif self.facing[0] == Direction.WEST:
             x -= w
-        y = self.y
         if self.facing[1] == Direction.NORTH:
             y += self.h
-        elif self.facing[0] == Direction.SOUTH:
-            y -= h
+        elif self.facing[1] == Direction.SOUTH:
+            y -=  h
         self.hitbox = Hitbox(self.strength, x, y, w, h)
     def chase(self):
         """Chase and set the last desired point"""
         x = self.target.x
         y = self.target.y
-        dx = - cmp(self.x - x, 0)
-        dy = - cmp(self.y - y, 0)
+        dx, dy = self.target_direction()
         self.set_last_desired_direction(dx, dy, self.speed)
         self.move_towards(x, y)
+    def target_direction(self):
+        dx = cmp(0, self.x - self.target.x)
+        dy = cmp(0, self.y - self.target.y)
+        return (dx, dy)
     def move_towards(self, x, y):
         """Move towards a point"""
         ox = self.x
