@@ -337,14 +337,16 @@ class Hitbox(Drawable):
 class Hero(Creature):
     @autoset
     def __init__(self, khandler, inv = None):
-        super(Hero, self).__init__(symbol='@',
-                               description='You',
-                               health=100,
-                               speed=3,
-                               strength=3,
-                               light_radius=20,
-                               go_through=False,
-                               range=6)
+        super(Hero, self).__init__(
+            symbol='@',
+            description='You',
+            health=100,
+            speed=3,
+            strength=3,
+            light_radius=20,
+            go_through=False,
+            range=10,
+            cooldown_=3)
         self.speed = 3
         self.intended_interact = False
         if inv is None:
@@ -353,16 +355,25 @@ class Hero(Creature):
         if self.dead():
             raise GameOverException(True)
         self.intended_interact = False
+        facing = [None, None]
         if self.khandler[key.W]:
             self.intended_y = self.y + self.speed
+            facing[1] = Direction.NORTH
         if self.khandler[key.S]:
             self.intended_y = self.y - self.speed
+            facing[1] = Direction.SOUTH
         if self.khandler[key.A]:
             self.intended_x = self.x - self.speed
+            facing[0] = Direction.WEST
         if self.khandler[key.D]:
             self.intended_x = self.x + self.speed
+            facing[0] = Direction.EAST
         if self.khandler[key.J]:
             self.intended_interact = True
+        if self.khandler[key.I]:
+            self.attack()
+        if facing != [None, None]:
+            self.facing = facing
 
 class Level(Container):
     """A game level, stage etc"""
