@@ -191,7 +191,7 @@ class Creature(Object):
     """Actual creature on the screen"""
     @autoset
     def __init__(self, symbol, description, health, speed, strength,
-                 light_radius, stationary = False, hostile = True,
+                 light_radius, attack_type, stationary = False, hostile = True,
                  go_through = False, range = 1, interaction=empty_interaction,
                  cooldown_ = 10):
         super(Creature, self).__init__(
@@ -291,7 +291,7 @@ was moving before."""
             y += self.h + HITBOX_GAP
         elif self.facing[1] == Direction.SOUTH:
             y -=  h + HITBOX_GAP
-        self.hitbox = Hitbox(self.strength, x, y, w, h)
+        self.hitbox = self.attack_type(self, x, y, w, h)
     def chase(self):
         """Chase and set the last desired point"""
         dx, dy = self.target_direction()
@@ -327,12 +327,25 @@ intended direction"""
 
 class Hitbox(Drawable):
     @autoset
-    def __init__(self, strength, x, y, w, h):
+    def __init__(self, origin, x, y, w, h):
+        self.strength = origin.strength
         self.remove = False
         self.sprite = vertex_list_from_rect(x, y, w, h)
         self.rect = Rect.from_dimensions(x, y, w, h)
+    def hit(self, creature):
+        return self.rect.overlaps(creature.rect)
     def draw(self):
         self.sprite.draw(pyglet.gl.GL_QUAD_STRIP)
+
+class MeleeHitbox(Hitbox):
+    def __init__(self, origin,  x, y, w, h):
+        super(MeleeHitbox, self).__init__(
+            origin, x, y, w, h)
+    def hit(self, creature):
+        if creature == self.origin:
+            return False
+        else:
+            return super(MeleeHitbox, self).hit(creature)
 
 class Hero(Creature):
     @autoset
@@ -346,7 +359,8 @@ class Hero(Creature):
             light_radius=20,
             go_through=False,
             range=10,
-            cooldown_=3)
+            cooldown_=3,
+            attack_type=MeleeHitbox)
         self.speed = 3
         self.intended_interact = False
         if inv is None:
@@ -452,7 +466,7 @@ does not exist. Fail silently"""
         del self.hitboxes[:]
     def hitbox_eval(self, b):
         for c in self.creatures:
-            if c.rect.overlaps(b.rect):
+            if b.hit(c):
                 c.be_attacked(b)
     def hero_interact(self):
         if self.hero.intended_interact:

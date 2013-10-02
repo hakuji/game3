@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with game 3.  If not, see <http://www.gnu.org/licenses/>.
 
-from util import (Object, Creature, Level, Room, MagneticPathway)
+from util import (Object, Creature, Level, Room, MagneticPathway, MeleeHitbox)
 from exception import ReplaceObjectException, NextLevelException
 from functools import partial
 
@@ -96,7 +96,8 @@ WOLF = partial(
     speed=2,
     strength=5,
     light_radius=20,
-    range=10
+    range=10,
+    attack_type=MeleeHitbox
 )
 
 room1 = Room(50, 50, 100, 100,
