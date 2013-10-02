@@ -123,10 +123,10 @@ class Object(Drawable):
         del self.sprite.x
     @property
     def y(self):
-        return self.sprite.y
+        return self.sprite.y - 2
     @y.setter
     def y(self, value):
-        self.sprite.y = value
+        self.sprite.y = value + 2
     @y.deleter
     def y(self):
         del self.sprite.y
@@ -141,7 +141,7 @@ class Object(Drawable):
         del self.sprite.content_width
     @property
     def h(self):
-        return self.sprite.content_height
+        return self.sprite.content_height - 3
     @h.setter
     def h(self, value):
         self.sprite.content_height = value
@@ -163,6 +163,12 @@ class Object(Drawable):
                 +  max(self.h, self.w) / 2)
     def within_range(self, obj):
         return self.within_distance(obj, self.range)
+    def draw(self):
+        x, y = self.x, self.y
+        w, h = self.w, self.h
+        rect = vertex_list_from_rect(x, y, w, h)
+        rect.draw(pyglet.gl.GL_QUAD_STRIP)
+        super(Object, self).draw()
 
 class Direction(object):
     NORTH = 'N'
@@ -194,12 +200,6 @@ class Creature(Object):
         self.cooldown = 0
         self.facing = [None, Direction.NORTH]
         self.hitbox = None
-    def draw(self):
-        x, y = self.x, self.y
-        w, h = self.w, self.h
-        rect = vertex_list_from_rect(x, y, w, h)
-        rect.draw(pyglet.gl.GL_QUAD_STRIP)
-        super(Creature, self).draw()
     def be_attacked(self, other):
         """Be attacked by another creature"""
         self.health -= other.strength
