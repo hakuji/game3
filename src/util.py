@@ -157,6 +157,7 @@ class Creature(Object):
         self.health = self.health
         self.cooldown = 0
         self.facing = [None, Direction.NORTH]
+        self.hitbox = None
     def be_attacked(self, other):
         """Be attacked by another creature"""
         self.health -= other.strength
@@ -317,9 +318,11 @@ class Level(Container):
         self.init_rooms()
         self.set_enemies()
         self.contents = []
+        self.hitboxes = []
         self.contents.extend(self.rooms)
         self.contents.extend(self.pathways)
         self.contents.extend(self.objects)
+        self.contents.extend(self.hitboxes)
         self.contents.extend(self.creatures)
         super(Level, self).__init__(self.contents)
     def init_rooms(self):
