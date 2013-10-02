@@ -112,9 +112,45 @@ class Object(Drawable):
             font_size=OBJECT_FONT_SIZE)
         self.interact = types.MethodType(interact, self)
         super(Object, self).__init__(sprite)
+    @property
+    def x(self):
+        return self.sprite.x
+    @x.setter
+    def x(self, value):
+        self.sprite.x = value
+    @x.deleter
+    def x(self):
+        del self.sprite.x
+    @property
+    def y(self):
+        return self.sprite.y
+    @y.setter
+    def y(self, value):
+        self.sprite.y = value
+    @y.deleter
+    def y(self):
+        del self.sprite.y
+    @property
+    def w(self):
+        return self.sprite.width
+    @w.setter
+    def w(self, value):
+        self.sprite.width = value
+    @w.deleter
+    def w(self):
+        del self.sprite.width
+    @property
+    def h(self):
+        return self.sprite.height
+    @h.setter
+    def h(self, value):
+        self.sprite.height = value
+    @h.deleter
+    def h(self):
+        del self.sprite.height
     def set_location(self, x, y):
-        self.sprite.x = x
-        self.sprite.y = y
+        self.x = x
+        self.y = y
     def update(self):
         pass
     def within_distance(self, obj, distance):
@@ -158,6 +194,12 @@ class Creature(Object):
         self.cooldown = 0
         self.facing = [None, Direction.NORTH]
         self.hitbox = None
+    def draw(self):
+        x, y = self.sprite.x, self.sprite.y
+        w, h = self.sprite.content_width, self.sprite.content_height
+        rect = vertex_list_from_rect(x, y, w, h)
+        rect.draw(pyglet.gl.GL_QUAD_STRIP)
+        super(Creature, self).draw()
     def be_attacked(self, other):
         """Be attacked by another creature"""
         self.health -= other.strength
