@@ -112,6 +112,7 @@ class Object(Drawable):
             font_size=OBJECT_FONT_SIZE)
         self.interact = types.MethodType(interact, self)
         super(Object, self).__init__(sprite)
+        self.rect_ = Rect.from_dimensions(0, 0, self.w, self.h)
     @property
     def x(self):
         return self.sprite.x
@@ -148,6 +149,14 @@ class Object(Drawable):
     @h.deleter
     def h(self):
         del self.sprite.content_height
+    @property
+    def rect(self):
+        self.rect_.set_points_from_dimensions(
+            self.x,
+            self.y,
+            self.w,
+            self.h)
+        return self.rect_
     def set_location(self, x, y):
         self.x = x
         self.y = y
@@ -169,6 +178,8 @@ class Object(Drawable):
         rect = vertex_list_from_rect(x, y, w, h)
         rect.draw(pyglet.gl.GL_QUAD_STRIP)
         super(Object, self).draw()
+    def __str__(self):
+        return self.symbol + ' ' + self.description
 
 class Direction(object):
     NORTH = 'N'
@@ -318,9 +329,10 @@ class Hitbox(Drawable):
     @autoset
     def __init__(self, strength, x, y, w, h):
         self.remove = False
-        self.rect = vertex_list_from_rect(x, y, w, h)
+        self.sprite = vertex_list_from_rect(x, y, w, h)
+        self.rect = Rect.from_dimensions(x, y, w, h)
     def draw(self):
-        self.rect.draw(pyglet.gl.GL_QUAD_STRIP)
+        self.sprite.draw(pyglet.gl.GL_QUAD_STRIP)
 
 class Hero(Creature):
     @autoset
@@ -407,13 +419,13 @@ does not exist. Fail silently"""
         self.remove_object(this)
         self.add_object(ex.that(), this.x, this.y)
     def update(self):
-#        del self.hitboxes[:]
         for obj in self.objects:
             obj.update()
         for c in self.creatures:
             c.update()
             self.update_position(c)
             self.add_hitbox(c)
+        self.update_hitboxes()
         try:
             self.hero_interact()
         except ReplaceObjectException as ex:
@@ -423,6 +435,14 @@ does not exist. Fail silently"""
             self.hitboxes.append(creature.hitbox)
             self.contents.append(creature.hitbox)
             creature.hitbox = None
+    def update_hitboxes(self):
+        for b in self.hitboxes:
+            self.hitbox_eval(b)
+        del self.hitboxes[:]
+    def hitbox_eval(self, b):
+        for c in self.creatures:
+            if c.rect.overlaps(b.rect):
+                print c
     def hero_interact(self):
         if self.hero.intended_interact:
             for o in self.placeable_objects():
