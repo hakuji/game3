@@ -133,7 +133,8 @@ class Creature(Object):
     @autoset
     def __init__(self, symbol, description, health, speed, strength,
                  light_radius, stationary = False, hostile = True,
-                 go_through = False, range = 1, interaction=empty_interaction):
+                 go_through = False, range = 1, interaction=empty_interaction,
+                 cooldown_ = 10):
         super(Creature, self).__init__(
             go_through,
             symbol,
@@ -148,6 +149,7 @@ class Creature(Object):
         self.change_countdown = 0
         self.last_desired_speed = 1
         self.health = self.health
+        self.cooldown = 0
     def be_attacked(self, other):
         """Be attacked by another creature"""
         self.health -= other.strength
@@ -194,7 +196,11 @@ was moving before."""
         self.last_desired_speed = speed
         self.change_countdown = self.light_radius
     def attack(self):
-        self.target.be_attacked(self)
+        if self.cooldown > 0:
+            self.cooldown -= 1
+        else:
+            self.cooldown = self.cooldown_
+            self.target.be_attacked(self)
     def chase(self):
         """Chase and set the last desired point"""
         x = self.target.sprite.x

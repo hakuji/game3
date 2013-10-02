@@ -94,7 +94,7 @@ WOLF = partial(
     description = 'Wolf',
     health=10,
     speed=2,
-    strength=0,
+    strength=5,
     light_radius=20,
     range=10
 )
