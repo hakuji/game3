@@ -92,7 +92,7 @@ WOLF = partial(
     Creature,
     symbol = 'W',
     description = 'Wolf',
-    health=10,
+    health=1,
     speed=2,
     strength=5,
     light_radius=20,

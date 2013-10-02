@@ -25,8 +25,11 @@ from constants import (OBJECT_FONT_SIZE,
 from random import randint
 from rect import Rect, Point
 from decorations import autoset
-from exception import (SubscriptionFound, GameOverException, ReplaceObjectException,
-                       ImpossiblePathwayException)
+from exception import (
+    SubscriptionFound, GameOverException,
+    ReplaceObjectException,
+    ImpossiblePathwayException,
+    CreatureDeathException)
 from function import range, range_inc, vertex_list_from_rect
 
 pointa = Point(0, 0)
@@ -217,6 +220,8 @@ class Creature(Object):
     def dead(self):
         return self.health <= 0
     def update(self):
+        if self.dead():
+            raise CreatureDeathException()
         if not self.stationary:
             if self.hostile and self.target is not None:
                 if self.within_range():
@@ -428,7 +433,6 @@ class Level(Container):
                 i.target = self.hero
     def remove_object(self, obj):
         self.objects.remove(obj)
-        self.contents.remove(obj)
     def add_object(self, obj, x, y):
         """Add and place an object"""
         self.objects.append(obj)
@@ -447,15 +451,20 @@ does not exist. Fail silently"""
         del self.hitboxes[:]
         for obj in self.objects:
             obj.update()
-        for c in self.creatures:
-            c.update()
-            self.update_position(c)
-            self.add_hitbox(c)
+        self.update_creatures()
         self.update_hitboxes()
         try:
             self.hero_interact()
         except ReplaceObjectException as ex:
             self.replace_object(ex)
+    def update_creatures(self):
+        for c in self.creatures[:]:
+            try:
+                c.update()
+                self.update_position(c)
+                self.add_hitbox(c)
+            except CreatureDeathException:
+                self.creatures.remove(c)
     def add_hitbox(self, creature):
         if creature.hitbox is not None:
             self.hitboxes.append(creature.hitbox)

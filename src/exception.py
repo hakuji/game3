@@ -26,6 +26,9 @@ class UnplaceableRoomException(Exception):
 class NextLevelException(Exception):
     pass
 
+class CreatureDeathException(Exception):
+    pass
+
 class GameOverException(Exception):
     def __init__(self, defeat):
         self.defeat = defeat
