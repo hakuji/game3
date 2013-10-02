@@ -129,8 +129,10 @@ class Object(Drawable):
         return self.within_distance(obj, self.range)
 
 class Direction(object):
-    NORTH = 1
-    EAST = 2
+    NORTH = 'N'
+    EAST = 'E'
+    SOUTH = 'S'
+    WEST = 'W'
 
 class Creature(Object):
     """Actual creature on the screen"""
@@ -154,7 +156,7 @@ class Creature(Object):
         self.last_desired_speed = 1
         self.health = self.health
         self.cooldown = 0
-        self.facing = Direction.NORTH
+        self.facing = [None, Direction.NORTH]
     def be_attacked(self, other):
         """Be attacked by another creature"""
         self.health -= other.strength
@@ -202,21 +204,39 @@ was moving before."""
         self.change_countdown = self.light_radius
         self.set_facing()
     def set_facing(self):
-        facing = 0
         if self.last_desired_direction == [0, 0]:
             return
         if self.last_desired_direction[0] == 1:
-            facing = facing | Direction.NORTH
+            self.facing[0] = Direction.EAST
+        elif self.last_desired_direction[0] == -1:
+            self.facing[0] = Direction.WEST
+        else:
+            self.facing[0] = None
         if self.last_desired_direction[1] == 1:
-            facing = facing | Direction.EAST
-        self.facing = facing
-        print facing
+            self.facing[1] = Direction.NORTH
+        elif self.last_desired_direction[1] == -1:
+            self.facing[1] = Direction.SOUTH
+        else:
+            self.facing[1] = None
     def attack(self):
         if self.cooldown > 0:
             self.cooldown -= 1
         else:
             self.cooldown = self.cooldown_
-            self.target.be_attacked(self)
+            self.set_hitbox()
+    def set_hitbox(self):
+        w = h = self.range
+        x = self.sprite.x
+        if self.facing[0] == Direction.EAST:
+            x += self.sprite.content_width
+        elif self.facing[0] == Direction.WEST:
+            x -= w
+        y = self.sprite.y
+        if self.facing[1] == Direction.NORTH:
+            y += self.sprite.content_height
+        elif self.facing[0] == Direction.SOUTH:
+            y -= h
+        self.hitbox = Hitbox(self.strength, x, y, w, h)
     def chase(self):
         """Chase and set the last desired point"""
         x = self.target.sprite.x
