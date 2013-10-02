@@ -21,7 +21,7 @@ import pyglet, itertools, types, random
 from pyglet.window import key
 from constants import (OBJECT_FONT_SIZE,
                        ST_BOUND_Y, ST_BOUND_X, OBJECT_FONT_FACE, WALL_WIDTH,
-                       EDGES, ROAM_LIST)
+                       EDGES, ROAM_LIST, HITBOX_GAP)
 from random import randint
 from rect import Rect, Point
 from decorations import autoset
@@ -284,13 +284,13 @@ was moving before."""
         x = self.x
         y = self.y
         if self.facing[0] == Direction.EAST:
-            x += self.w
+            x += self.w + HITBOX_GAP
         elif self.facing[0] == Direction.WEST:
-            x -= w
+            x -= w + HITBOX_GAP
         if self.facing[1] == Direction.NORTH:
-            y += self.h
+            y += self.h + HITBOX_GAP
         elif self.facing[1] == Direction.SOUTH:
-            y -=  h
+            y -=  h + HITBOX_GAP
         self.hitbox = Hitbox(self.strength, x, y, w, h)
     def chase(self):
         """Chase and set the last desired point"""
