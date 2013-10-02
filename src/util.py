@@ -128,6 +128,10 @@ class Object(Drawable):
     def within_range(self, obj):
         return self.within_distance(obj, self.range)
 
+class Direction(object):
+    NORTH = 1
+    EAST = 2
+
 class Creature(Object):
     """Actual creature on the screen"""
     @autoset
@@ -150,6 +154,7 @@ class Creature(Object):
         self.last_desired_speed = 1
         self.health = self.health
         self.cooldown = 0
+        self.facing = Direction.NORTH
     def be_attacked(self, other):
         """Be attacked by another creature"""
         self.health -= other.strength
@@ -195,6 +200,17 @@ was moving before."""
         self.last_desired_direction[1] = dy
         self.last_desired_speed = speed
         self.change_countdown = self.light_radius
+        self.set_facing()
+    def set_facing(self):
+        facing = 0
+        if self.last_desired_direction == [0, 0]:
+            return
+        if self.last_desired_direction[0] == 1:
+            facing = facing | Direction.NORTH
+        if self.last_desired_direction[1] == 1:
+            facing = facing | Direction.EAST
+        self.facing = facing
+        print facing
     def attack(self):
         if self.cooldown > 0:
             self.cooldown -= 1
@@ -301,11 +317,8 @@ class Level(Container):
                 self.set_location(o, r)
     def set_enemies(self):
         for i in self.creatures:
-            try:
-                if i.hostile:
+            if getattr(i, 'hostile', False):
                     i.target = self.hero
-            except AttributeError:
-                pass
     def remove_object(self, obj):
         self.objects.remove(obj)
         self.contents.remove(obj)
