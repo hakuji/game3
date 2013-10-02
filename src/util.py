@@ -209,6 +209,7 @@ class Creature(Object):
         if not self.stationary:
             if self.hostile and self.target is not None:
                 if self.within_range():
+                    self.set_facing(self.target_direction())
                     self.attack()
                 else:
                     if self.target_visible():
@@ -282,11 +283,9 @@ was moving before."""
         self.hitbox = Hitbox(self.strength, x, y, w, h)
     def chase(self):
         """Chase and set the last desired point"""
-        x = self.target.x
-        y = self.target.y
         dx, dy = self.target_direction()
         self.set_last_desired_direction(dx, dy, self.speed)
-        self.move_towards(x, y)
+        self.move_towards(self.target.x, self.target.y)
     def target_direction(self):
         dx = cmp(0, self.x - self.target.x)
         dy = cmp(0, self.y - self.target.y)
