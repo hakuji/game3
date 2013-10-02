@@ -132,22 +132,22 @@ class Object(Drawable):
         del self.sprite.y
     @property
     def w(self):
-        return self.sprite.width
+        return self.sprite.content_width
     @w.setter
     def w(self, value):
-        self.sprite.width = value
+        self.sprite.content_width = value
     @w.deleter
     def w(self):
-        del self.sprite.width
+        del self.sprite.content_width
     @property
     def h(self):
-        return self.sprite.height
+        return self.sprite.content_height
     @h.setter
     def h(self, value):
-        self.sprite.height = value
+        self.sprite.content_height = value
     @h.deleter
     def h(self):
-        del self.sprite.height
+        del self.sprite.content_height
     def set_location(self, x, y):
         self.x = x
         self.y = y
@@ -155,10 +155,10 @@ class Object(Drawable):
         pass
     def within_distance(self, obj, distance):
         """If obj is at most distance from self return true"""
-        pointa.x = self.sprite.x + self.sprite.content_width / 2
+        pointa.x = self.x + self.sprite.content_width / 2
         pointa.y = self.sprite.y + self.sprite.content_height / 2
-        pointb.x = obj.sprite.x + obj.sprite.content_width / 2
-        pointb.y = obj.sprite.y + obj.sprite.content_height / 2
+        pointb.x = obj.x + obj.sprite.content_width / 2
+        pointb.y = obj.y + obj.sprite.content_height / 2
         return (pointa.distance_to(pointb) <= distance
                 +  max(self.sprite.content_height, self.sprite.content_width) / 2)
     def within_range(self, obj):
@@ -184,8 +184,8 @@ class Creature(Object):
             interaction,
             range
         )
-        self.intended_x = self.sprite.x
-        self.intended_y = self.sprite.y
+        self.intended_x = self.x
+        self.intended_y = self.y
         self.target = None
         self.last_desired_direction = [0, 0]
         self.change_countdown = 0
@@ -195,7 +195,7 @@ class Creature(Object):
         self.facing = [None, Direction.NORTH]
         self.hitbox = None
     def draw(self):
-        x, y = self.sprite.x, self.sprite.y
+        x, y = self.x, self.y
         w, h = self.sprite.content_width, self.sprite.content_height
         rect = vertex_list_from_rect(x, y, w, h)
         rect.draw(pyglet.gl.GL_QUAD_STRIP)
@@ -230,7 +230,7 @@ was moving before."""
         return self.within_distance(self.target, self.light_radius)
     def roam(self):
         """Move randomly"""
-        x, y = self.sprite.x, self.sprite.y
+        x, y = self.x, self.y
         self.change_countdown -= 1
         if not self.continue_last_desired():
             dx = random.choice(ROAM_LIST)
@@ -269,12 +269,12 @@ was moving before."""
             self.set_hitbox()
     def set_hitbox(self):
         w = h = self.range
-        x = self.sprite.x
+        x = self.x
         if self.facing[0] == Direction.EAST:
             x += self.sprite.content_width
         elif self.facing[0] == Direction.WEST:
             x -= w
-        y = self.sprite.y
+        y = self.y
         if self.facing[1] == Direction.NORTH:
             y += self.sprite.content_height
         elif self.facing[0] == Direction.SOUTH:
@@ -282,27 +282,27 @@ was moving before."""
         self.hitbox = Hitbox(self.strength, x, y, w, h)
     def chase(self):
         """Chase and set the last desired point"""
-        x = self.target.sprite.x
-        y = self.target.sprite.y
-        dx = - cmp(self.sprite.x - x, 0)
-        dy = - cmp(self.sprite.y - y, 0)
+        x = self.target.x
+        y = self.target.y
+        dx = - cmp(self.x - x, 0)
+        dy = - cmp(self.y - y, 0)
         self.set_last_desired_direction(dx, dy, self.speed)
         self.move_towards(x, y)
     def move_towards(self, x, y):
         """Move towards a point"""
-        ox = self.sprite.x
-        oy = self.sprite.y
+        ox = self.x
+        oy = self.y
         mov_x = min(abs(x - ox), self.speed)
         mov_y = min(abs(y - oy), self.speed)
-        nx = self.sprite.x + mov_x * (1 if x > ox else -1)
-        ny = self.sprite.y + mov_y * (1 if y > oy else -1)
+        nx = self.x + mov_x * (1 if x > ox else -1)
+        ny = self.y + mov_y * (1 if y > oy else -1)
         self.intent(nx, ny)
     def movements(self):
         """Iterator function that returns all the possible positions in the
 intended direction"""
-        for i in reversed(range_inc(self.sprite.x,
+        for i in reversed(range_inc(self.x,
                                     self.intended_x)):
-            for j in reversed(range_inc(self.sprite.y,
+            for j in reversed(range_inc(self.y,
                                         self.intended_y)):
                 yield (i, j)
     def set_location(self, x, y):
@@ -340,13 +340,13 @@ class Hero(Creature):
             raise GameOverException(True)
         self.intended_interact = False
         if self.khandler[key.W]:
-            self.intended_y = self.sprite.y + self.speed
+            self.intended_y = self.y + self.speed
         if self.khandler[key.S]:
-            self.intended_y = self.sprite.y - self.speed
+            self.intended_y = self.y - self.speed
         if self.khandler[key.A]:
-            self.intended_x = self.sprite.x - self.speed
+            self.intended_x = self.x - self.speed
         if self.khandler[key.D]:
-            self.intended_x = self.sprite.x + self.speed
+            self.intended_x = self.x + self.speed
         if self.khandler[key.J]:
             self.intended_interact = True
 
@@ -403,7 +403,7 @@ does not exist. Fail silently"""
         else:
             return
         self.remove_object(this)
-        self.add_object(ex.that(), this.sprite.x, this.sprite.y)
+        self.add_object(ex.that(), this.x, this.y)
     def update(self):
 #        del self.hitboxes[:]
         for obj in self.objects:
@@ -436,8 +436,8 @@ does not exist. Fail silently"""
             for i in creature.movements():
                 if (self.contained_in_any_room(i[0], i[1], w, h)
                     and not self.collide_with_objects(i[0], i[1], w, h, creature)):
-                    creature.sprite.x = i[0]
-                    creature.sprite.y = i[1]
+                    creature.x = i[0]
+                    creature.y = i[1]
                     break
                 else:
                     pass
@@ -463,8 +463,8 @@ does not exist. Fail silently"""
         return itertools.chain(self.rooms, self.pathways)
     def collide_with_rect(self, obj):
         """Ugly bit of code that requires a previous state to be set"""
-        rect2.set_points_from_dimensions(obj.sprite.x,
-                                               obj.sprite.y,
+        rect2.set_points_from_dimensions(obj.x,
+                                               obj.y,
                                                obj.sprite.content_width,
                                                obj.sprite.content_height)
         return rect1.overlaps(rect2)
