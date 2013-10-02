@@ -22,10 +22,8 @@ import pyglet
 class Screen(Container):
     def react(self, key, modifiers):
         for i in self.contents:
-            try:
+            if hasattr(i, 'react'):
                 i.react(key, modifiers)
-            except AttributeError:
-                pass
 
 class LabeledField(Container):
     def __init__(self, label, value_func, x, y):
