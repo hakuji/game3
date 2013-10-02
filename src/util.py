@@ -442,7 +442,7 @@ does not exist. Fail silently"""
     def hitbox_eval(self, b):
         for c in self.creatures:
             if c.rect.overlaps(b.rect):
-                print c
+                c.be_attacked(b)
     def hero_interact(self):
         if self.hero.intended_interact:
             for o in self.placeable_objects():
