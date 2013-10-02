@@ -329,7 +329,7 @@ class Level(Container):
         for r in self.rooms:
             if r.start:
                 self.set_location(self.hero, r)
-            self.creatures.append(self.hero)
+                self.creatures.append(self.hero)
             creatures = Object.from_list(r.creatures)
             for c in creatures:
                 self.creatures.append(c)
@@ -361,15 +361,21 @@ does not exist. Fail silently"""
         self.remove_object(this)
         self.add_object(ex.that(), this.sprite.x, this.sprite.y)
     def update(self):
+        del self.hitboxes[:]
         for obj in self.objects:
             obj.update()
         for c in self.creatures:
             c.update()
             self.update_position(c)
+            self.add_hitbox(c)
         try:
             self.hero_interact()
         except ReplaceObjectException as ex:
             self.replace_object(ex)
+    def add_hitbox(self, creature):
+        if creature.hitbox is not None:
+            self.hitboxes.append(creature.hitbox)
+            creature.hitbox = None
     def hero_interact(self):
         if self.hero.intended_interact:
             for o in self.placeable_objects():
