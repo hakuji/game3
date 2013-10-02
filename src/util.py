@@ -233,6 +233,11 @@ intended direction"""
         self.intended_x = x
         self.intended_y = y
 
+class Hitbox(object):
+    @autoset
+    def __init__(self, strength, x, y, w, h):
+        self.remove = False
+
 class Hero(Creature):
     @autoset
     def __init__(self, khandler, inv = None):
