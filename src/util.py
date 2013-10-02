@@ -318,7 +318,7 @@ class Level(Container):
     def set_enemies(self):
         for i in self.creatures:
             if getattr(i, 'hostile', False):
-                    i.target = self.hero
+                i.target = self.hero
     def remove_object(self, obj):
         self.objects.remove(obj)
         self.contents.remove(obj)
