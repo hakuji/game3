@@ -155,12 +155,12 @@ class Object(Drawable):
         pass
     def within_distance(self, obj, distance):
         """If obj is at most distance from self return true"""
-        pointa.x = self.x + self.sprite.content_width / 2
-        pointa.y = self.sprite.y + self.sprite.content_height / 2
-        pointb.x = obj.x + obj.sprite.content_width / 2
-        pointb.y = obj.y + obj.sprite.content_height / 2
+        pointa.x = self.x + self.w / 2
+        pointa.y = self.y + self.h / 2
+        pointb.x = obj.x + obj.w / 2
+        pointb.y = obj.y + obj.h / 2
         return (pointa.distance_to(pointb) <= distance
-                +  max(self.sprite.content_height, self.sprite.content_width) / 2)
+                +  max(self.h, self.w) / 2)
     def within_range(self, obj):
         return self.within_distance(obj, self.range)
 
@@ -196,7 +196,7 @@ class Creature(Object):
         self.hitbox = None
     def draw(self):
         x, y = self.x, self.y
-        w, h = self.sprite.content_width, self.sprite.content_height
+        w, h = self.w, self.h
         rect = vertex_list_from_rect(x, y, w, h)
         rect.draw(pyglet.gl.GL_QUAD_STRIP)
         super(Creature, self).draw()
@@ -271,12 +271,12 @@ was moving before."""
         w = h = self.range
         x = self.x
         if self.facing[0] == Direction.EAST:
-            x += self.sprite.content_width
+            x += self.w
         elif self.facing[0] == Direction.WEST:
             x -= w
         y = self.y
         if self.facing[1] == Direction.NORTH:
-            y += self.sprite.content_height
+            y += self.h
         elif self.facing[0] == Direction.SOUTH:
             y -= h
         self.hitbox = Hitbox(self.strength, x, y, w, h)
@@ -431,8 +431,8 @@ does not exist. Fail silently"""
                     return
     def update_position(self, creature):
         if not creature.go_through:
-            w = creature.sprite.content_width
-            h = creature.sprite.content_height
+            w = creature.w
+            h = creature.h
             for i in creature.movements():
                 if (self.contained_in_any_room(i[0], i[1], w, h)
                     and not self.collide_with_objects(i[0], i[1], w, h, creature)):
@@ -465,8 +465,8 @@ does not exist. Fail silently"""
         """Ugly bit of code that requires a previous state to be set"""
         rect2.set_points_from_dimensions(obj.x,
                                                obj.y,
-                                               obj.sprite.content_width,
-                                               obj.sprite.content_height)
+                                               obj.w,
+                                               obj.h)
         return rect1.overlaps(rect2)
     def contained_in_a_room(self, x, y, w, h, room):
         """True if the rect defined by the given dimensions is inside the given
@@ -492,8 +492,8 @@ except for ex"""
     def set_location(self, obj, room = None):
         """Assign a random free position to an object. Will try at most 10000
 times before raising an exception"""
-        width = obj.sprite.content_width
-        height = obj.sprite.content_height
+        width = obj.w
+        height = obj.h
         for i in range(10000):
             if room is None:
                 x, y = self.get_random_position(width, height)
