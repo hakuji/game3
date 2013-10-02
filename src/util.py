@@ -403,10 +403,11 @@ class Level(Container):
         self.set_enemies()
         self.contents = []
         self.hitboxes = []
-        self.contents.extend(self.rooms)
-        self.contents.extend(self.pathways)
-        self.contents.extend(self.objects)
-        self.contents.extend(self.creatures)
+        self.contents.append(self.rooms)
+        self.contents.append(self.pathways)
+        self.contents.append(self.objects)
+        self.contents.append(self.hitboxes)
+        self.contents.append(self.creatures)
         super(Level, self).__init__(self.contents)
     def init_rooms(self):
         for r in self.rooms:
@@ -431,7 +432,6 @@ class Level(Container):
     def add_object(self, obj, x, y):
         """Add and place an object"""
         self.objects.append(obj)
-        self.contents.append(obj)
         obj.set_location(x, y)
     def replace_object(self, ex):
         """Use a replace exception to replace an object, if the object
@@ -444,6 +444,7 @@ does not exist. Fail silently"""
         self.remove_object(this)
         self.add_object(ex.that(), this.x, this.y)
     def update(self):
+        del self.hitboxes[:]
         for obj in self.objects:
             obj.update()
         for c in self.creatures:
@@ -458,12 +459,10 @@ does not exist. Fail silently"""
     def add_hitbox(self, creature):
         if creature.hitbox is not None:
             self.hitboxes.append(creature.hitbox)
-            self.contents.append(creature.hitbox)
             creature.hitbox = None
     def update_hitboxes(self):
         for b in self.hitboxes:
             self.hitbox_eval(b)
-        del self.hitboxes[:]
     def hitbox_eval(self, b):
         for c in self.creatures:
             if b.hit(c):
@@ -557,6 +556,10 @@ times before raising an exception"""
                     return
         raise Exception('Could not assign a position to object: '
                         + str(obj))
+    def draw(self):
+        for l in self.contents:
+            for i in l:
+                i.draw()
 
 class Pathway(object):
     @autoset
