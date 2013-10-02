@@ -270,10 +270,13 @@ intended direction"""
         self.intended_x = x
         self.intended_y = y
 
-class Hitbox(object):
+class Hitbox(Drawable):
     @autoset
     def __init__(self, strength, x, y, w, h):
         self.remove = False
+        self.rect = vertex_list_from_rect(x, y, w, h)
+    def draw(self):
+        self.rect.draw(pyglet.gl.GL_QUAD_STRIP)
 
 class Hero(Creature):
     @autoset
@@ -322,7 +325,6 @@ class Level(Container):
         self.contents.extend(self.rooms)
         self.contents.extend(self.pathways)
         self.contents.extend(self.objects)
-        self.contents.extend(self.hitboxes)
         self.contents.extend(self.creatures)
         super(Level, self).__init__(self.contents)
     def init_rooms(self):
@@ -361,7 +363,7 @@ does not exist. Fail silently"""
         self.remove_object(this)
         self.add_object(ex.that(), this.sprite.x, this.sprite.y)
     def update(self):
-        del self.hitboxes[:]
+#        del self.hitboxes[:]
         for obj in self.objects:
             obj.update()
         for c in self.creatures:
@@ -375,6 +377,7 @@ does not exist. Fail silently"""
     def add_hitbox(self, creature):
         if creature.hitbox is not None:
             self.hitboxes.append(creature.hitbox)
+            self.contents.append(creature.hitbox)
             creature.hitbox = None
     def hero_interact(self):
         if self.hero.intended_interact:
