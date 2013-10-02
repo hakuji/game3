@@ -361,9 +361,11 @@ does not exist. Fail silently"""
         self.remove_object(this)
         self.add_object(ex.that(), this.sprite.x, this.sprite.y)
     def update(self):
-        for obj in self.placeable_objects():
+        for obj in self.objects:
             obj.update()
-        self.update_movements()
+        for c in self.creatures:
+            c.update()
+            self.update_position(c)
         try:
             self.hero_interact()
         except ReplaceObjectException as ex:
@@ -376,19 +378,18 @@ does not exist. Fail silently"""
                 if o.within_range(self.hero):
                     o.interact()
                     return
-    def update_movements(self):
-        for c in self.creatures:
-            if not c.go_through:
-                w = c.sprite.content_width
-                h = c.sprite.content_height
-                for i in c.movements():
-                    if (self.contained_in_any_room(i[0], i[1], w, h)
-                        and not self.collide_with_objects(i[0], i[1], w, h, c)):
-                        c.sprite.x = i[0]
-                        c.sprite.y = i[1]
-                        break
-                    else:
-                        pass
+    def update_position(self, creature):
+        if not creature.go_through:
+            w = creature.sprite.content_width
+            h = creature.sprite.content_height
+            for i in creature.movements():
+                if (self.contained_in_any_room(i[0], i[1], w, h)
+                    and not self.collide_with_objects(i[0], i[1], w, h, creature)):
+                    creature.sprite.x = i[0]
+                    creature.sprite.y = i[1]
+                    break
+                else:
+                    pass
     def placeable_objects(self):
         return itertools.chain(self.objects, self.creatures)
     def arrange_objects(self):
