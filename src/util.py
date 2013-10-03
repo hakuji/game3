@@ -372,21 +372,44 @@ class Hero(Creature):
             self.inv = []
     def draw(self):
         super(Hero, self).draw()
+        x = x1 = x2 = y = y1 = y2 = 0
         if self.facing[1] == Direction.NORTH:
-            y = self.y + self.h + HITBOX_GAP
-            y1 = y + self.range
+            y = self.y + self.h + 2 * HITBOX_GAP
+            y1 = y + self.range / 2
+            y2 = y
             x = self.x
             x1 = x + self.w / 2
             x2 = x + self.w
-            vl = self.arrow(y, y1, x, x1, x2)
-            vl.draw(pyglet.gl.GL_LINE_LOOP)
-    def arrow(self, y, y1, x, x1, x2):
+        elif self.facing[1] == Direction.SOUTH:
+            y = self.y - 2 * HITBOX_GAP
+            y1 = y - self.range / 2
+            y2 = y
+            x = self.x
+            x1 = x + self.w / 2
+            x2 = x + self.w
+        if self.facing[0] == Direction.EAST:
+            y = self.y
+            y1 = y + self.h / 2
+            y2 = y + self.h
+            x = self.x + self.w + 2 * HITBOX_GAP
+            x1 = x + self.range / 2
+            x2 = x
+        elif self.facing[0] == Direction.WEST:
+            y = self.y
+            y1 = y + self.h / 2
+            y2 = y + self.h
+            x = self.x - 2 * HITBOX_GAP
+            x1 = x - self.range / 2
+            x2 = x
+        vl = self.arrow(y, y1, y2, x, x1, x2)
+        vl.draw(pyglet.gl.GL_LINE_STRIP)
+    def arrow(self, y, y1, y2, x, x1, x2):
         r = b = g = 255
         a = 120
         return pyglet.graphics.vertex_list(
             3, ('v2i', (x,     y,
                         x1, y1,
-                        x2,     y)),
+                        x2,     y2)),
             ('c4B', (r, g, b, a,
                      r, g, b, a,
                      r, g, b, a)
