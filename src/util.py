@@ -370,6 +370,27 @@ class Hero(Creature):
         self.intended_interact = False
         if inv is None:
             self.inv = []
+    def draw(self):
+        super(Hero, self).draw()
+        if self.facing[1] == Direction.NORTH:
+            y = self.y + self.h + HITBOX_GAP
+            y1 = y + self.range
+            x = self.x
+            x1 = x + self.w / 2
+            x2 = x + self.w
+            vl = self.arrow(y, y1, x, x1, x2)
+            vl.draw(pyglet.gl.GL_LINE_LOOP)
+    def arrow(self, y, y1, x, x1, x2):
+        r = b = g = 255
+        a = 120
+        return pyglet.graphics.vertex_list(
+            3, ('v2i', (x,     y,
+                        x1, y1,
+                        x2,     y)),
+            ('c4B', (r, g, b, a,
+                     r, g, b, a,
+                     r, g, b, a)
+         ))
     def update(self):
         if self.dead():
             raise GameOverException(True)

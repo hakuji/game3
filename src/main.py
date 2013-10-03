@@ -21,6 +21,7 @@ from control import state
 from constants import WINDOW_WIDTH, WINDOW_HEIGHT, GAME_NAME, INTERVAL
 from util import KeySubscription, Option, SubscriptionFound
 from pyglet.window import key
+from pyglet import gl
 from menu import MAIN_MENU, VICTORY_SCREEN, DEFEAT_SCREEN
 
 window = pyglet.window.Window(
@@ -41,6 +42,9 @@ def on_draw():
     state.draw()
 
 def init():
+    gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
+    gl.glEnable(gl.GL_BLEND)
+    gl.glClearColor(0.0,0.0,0.0,0.0)
     state.subs.extend([
         KeySubscription(state.back_one_screen, key.Q),
         KeySubscription(state.back_one_screen, key.ESCAPE),
