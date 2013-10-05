@@ -362,21 +362,29 @@ class Animation(object):
 
 class Move(Animation):
     @autoset
-    def __init__(self, direction, distance):
-        pass
-    def update(self, obj):
-        x, y = obj.x, obj.y
+    def __init__(self, direction, distance, obj):
+        self.destination_set = False
+        self.pos = None
+    def final_destination(self):
+        x, y = self.obj.x, self.obj.y
+        print x,y
         if self.direction[0] == Direction.EAST:
             x += self.distance
-        else:
+        elif self.direction[0] == Direction.WEST:
             x -= self.distance
         if self.direction[1] == Direction.NORTH:
             y += self.distance
-        else:
+        elif self.direction[1] == Direction.SOUTH:
             y -= self.distance
-        if x == obj.x and y == obj.y:
+        print x,y
+        return x, y
+    def update(self):
+        if not self.destination_set:
+            self.pos = self.final_destination()
+            self.obj.move_towards(self.pos[0], self.pos[1])
+            self.destination_set = True
+        if self.pos[0] == self.obj.x and self.pos[1] == self.obj.y:
             raise AnimationEnd()
-        obj.move_towards(x, y)
 
 class Hero(Creature):
     @autoset
@@ -451,7 +459,7 @@ class Hero(Creature):
             raise GameOverException(True)
         if self.animation is not None:
             try:
-                self.animation.update(self)
+                self.animation.update()
             except AnimationEnd:
                 self.animation = None
             return
