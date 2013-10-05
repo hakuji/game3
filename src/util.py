@@ -391,7 +391,10 @@ class Hero(Creature):
             go_through=False,
             range=10,
             cooldown_=3,
-            attack_type=MeleeHitbox)
+            attack_type=MeleeHitbox,
+            roaming=False,
+            hostile=False
+        )
         self.speed = 3
         self.intended_interact = False
         self.animation = None
@@ -443,7 +446,7 @@ class Hero(Creature):
          ))
     def update(self):
         try:
-            self.death()
+            super(Hero, self).update()
         except CreatureDeathException:
             raise GameOverException(True)
         if self.animation is not None:
