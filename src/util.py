@@ -197,7 +197,7 @@ class Creature(Object):
     def __init__(self, symbol, description, health, speed, strength,
                  light_radius, attack_type, stationary = False, hostile = True,
                  go_through = False, range = 1, interaction=empty_interaction,
-                 cooldown_ = 10):
+                 cooldown_ = 10, roaming = True):
         super(Creature, self).__init__(
             go_through,
             symbol,
@@ -229,13 +229,14 @@ class Creature(Object):
                 if self.within_range():
                     self.set_facing(self.target_direction())
                     self.attack()
+                    return
                 else:
                     if self.target_visible():
                         self.chase()
-                    else:
-                        self.roam()
-            else:
+                        return
+            if self.roaming:
                 self.roam()
+                return
     def continue_last_desired(self):
         """Return true if the creature should continue moving towards where it
 was moving before."""
