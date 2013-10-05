@@ -29,7 +29,8 @@ from exception import (
     SubscriptionFound, GameOverException,
     ReplaceObjectException,
     ImpossiblePathwayException,
-    CreatureDeathException)
+    CreatureDeathException,
+    AnimationEnd)
 from function import range, range_inc, vertex_list_from_rect
 
 pointa = Point(0, 0)
@@ -352,6 +353,29 @@ class MeleeHitbox(Hitbox):
         else:
             return super(MeleeHitbox, self).hit(creature)
 
+class Animation(object):
+    """Some kind of object animation"""
+    def __init__(self):
+        pass
+
+class Move(Animation):
+    @autoset
+    def __init__(self, direction, distance):
+        pass
+    def update(self, obj):
+        x, y = obj.x, obj.y
+        if self.direction[0] == Direction.EAST:
+            x += self.distance
+        else:
+            x -= self.distance
+        if self.direction[1] == Direction.NORTH:
+            y += self.distance
+        else:
+            y -= self.distance
+        if x == obj.x and y == obj.y:
+            raise AnimationEnd()
+        obj.move_towards(x, y)
+
 class Hero(Creature):
     @autoset
     def __init__(self, khandler, inv = None):
@@ -368,6 +392,7 @@ class Hero(Creature):
             attack_type=MeleeHitbox)
         self.speed = 3
         self.intended_interact = False
+        self.animation = None
         if inv is None:
             self.inv = []
     def draw(self):
@@ -417,6 +442,12 @@ class Hero(Creature):
     def update(self):
         if self.dead():
             raise GameOverException(True)
+        if self.animation is not None:
+            try:
+                self.animation.update(self)
+            except AnimationEnd:
+                self.animation = None
+            return
         self.intended_interact = False
         facing = [None, None]
         if self.khandler[key.W]:
@@ -437,6 +468,8 @@ class Hero(Creature):
             self.attack()
         if facing != [None, None]:
             self.facing = facing
+    def set_animation(self, animation):
+        self.animation = animation
 
 class Level(Container):
     """A game level, stage etc"""

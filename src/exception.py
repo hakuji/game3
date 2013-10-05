@@ -40,3 +40,6 @@ class ReplaceObjectException(Exception):
     def __init__(self, this, that):
         self.this = this
         self.that = that
+
+class AnimationEnd(Exception):
+    pass
