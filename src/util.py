@@ -218,11 +218,12 @@ class Creature(Object):
     def be_attacked(self, other):
         """Be attacked by another creature"""
         self.health -= other.strength
-    def dead(self):
-        return self.health <= 0
-    def update(self):
-        if self.dead():
+    def death(self):
+        """Deals with the eventual death of the creature"""
+        if self.health <= 0:
             raise CreatureDeathException()
+    def update(self):
+        self.death()
         if not self.stationary:
             if self.hostile and self.target is not None:
                 if self.within_range():
@@ -440,7 +441,9 @@ class Hero(Creature):
                      r, g, b, a)
          ))
     def update(self):
-        if self.dead():
+        try:
+            self.death()
+        except CreatureDeathException:
             raise GameOverException(True)
         if self.animation is not None:
             try:
