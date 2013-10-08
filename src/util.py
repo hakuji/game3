@@ -297,6 +297,8 @@ was moving before."""
             pass
         else:
             self.cooldown = self.cooldown_
+            self.intended_y = self.y
+            self.intended_x = self.x
             self.set_hitbox()
     def set_hitbox(self):
         w = h = self.range
