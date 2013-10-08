@@ -85,7 +85,9 @@ def debug(self):
 TREASURE_CHEST = partial(
     BASE_CHEST,
     description = 'A treasure chest',
-    interact = debug
+    interact = debug,
+    x = 100,
+    y = 100
 )
 
 WOLF = partial(
@@ -100,8 +102,6 @@ WOLF = partial(
     attack_type=MeleeHitbox
 )
 
-WOLF()
-
 room1 = Room(50, 50, 100, 100,
              objects=[CLOSED_SHAFT],
              start=True)
@@ -111,14 +111,13 @@ room2 = Room(300, 200, 100, 150,
              objects=[LEVER])
 
 room3 = Room(50, 220, 100, 100,
-             objects=[DECORATIVE_CHEST,
-                         TREASURE_CHEST])
+             objects=[DECORATIVE_CHEST])
 
 p1 = MagneticPathway(room1, room3)
 p2 = MagneticPathway(room2, room3)
 
 L1 = partial(Level,
-    objects = [],
+    objects = [TREASURE_CHEST],
     rooms = [
         room1,
         room2,

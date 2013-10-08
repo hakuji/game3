@@ -602,7 +602,9 @@ does not exist. Fail silently"""
     def arrange_objects(self):
         """Set initial arrangement of the objects"""
         for obj in self.placeable_objects():
-            self.set_location(obj)
+#            print obj, obj.x, obj.y
+            if obj.x == 0 and obj.y == 0:
+                self.set_location(obj)
     def get_random_position_in_room(self, width, height, room):
         """Returns a random walkable point in a room"""
         rect = room.inner_rect
