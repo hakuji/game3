@@ -17,7 +17,8 @@
 
 import pyglet
 from util import Reactable, Hero
-from exception import NextLevelException, GameOverException
+from exception import (NextLevelException, GameOverException,
+                       PreviousLevelException)
 from screens import CommonScreen
 from stage_objects import LEVELS
 from constants import INTERVAL
@@ -87,10 +88,16 @@ class GameState(object):
         except IndexError:
             raise GameOverException(False)
         self.level = level(self.hero)
+    def goto_prev_level(self):
+        """Move to the previous level"""
+        self.level_no -= 1
+        self.level = LEVELS[self.level_no](self.hero)
     def update(self):
         try:
             self.level.update()
         except NextLevelException:
             self.goto_next_level()
+        except PreviousLevelException:
+            self.goto_prev_level()
 
 state = GameController()

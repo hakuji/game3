@@ -16,11 +16,14 @@
 # along with game 3.  If not, see <http://www.gnu.org/licenses/>.
 
 from util import (Object, Creature, Level, Room, MagneticPathway, MeleeHitbox)
-from exception import ReplaceObjectException, NextLevelException
+from exception import ReplaceObjectException, NextLevelException, PreviousLevelException
 from functools import partial
 
 def descend_stairs(self):
     raise NextLevelException()
+
+def ascend_stairs(self):
+    raise PreviousLevelException()
 
 def replace_object(this, that):
     """Replace this with that"""
@@ -54,6 +57,17 @@ DESC_STAIRS = partial(
     'Descending stairs',
     interact = descend_stairs,
     id = 2
+)
+
+ASC_STAIRS = partial(
+    Object,
+    True,
+    '<',
+    'Ascending stairs',
+    interact = ascend_stairs,
+    id = 3,
+    x = 130,
+    y = 90
 )
 
 LEVER = partial(
@@ -117,7 +131,7 @@ p1 = MagneticPathway(room1, room3)
 p2 = MagneticPathway(room2, room3)
 
 L1 = partial(Level,
-    objects = [TREASURE_CHEST],
+             objects = [TREASURE_CHEST, ASC_STAIRS],
     rooms = [
         room1,
         room2,

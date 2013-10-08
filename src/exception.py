@@ -26,6 +26,9 @@ class UnplaceableRoomException(Exception):
 class NextLevelException(Exception):
     pass
 
+class PreviousLevelException(Exception):
+    pass
+
 class CreatureDeathException(Exception):
     pass
 
