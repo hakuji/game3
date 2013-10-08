@@ -488,10 +488,10 @@ class Hero(Creature):
                 self.cooldown = INTERACT_COOLDOWN
             else:
                 pass
-        if self.khandler[key.I]:
-            self.attack()
         if facing != [None, None]:
             self.facing = facing
+        if self.khandler[key.I]:
+            self.attack()
     def set_animation(self, animation):
         self.animation = animation
 
