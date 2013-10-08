@@ -419,6 +419,7 @@ class Hero(Creature):
         self.speed = 3
         self.intended_interact = False
         self.animation = None
+        self.arrow = self.get_arrow()
         if inv is None:
             self.inv = []
     def draw(self):
@@ -440,26 +441,22 @@ class Hero(Creature):
                 angle = 0.0
             elif self.facing[0] == Direction.WEST:
                 angle = 180.0
-        y = 0
-        y1 = 0
-        x = 0
-        x1 = self.range + self.w
-        vl = self.arrow(x, y, x1, y1)
         gl.glPushMatrix()
         gl.glTranslatef(float(self.x + self.w / 2), float(self.y + self.h / 2), 0.0)
         gl.glRotatef(angle, 0.0, 0.0, 1.0)
-        vl.draw(pyglet.gl.GL_LINE_STRIP)
+        self.arrow.draw(pyglet.gl.GL_LINE_STRIP)
         gl.glPopMatrix()
-    def arrow(self, x, y, x1, y1):
+    def get_arrow(self):
         r = b = g = 255
         a = 120
+        x1 = self.range + self.w
         x2 = x1 - self.w / 2
-        y2 = self.h / 2
-        y3 = - (self.h / 2)
+        y1 = self.h / 2
+        y2 = - (self.h / 2)
         return pyglet.graphics.vertex_list(
-            3, ('v2i', (x2,    y3,
-                        x1,    y1,
-                        x2,    y2)),
+            3, ('v2i', (x2,    y2,
+                        x1,    0,
+                        x2,    y1)),
             ('c4B', (r, g, b, a,
                      r, g, b, a,
                      r, g, b, a)
