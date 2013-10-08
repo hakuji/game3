@@ -482,7 +482,7 @@ class Hero(Creature):
         if self.khandler[key.D]:
             self.intended_x = self.x + self.speed
             facing[0] = Direction.EAST
-        if self.khandler[key.J]:
+        if self.khandler[key.I]:
             if self.cooldown == 0:
                 self.intended_interact = True
                 self.cooldown = INTERACT_COOLDOWN
@@ -490,7 +490,7 @@ class Hero(Creature):
                 pass
         if facing != [None, None]:
             self.facing = facing
-        if self.khandler[key.I]:
+        if self.khandler[key.J]:
             self.attack()
     def set_animation(self, animation):
         self.animation = animation
