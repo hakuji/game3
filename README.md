@@ -12,7 +12,8 @@ On debian-like systems use
 
     # apt-get install python-pyglet
 
-Gentoo and Arch have a pretty up-to-date version of the package see if it works :)
+Gentoo and Arch have a pretty up-to-date version of the pyglet. See if it works
+for you :-)
 
 Fedora has 1.1.2 packaged, so the official repository version might not work.
 
