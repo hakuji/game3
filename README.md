@@ -1,4 +1,4 @@
-Copyright by akuji.
+Copyright 2013 by akuji.
 See the end of the file for license conditions.
 
 ## About ##
