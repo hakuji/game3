@@ -21,7 +21,7 @@ import pyglet, itertools, types, random
 from pyglet.window import key
 from constants import (OBJECT_FONT_SIZE,
                        ST_BOUND_Y, ST_BOUND_X, OBJECT_FONT_FACE, WALL_WIDTH,
-                       EDGES, ROAM_LIST, HITBOX_GAP)
+                       EDGES, ROAM_LIST, HITBOX_GAP, INTERACT_COOLDOWN)
 from random import randint
 from rect import Rect, Point
 from decorations import autoset
@@ -233,6 +233,7 @@ class Creature(Object):
             raise CreatureDeathException()
     def update(self):
         self.death()
+        self.cooldown = max(0, self.cooldown - 1)
         if not self.stationary:
             if self.hostile and self.target is not None:
                 if self.within_range():
@@ -292,7 +293,7 @@ was moving before."""
             self.facing[1] = None
     def attack(self):
         if self.cooldown > 0:
-            self.cooldown -= 1
+            pass
         else:
             self.cooldown = self.cooldown_
             self.set_hitbox()
@@ -487,7 +488,11 @@ class Hero(Creature):
             self.intended_x = self.x + self.speed
             facing[0] = Direction.EAST
         if self.khandler[key.J]:
-            self.intended_interact = True
+            if self.cooldown == 0:
+                self.intended_interact = True
+                self.cooldown = INTERACT_COOLDOWN
+            else:
+                pass
         if self.khandler[key.I]:
             self.attack()
         if facing != [None, None]:
