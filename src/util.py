@@ -18,6 +18,7 @@
 """Helper classes"""
 
 import pyglet, itertools, types, random
+from pyglet import gl
 from pyglet.window import key
 from constants import (OBJECT_FONT_SIZE,
                        ST_BOUND_Y, ST_BOUND_X, OBJECT_FONT_FACE, WALL_WIDTH,
@@ -420,46 +421,40 @@ class Hero(Creature):
             self.inv = []
     def draw(self):
         super(Hero, self).draw()
-        x = x1 = x2 = y = y1 = y2 = 0
         if self.facing[1] == Direction.NORTH:
-            y = self.y + self.h + 2 * HITBOX_GAP
-            y1 = y + self.range / 2
-            y2 = y
-            x = self.x
-            x1 = x + self.w / 2
-            x2 = x + self.w
+            angle = 90.0
+            if self.facing[0] == Direction.EAST:
+                angle -= 45.0
+            elif self.facing[0] == Direction.WEST:
+                angle += 45.0
         elif self.facing[1] == Direction.SOUTH:
-            y = self.y - 2 * HITBOX_GAP
-            y1 = y - self.range / 2
-            y2 = y
-            x = self.x
-            x1 = x + self.w / 2
-            x2 = x + self.w
-        if self.facing[0] == Direction.EAST:
-            y = self.y
-            y1 = y + self.h / 2
-            y2 = y + self.h
-            x = self.x + self.w + 2 * HITBOX_GAP
-            x1 = x + self.range / 2
-            x2 = x
-        elif self.facing[0] == Direction.WEST:
-            y = self.y
-            y1 = y + self.h / 2
-            y2 = y + self.h
-            x = self.x - 2 * HITBOX_GAP
-            x1 = x - self.range / 2
-            x2 = x
-        vl = self.arrow(y, y1, y2, x, x1, x2)
+            angle = 270.0
+            if self.facing[0] == Direction.EAST:
+                angle += 45.0
+            elif self.facing[0] == Direction.WEST:
+                angle -= 45.0
+        else:
+            if self.facing[0] == Direction.EAST:
+                angle = 0.0
+            elif self.facing[0] == Direction.WEST:
+                angle = 180.0
+        y = 0
+        y1 = 0
+        x = 0
+        x1 = self.range + self.w
+        vl = self.arrow(x, y, x1, y1)
+        gl.glPushMatrix()
+        gl.glTranslatef(float(self.x + self.w / 2), float(self.y + self.h / 2), 0.0)
+        gl.glRotatef(angle, 0.0, 0.0, 1.0)
         vl.draw(pyglet.gl.GL_LINE_STRIP)
-    def arrow(self, y, y1, y2, x, x1, x2):
+        gl.glPopMatrix()
+    def arrow(self, x, y, x1, y1):
         r = b = g = 255
         a = 120
         return pyglet.graphics.vertex_list(
-            3, ('v2i', (x,     y,
-                        x1, y1,
-                        x2,     y2)),
+            2, ('v2i', (x,     y,
+                        x1, y1)),
             ('c4B', (r, g, b, a,
-                     r, g, b, a,
                      r, g, b, a)
          ))
     def update(self):
