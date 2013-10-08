@@ -107,16 +107,25 @@ class Object(Drawable):
                 else:
                     yield d()
         return list(fun())
-    @autoset
     def __init__(self, go_through, symbol, description,
-                 interact = empty_interaction, range = 1, id = None):
+                 interact = empty_interaction, range = 1, id = None, x = 0,
+                 y = 0):
+        self._set_properties(go_through, symbol, description, interact, range,
+                             id)
         sprite = pyglet.text.Label(
             symbol,
             font_name=OBJECT_FONT_FACE,
             font_size=OBJECT_FONT_SIZE)
         self.interact = types.MethodType(interact, self)
         super(Object, self).__init__(sprite)
+        self.x = x
+        self.y = y
         self.rect_ = Rect.from_dimensions(0, 0, self.w, self.h)
+    @autoset
+    def _set_properties(self, go_through, symbol, description,
+                 interact, range, id):
+        """Used during the initialization to autoset attributes"""
+        pass
     @property
     def x(self):
         return self.sprite.x

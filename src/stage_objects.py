@@ -100,6 +100,8 @@ WOLF = partial(
     attack_type=MeleeHitbox
 )
 
+WOLF()
+
 room1 = Room(50, 50, 100, 100,
              objects=[CLOSED_SHAFT],
              start=True)
