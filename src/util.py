@@ -453,10 +453,15 @@ class Hero(Creature):
     def arrow(self, x, y, x1, y1):
         r = b = g = 255
         a = 120
+        x2 = x1 - self.w / 2
+        y2 = self.h / 2
+        y3 = - (self.h / 2)
         return pyglet.graphics.vertex_list(
-            2, ('v2i', (x,     y,
-                        x1, y1)),
+            3, ('v2i', (x2,    y3,
+                        x1,    y1,
+                        x2,    y2)),
             ('c4B', (r, g, b, a,
+                     r, g, b, a,
                      r, g, b, a)
          ))
     def update(self):
