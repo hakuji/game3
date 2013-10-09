@@ -22,7 +22,7 @@ from screens import Screen
 from decorations import autoset
 from pyglet.window import key
 from constants import (WINDOW_WIDTH, WINDOW_HEIGHT, NORMAL_DIFICULTY, GAME_NAME,
-                       VICTORY, GAME_OVER)
+                       VICTORY, GAME_OVER, ACCEPT_KEY)
 from control import state
 
 class Option(Drawable, Reactable):
@@ -71,7 +71,7 @@ MAIN_MENU = Screen([
                           font_size=36,
                           x=WINDOW_WIDTH//2, y=WINDOW_HEIGHT//2,
                           anchor_x='center', anchor_y='center'),
-    Option([KeySubscription(get_start(NORMAL_DIFICULTY), key.N)],
+    Option([KeySubscription(get_start(NORMAL_DIFICULTY), ACCEPT_KEY)],
            'New game',
            pyglet.text.Label(font_name='Times',
                           font_size=12,

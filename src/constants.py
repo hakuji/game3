@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with game 3.  If not, see <http://www.gnu.org/licenses/>.
 
+from pyglet.window import key
+
 WINDOW_WIDTH = 640
 WINDOW_HEIGHT = 480
 FIELD_FONT_SIZE = 12
@@ -38,3 +40,4 @@ class Direction(object):
     EAST = 'E'
     SOUTH = 'S'
     WEST = 'W'
+ACCEPT_KEY = key.I

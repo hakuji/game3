@@ -27,7 +27,8 @@ from constants import (
     ROAM_LIST,
     HITBOX_GAP,
     INTERACT_COOLDOWN,
-    Direction)
+    Direction,
+    ACCEPT_KEY)
 from random import randint
 from rect import Rect, Point
 from decorations import autoset
@@ -468,7 +469,7 @@ class Hero(Creature):
         if self.khandler[key.D]:
             self.intended_x = self.x + self.speed
             facing[0] = Direction.EAST
-        if self.khandler[key.I]:
+        if self.khandler[ACCEPT_KEY]:
             if self.cooldown == 0:
                 self.intended_interact = True
                 self.cooldown = INTERACT_COOLDOWN
