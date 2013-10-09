@@ -17,19 +17,19 @@
 
 import itertools
 from random import randint
-from exception import ReplaceObjectException, CreatureDeathException
+from exception import (ReplaceObjectException, CreatureDeathException,
+                       AnimationEnd)
 from util import Container, Object
+from decorations import autoset
 
 class Level(Container):
     """A game level, stage etc"""
+    @autoset
     def __init__(self, hero, objects, rooms, pathways,
-                 creatures):
-        self.pathways = pathways
-        self.rooms = rooms
+                 creatures, initial_animations = []):
         self.objects = Object.from_list(objects)
         self.creatures = Object.from_list(creatures)
         self.arrange_objects()
-        self.hero = hero
         self.init_rooms()
         self.set_enemies()
         self.contents = []
@@ -74,6 +74,12 @@ does not exist. Fail silently"""
         self.remove_object(this)
         self.add_object(ex.that(), this.x, this.y)
     def update(self):
+        if len(self.initial_animations) > 0:
+            try:
+                self.initial_animations[0].update(self)
+            except AnimationEnd:
+                del self.initial_animations[0]
+
         del self.hitboxes[:]
         for obj in self.objects:
             obj.update()

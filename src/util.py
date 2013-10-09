@@ -570,7 +570,6 @@ class MagneticPathway(Pathway):
                 y = randint(min_y, max_y)
                 super(MagneticPathway, self).__init__(True, x, y,  width)
 
-
 class Room(object):
     @autoset
     def __init__(self, x, y, w, h, objects = [], creatures = [],
