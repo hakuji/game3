@@ -28,7 +28,10 @@ from constants import (
     HITBOX_GAP,
     INTERACT_COOLDOWN,
     Direction,
-    ACCEPT_KEY)
+    ACCEPT_KEY,
+    WINDOW_WIDTH,
+    WINDOW_HEIGHT,
+    BACKGROUND_COLOR)
 from random import randint
 from rect import Rect, Point
 from decorations import autoset
@@ -82,6 +85,13 @@ class Reactable(object):
 
 def empty_interaction(self):
     pass
+
+def fadeout():
+    """Makes the entire screen fadeout"""
+    bg = BACKGROUND_COLOR
+    rect = vertex_list_from_rect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT,
+                                 bg)
+    rect.draw(pyglet.gl.GL_QUAD_STRIP)
 
 class Object(Drawable):
     """Actual object on the screen"""

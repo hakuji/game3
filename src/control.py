@@ -39,15 +39,17 @@ class GameController(Reactable):
         return self.screens[-1]
     def get_chsc_callback(self, screen):
         """Return a function that changes the current screen"""
-        def append_screen():
-            self.screens.append(screen)
-        return append_screen
+        return lambda : self.add_screen(screen)
+    def add_screen(self, screen):
+        """Changes the current screen"""
+#        fadeout()
+        self.screens.append(screen)
     def start_game(self, dificulty, hero = None, stage_no = 0):
         """Where the magic starts"""
         if hero is None:
             hero = Hero(self.khandler)
         self.game_state = GameState(dificulty, hero, stage_no)
-        self.screens.append(CommonScreen(self.game_state))
+        self.add_screen(CommonScreen(self.game_state))
     def back_one_screen(self):
         """Revert to previous screen or quit"""
         if len(self.screens) > 1:
@@ -68,9 +70,9 @@ class GameController(Reactable):
         except GameOverException as ex:
             self.back_one_screen()
             if ex.defeat:
-                self.screens.append(self.defeat)
+                self.add_screen(self.defeat)
             else:
-                self.screens.append(self.victory)
+                self.add_screen(self.victory)
     def react(self, key, modifiers):
         """Calls default reactions and screen specific reactions to keyboard
 events"""

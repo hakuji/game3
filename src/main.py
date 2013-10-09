@@ -18,7 +18,8 @@
 
 import pyglet
 from control import state
-from constants import WINDOW_WIDTH, WINDOW_HEIGHT, GAME_NAME, INTERVAL
+from constants import (WINDOW_WIDTH, WINDOW_HEIGHT, GAME_NAME, INTERVAL,
+                       BACKGROUND_COLOR)
 from util import KeySubscription, SubscriptionFound
 from pyglet.window import key
 from pyglet import gl
@@ -44,7 +45,7 @@ def on_draw():
 def init():
     gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
     gl.glEnable(gl.GL_BLEND)
-    gl.glClearColor(0.0,0.0,0.0,0.0)
+    gl.glClearColor(*BACKGROUND_COLOR)
     state.subs.extend([
         KeySubscription(state.back_one_screen, key.Q),
         KeySubscription(state.back_one_screen, key.ESCAPE),
