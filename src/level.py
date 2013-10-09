@@ -19,10 +19,6 @@ import itertools
 from random import randint
 from exception import ReplaceObjectException, CreatureDeathException
 from util import Container, Object
-from rect import Rect
-
-rect1 = Rect.from_dimensions(0, 0, 0, 0)
-rect2 = Rect.from_dimensions(0, 0, 0, 0)
 
 class Level(Container):
     """A game level, stage etc"""
@@ -116,13 +112,10 @@ does not exist. Fail silently"""
                     return
     def update_position(self, creature):
         if not creature.go_through:
-            w = creature.w
-            h = creature.h
             for i in creature.movements():
-                if (self.contained_in_any_room(i[0], i[1], w, h)
-                    and not self.collide_with_objects(i[0], i[1], w, h, creature)):
-                    creature.x = i[0]
-                    creature.y = i[1]
+                creature.set_location(*i)
+                if (self.contained_in_any_room(creature)
+                    and not self.collide_with_objects(creature)):
                     break
                 else:
                     pass
@@ -147,34 +140,23 @@ does not exist. Fail silently"""
     def get_containing_places(self):
         """Returns all rooms an pathways"""
         return itertools.chain(self.rooms, self.pathways)
-    def collide_with_rect(self, obj):
+    def collide_with_rect(self, obj1, obj2):
         """Ugly bit of code that requires a previous state to be set"""
-        rect2.set_points_from_dimensions(obj.x,
-                                               obj.y,
-                                               obj.w,
-                                               obj.h)
-        return rect1.overlaps(rect2)
-    def contained_in_a_room(self, x, y, w, h, room):
+        return obj1.rect.overlaps(obj2.rect)
+    def contained_in_a_room(self, obj, room):
         """True if the rect defined by the given dimensions is inside the given
 room or pathway"""
-        rect1.set_points_from_dimensions(x, y, w, h)
-        return room.inner_rect.contains(rect1)
-    def contained_in_any_room(self, x, y, w, h):
+        return room.inner_rect.contains(obj.rect)
+    def contained_in_any_room(self, obj):
         """True if the rect defined by the given dimensions is inside a room or
 pathway"""
-        rect1.set_points_from_dimensions(x, y, w, h)
-        return any(self.contained_in_a_room(x, y, w, h, r)
+        return any(self.contained_in_a_room(obj, r)
                    for r in itertools.chain(self.rooms, self.pathways))
-    def collide_with_objects(self, x, y, w, h, ex = None):
+    def collide_with_objects(self, obj):
         """True if the rect defined by the given dimensions collide with any object
 except for ex"""
-        rect1.set_points_from_dimensions(x, y, w, h)
-        if ex is not None:
-            return any(self.collide_with_rect(i) for i in self.placeable_objects()
-                       if i != ex and not i.go_through)
-        else:
-            return any(self.collide_with_rect(i) for i in self.placeable_objects()
-                       if not i.go_through)
+        return any(self.collide_with_rect(obj, i) for i in self.placeable_objects()
+                   if i != obj and not i.go_through)
     def set_location(self, obj, room = None):
         """Assign a random free position to an object. Will try at most 10000
 times before raising an exception"""
@@ -183,16 +165,16 @@ times before raising an exception"""
         for i in range(10000):
             if room is None:
                 x, y = self.get_random_position(width, height)
-                contained = self.contained_in_any_room(x, y, width, height)
+                obj.set_location(x, y)
+                contained = self.contained_in_any_room(obj)
             else:
                 x, y = self.get_random_position_in_room(width, height, room)
-                contained = self.contained_in_a_room(x, y, width, height, room)
+                obj.set_location(x, y)
+                contained = self.contained_in_a_room(obj, room)
             if contained:
                 if obj.go_through:
-                    obj.set_location(x, y)
                     return
-                elif not self.collide_with_objects(x, y, width, height):
-                    obj.set_location(x, y)
+                elif not self.collide_with_objects(obj):
                     return
         raise Exception('Could not assign a position to object: '
                         + str(obj))
