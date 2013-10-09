@@ -19,6 +19,11 @@
 
 import pyglet
 
+from constants import (
+    WINDOW_WIDTH,
+    WINDOW_HEIGHT,
+    BACKGROUND_COLOR)
+
 ran = range
 def range(*args):
     """Beefed out version of range that automatically deals
@@ -77,3 +82,9 @@ def vertex_list_from_rect(x, y, w, h, color = (0, 0, 255, 255)):
                  r, g, b, a)
         ))
 
+def fadeout():
+    """Makes the entire screen fadeout"""
+    bg = BACKGROUND_COLOR
+    rect = vertex_list_from_rect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT,
+                                 bg)
+    rect.draw(pyglet.gl.GL_QUAD_STRIP)
