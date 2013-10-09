@@ -79,20 +79,6 @@ class Reactable(object):
         for i in self.subs:
             i.react(key, modifiers)
 
-class Option(Drawable, Reactable):
-    """Option accessed with a key"""
-    @autoset
-    def __init__(self, subs, description, sprite):
-        self.sprite.text = self.get_text()
-    def keypart(self):
-        keystr = [str(i) for i in self.subs]
-        if len(keystr) > 1:
-            return ', '.join(keystr[:-1]) + ' or ' + keystr[-1]
-        else:
-            return keystr[0]
-    def get_text(self):
-        return self.keypart() + ' - ' + self.description
-
 def empty_interaction(self):
     pass
 

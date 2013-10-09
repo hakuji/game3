@@ -17,12 +17,27 @@
 
 """List of game menus"""
 import pyglet
-from util import KeySubscription, Option
+from util import KeySubscription, Drawable, Reactable
 from screens import Screen
+from decorations import autoset
 from pyglet.window import key
 from constants import (WINDOW_WIDTH, WINDOW_HEIGHT, NORMAL_DIFICULTY, GAME_NAME,
                        VICTORY, GAME_OVER)
 from control import state
+
+class Option(Drawable, Reactable):
+    """Option accessed with a key"""
+    @autoset
+    def __init__(self, subs, description, sprite):
+        self.sprite.text = self.get_text()
+    def keypart(self):
+        keystr = [str(i) for i in self.subs]
+        if len(keystr) > 1:
+            return ', '.join(keystr[:-1]) + ' or ' + keystr[-1]
+        else:
+            return keystr[0]
+    def get_text(self):
+        return self.keypart() + ' - ' + self.description
 
 def get_start(dificulty):
     def l():
