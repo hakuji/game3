@@ -64,16 +64,16 @@ def range_inc(*args):
     else:
         raise TypeError('range takes at most 3 arguments (0 given)'.format([str(len(args))]))
 
-def vertex_list_from_rect(x, y, w, h, color = (0, 0, 255)):
-    r, g, b = color
+def vertex_list_from_rect(x, y, w, h, color = (0, 0, 255, 255)):
+    r, g, b, a = color
     return pyglet.graphics.vertex_list(
         4, ('v2i', (x,     y,
                     x + w, y,
                     x,     y + h,
                     x + w, y + h)),
-        ('c3B', (r, g, b,
-                 r, g, b,
-                 r, g, b,
-                 r, g, b)
+        ('c4B', (r, g, b, a,
+                 r, g, b, a,
+                 r, g, b, a,
+                 r, g, b, a)
         ))
 
