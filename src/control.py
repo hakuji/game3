@@ -39,7 +39,9 @@ class GameController(Reactable):
         return self.screens[-1]
     def get_chsc_callback(self, screen):
         """Return a function that changes the current screen"""
-        return lambda : self.screens.append(screen)
+        def append_screen():
+            self.screens.append(screen)
+        return append_screen
     def start_game(self, dificulty, hero = None, stage_no = 0):
         """Where the magic starts"""
         if hero is None:
