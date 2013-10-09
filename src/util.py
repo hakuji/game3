@@ -33,11 +33,7 @@ from exception import (
     AnimationEnd)
 from function import range, range_inc, vertex_list_from_rect
 
-pointa = Point(0, 0)
-pointb = Point(0, 0)
 flatten = itertools.chain.from_iterable
-rect1 = Rect.from_dimensions(0, 0, 0, 0)
-rect2 = Rect.from_dimensions(0, 0, 0, 0)
 
 class KeySubscription(object):
     """Keyboard inputs combination that trigger an event"""
@@ -97,6 +93,8 @@ def empty_interaction(self):
 
 class Object(Drawable):
     """Actual object on the screen"""
+    pa = Point(0, 0)
+    pb = Point(0, 0)
     @classmethod
     def from_list(cls, l):
         def fun():
@@ -177,11 +175,11 @@ class Object(Drawable):
         pass
     def within_distance(self, obj, distance):
         """If obj is at most distance from self return true"""
-        pointa.x = self.x + self.w / 2
-        pointa.y = self.y + self.h / 2
-        pointb.x = obj.x + obj.w / 2
-        pointb.y = obj.y + obj.h / 2
-        return (pointa.distance_to(pointb) <= distance
+        Object.pa.x = self.x + self.w / 2
+        Object.pa.y = self.y + self.h / 2
+        Object.pb.x = obj.x + obj.w / 2
+        Object.pb.y = obj.y + obj.h / 2
+        return (Object.pa.distance_to(Object.pb) <= distance
                 +  max(self.h, self.w) / 2)
     def within_range(self, obj):
         return self.within_distance(obj, self.range)
