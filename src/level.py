@@ -18,15 +18,30 @@
 import itertools
 from random import randint
 from exception import (ReplaceObjectException, CreatureDeathException,
-                       AnimationEnd)
+                       AnimationEnd, PreviousLevelException)
 from util import Container, Object
 from decorations import autoset
+from functools import partial
+
+def ascend_stairs(self):
+    raise PreviousLevelException()
+
+ASC_STAIRS = partial(
+    Object,
+    True,
+    '<',
+    'Ascending stairs',
+#    interact = ascend_stairs,
+    id = 3,
+    x = 130,
+    y = 90
+)
 
 class Level(Container):
     """A game level, stage etc"""
     @autoset
     def __init__(self, hero, objects, rooms, pathways,
-                 creatures, initial_animations = []):
+                 creatures):
         self.objects = Object.from_list(objects)
         self.creatures = Object.from_list(creatures)
         self.arrange_objects()
@@ -43,8 +58,7 @@ class Level(Container):
     def init_rooms(self):
         for r in self.rooms:
             if r.start:
-                self.set_location(self.hero, r)
-                self.creatures.append(self.hero)
+                self.init_start_room(r)
             creatures = Object.from_list(r.creatures)
             for c in creatures:
                 self.creatures.append(c)
@@ -53,6 +67,14 @@ class Level(Container):
             for o in objects:
                 self.objects.append(o)
                 self.set_location(o, r)
+    def init_start_room(self, r):
+        stairs = ASC_STAIRS()
+        self.objects.append(stairs)
+        self.set_location(stairs, r)
+        x = stairs.x
+        y = stairs.y
+        self.hero.set_location(x, y)
+        self.creatures.append(self.hero)
     def set_enemies(self):
         for i in self.creatures:
             if getattr(i, 'hostile', False):
@@ -74,12 +96,6 @@ does not exist. Fail silently"""
         self.remove_object(this)
         self.add_object(ex.that(), this.x, this.y)
     def update(self):
-        if len(self.initial_animations) > 0:
-            try:
-                self.initial_animations[0].update(self)
-            except AnimationEnd:
-                del self.initial_animations[0]
-
         del self.hitboxes[:]
         for obj in self.objects:
             obj.update()
