@@ -20,9 +20,14 @@
 import pyglet, itertools, types, random
 from pyglet import gl
 from pyglet.window import key
-from constants import (OBJECT_FONT_SIZE,
-                       OBJECT_FONT_FACE, WALL_WIDTH,
-                       ROAM_LIST, HITBOX_GAP, INTERACT_COOLDOWN)
+from constants import (
+    OBJECT_FONT_SIZE,
+    OBJECT_FONT_FACE,
+    WALL_WIDTH,
+    ROAM_LIST,
+    HITBOX_GAP,
+    INTERACT_COOLDOWN,
+    Direction)
 from random import randint
 from rect import Rect, Point
 from decorations import autoset
@@ -191,12 +196,6 @@ class Object(Drawable):
         super(Object, self).draw()
     def __str__(self):
         return self.symbol + ' ' + self.description
-
-class Direction(object):
-    NORTH = 'N'
-    EAST = 'E'
-    SOUTH = 'S'
-    WEST = 'W'
 
 class Creature(Object):
     """Actual creature on the screen"""
