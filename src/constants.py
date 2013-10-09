@@ -42,3 +42,4 @@ class Direction(object):
     SOUTH = 'S'
     WEST = 'W'
 ACCEPT_KEY = key.I
+ROOM_FLOOR_COLOR = (150, 50, 255, 255)
