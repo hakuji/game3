@@ -23,7 +23,7 @@ from decorations import autoset
 from pyglet.window import key
 from constants import (WINDOW_WIDTH, WINDOW_HEIGHT, NORMAL_DIFICULTY, GAME_NAME,
                        VICTORY, GAME_OVER, ACCEPT_KEY)
-from control import state
+from exception import StartGame
 
 class Option(Drawable, Reactable):
     """Option accessed with a key"""
@@ -39,11 +39,10 @@ class Option(Drawable, Reactable):
     def get_text(self):
         return self.keypart() + ' - ' + self.description
 
-def get_start(dificulty):
-    def l():
-        state.start_game(dificulty)
-#        del state.screens[-2]
-    return l
+def start_game(dificulty):
+    def f(): 
+        raise StartGame(dificulty)
+    return f
 
 CHOOSE_DIFICULTY = Screen([
     pyglet.text.Label('Choose the game dificulty',
@@ -51,13 +50,13 @@ CHOOSE_DIFICULTY = Screen([
                           font_size=25,
                           x=WINDOW_WIDTH//2, y=WINDOW_HEIGHT//2,
                           anchor_x='center', anchor_y='center'),
-    Option([KeySubscription(get_start(NORMAL_DIFICULTY), key.N)],
+    Option([KeySubscription(start_game(NORMAL_DIFICULTY), key.N)],
            'Normal',
            pyglet.text.Label(font_name='Times',
                           font_size=12,
                           x=WINDOW_WIDTH//2, y=WINDOW_HEIGHT//2 - 52,
                           anchor_x='center', anchor_y='center')),
-    Option([KeySubscription(get_start(not NORMAL_DIFICULTY), key.H)],
+    Option([KeySubscription(start_game(not NORMAL_DIFICULTY), key.H)],
            'Hard',
            pyglet.text.Label(font_name='Times',
                           font_size=12,
@@ -71,7 +70,7 @@ MAIN_MENU = Screen([
                           font_size=36,
                           x=WINDOW_WIDTH//2, y=WINDOW_HEIGHT//2,
                           anchor_x='center', anchor_y='center'),
-    Option([KeySubscription(get_start(NORMAL_DIFICULTY), ACCEPT_KEY)],
+    Option([KeySubscription(start_game(NORMAL_DIFICULTY), ACCEPT_KEY)],
            'New game',
            pyglet.text.Label(font_name='Times',
                           font_size=12,

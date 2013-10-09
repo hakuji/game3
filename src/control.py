@@ -17,8 +17,11 @@
 
 import pyglet
 from util import Reactable, Hero
-from exception import (NextLevelException, GameOverException,
-                       PreviousLevelException)
+from exception import (
+    NextLevelException,
+    GameOverException,
+    PreviousLevelException,
+    StartGame)
 from screens import CommonScreen
 from stage_objects import LEVELS
 from constants import INTERVAL
@@ -42,7 +45,6 @@ class GameController(Reactable):
         return lambda : self.add_screen(screen)
     def add_screen(self, screen):
         """Changes the current screen"""
-#        fadeout()
         self.screens.append(screen)
     def start_game(self, dificulty, hero = None, stage_no = 0):
         """Where the magic starts"""
@@ -77,7 +79,10 @@ class GameController(Reactable):
         """Calls default reactions and screen specific reactions to keyboard
 events"""
         super(GameController, self).react(key, modifiers)
-        self.top_screen().react(key, modifiers)
+        try:
+            self.top_screen().react(key, modifiers)
+        except StartGame as ex:
+            self.start_game(ex.dificulty)
 
 class GameState(object):
     """State of the playable parts of the game"""

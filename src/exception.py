@@ -17,6 +17,13 @@
 
 """Game exceptions"""
 
+from decorations import autoset
+
+class StartGame(Exception):
+    @autoset
+    def __init__(self, dificulty):
+        pass
+
 class SubscriptionFound(Exception):
     pass
 
@@ -33,16 +40,17 @@ class CreatureDeathException(Exception):
     pass
 
 class GameOverException(Exception):
+    @autoset
     def __init__(self, defeat):
-        self.defeat = defeat
+        pass
 
 class ImpossiblePathwayException(Exception):
     pass
 
 class ReplaceObjectException(Exception):
+    @autoset
     def __init__(self, this, that):
-        self.this = this
-        self.that = that
+        pass
 
 class AnimationEnd(Exception):
     pass
