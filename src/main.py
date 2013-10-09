@@ -19,10 +19,10 @@
 import pyglet
 from control import state
 from constants import WINDOW_WIDTH, WINDOW_HEIGHT, GAME_NAME, INTERVAL
-from util import KeySubscription, Option, SubscriptionFound
+from util import KeySubscription, SubscriptionFound
 from pyglet.window import key
 from pyglet import gl
-from menu import MAIN_MENU, VICTORY_SCREEN, DEFEAT_SCREEN
+from menu import MAIN_MENU, VICTORY_SCREEN, DEFEAT_SCREEN, Option
 
 window = pyglet.window.Window(
     caption = GAME_NAME,

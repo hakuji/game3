@@ -42,7 +42,7 @@ class Option(Drawable, Reactable):
 def get_start(dificulty):
     def l():
         state.start_game(dificulty)
-        del state.screens[-2]
+#        del state.screens[-2]
     return l
 
 CHOOSE_DIFICULTY = Screen([
@@ -71,8 +71,7 @@ MAIN_MENU = Screen([
                           font_size=36,
                           x=WINDOW_WIDTH//2, y=WINDOW_HEIGHT//2,
                           anchor_x='center', anchor_y='center'),
-    Option([KeySubscription(
-        state.get_chsc_callback(CHOOSE_DIFICULTY), key.N)],
+    Option([KeySubscription(get_start(NORMAL_DIFICULTY), key.N)],
            'New game',
            pyglet.text.Label(font_name='Times',
                           font_size=12,
