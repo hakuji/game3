@@ -40,9 +40,6 @@ class GameController(Reactable):
         self.subs = subs
     def top_screen(self):
         return self.screens[-1]
-    def get_chsc_callback(self, screen):
-        """Return a function that changes the current screen"""
-        return lambda : self.add_screen(screen)
     def add_screen(self, screen):
         """Changes the current screen"""
         self.screens.append(screen)
