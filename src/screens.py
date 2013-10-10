@@ -17,7 +17,11 @@
 
 import pyglet
 from util import Container
-from constants import STATS_PANEL_X, STATS_PANEL_Y, FIELD_FONT_SIZE
+from constants import (
+    STATS_PANEL_X,
+    STATS_PANEL_Y,
+    FIELD_FONT_SIZE,
+    FADEOUT_STEP)
 from function import fadeout
 from exception import StartGame
 
@@ -26,7 +30,7 @@ class Screen(Container):
         super(Screen, self).__init__(contents)
         self.fadeout = 255
         self.ex = None
-        self.fstep = 20
+        self.fstep = FADEOUT_STEP
     def fadeout(self, next_screen):
         self.fadeout = 0
     def update(self):
@@ -46,7 +50,6 @@ class Screen(Container):
                 if hasattr(i, 'react'):
                     i.react(key, modifiers)
         except StartGame as ex:
-            self.fstep = 20
             self.fadeout = 0
             self.ex = ex
 
