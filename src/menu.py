@@ -70,6 +70,12 @@ CHOOSE_DIFICULTY = Screen([
                           anchor_x='center', anchor_y='center'))
 ])
 
+QUIT_SUBSCRIPTIONS = [
+        KeySubscription(go_back, key.Q),
+        KeySubscription(go_back, key.ESCAPE),
+        KeySubscription(quit_game, key.C, key.MOD_CTRL)
+]
+
 MAIN_MENU = Screen([
     pyglet.text.Label(GAME_NAME,
                           font_name='Times',
@@ -79,9 +85,15 @@ MAIN_MENU = Screen([
     Option([KeySubscription(start_game(NORMAL_DIFICULTY), ACCEPT_KEY)],
            'New game',
            pyglet.text.Label(font_name='Times',
-                          font_size=12,
-                          x=WINDOW_WIDTH//2, y=WINDOW_HEIGHT//2 - 72,
-                          anchor_x='center', anchor_y='center'))
+                             font_size=12,
+                             x=WINDOW_WIDTH//2, y=WINDOW_HEIGHT//2 - 72,
+                             anchor_x='center', anchor_y='center')),
+    Option(QUIT_SUBSCRIPTIONS[0:1],
+           'Quit',
+           pyglet.text.Label(font_name='Times',
+                             font_size=12,
+                             x=WINDOW_WIDTH//2, y=WINDOW_HEIGHT//2 - 92,
+                             anchor_x='center', anchor_y='center'))
 ])
 
 VICTORY_SCREEN = Screen([
@@ -99,9 +111,3 @@ DEFEAT_SCREEN = Screen([
                           x=WINDOW_WIDTH//2, y=WINDOW_HEIGHT//2,
                           anchor_x='center', anchor_y='center')
 ])
-
-QUIT_SUBSCRIPTIONS = [
-        KeySubscription(go_back, key.Q),
-        KeySubscription(go_back, key.ESCAPE),
-        KeySubscription(quit_game, key.C, key.MOD_CTRL)
-]

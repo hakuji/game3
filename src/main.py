@@ -20,10 +20,9 @@ import pyglet
 from control import state
 from constants import (WINDOW_WIDTH, WINDOW_HEIGHT, GAME_NAME, INTERVAL,
                        BACKGROUND_COLOR)
-from util import KeySubscription, SubscriptionFound
+from util import SubscriptionFound
 from pyglet.window import key
 from pyglet import gl
-from menu import MAIN_MENU, VICTORY_SCREEN, DEFEAT_SCREEN, Option
 
 window = pyglet.window.Window(
     caption = GAME_NAME,
@@ -49,14 +48,6 @@ def init():
     keys = key.KeyStateHandler()
     window.push_handlers(keys)
     state.khandler = keys
-    MAIN_MENU.contents.append(Option(
-        state.subs[0:1],
-        'Quit',
-        pyglet.text.Label(
-            font_name='Times',
-            font_size=12,
-            x=WINDOW_WIDTH//2, y=WINDOW_HEIGHT//2 - 92,
-            anchor_x='center', anchor_y='center')))
     pyglet.clock.schedule_interval(state.update, INTERVAL)
     pyglet.app.run()
 
