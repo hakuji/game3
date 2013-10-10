@@ -17,25 +17,9 @@
 
 import itertools
 from random import randint
-from exception import (ReplaceObjectException, CreatureDeathException,
-                       PreviousLevelException)
+from exception import (ReplaceObjectException, CreatureDeathException)
 from util import Container, Object
 from decorations import autoset
-from functools import partial
-
-def ascend_stairs(self):
-    raise PreviousLevelException()
-
-ASC_STAIRS = partial(
-    Object,
-    True,
-    '<',
-    'Ascending stairs',
-    interact = ascend_stairs,
-    id = 3,
-    x = 130,
-    y = 90
-)
 
 class Level(Container):
     """A game level, stage etc"""
@@ -68,9 +52,8 @@ class Level(Container):
                 self.objects.append(o)
                 self.set_location(o, r)
     def init_start_room(self, r):
-        stairs = ASC_STAIRS()
-        self.objects.append(stairs)
-        self.set_location(stairs, r)
+        stairs = filter(lambda o: o.id == -2, self.objects)
+        stairs = stairs[0]
         x = stairs.x
         y = stairs.y
         self.hero.set_location(x, y)
