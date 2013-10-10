@@ -364,7 +364,6 @@ class Move(Animation):
         self.pos = None
     def final_destination(self):
         x, y = self.obj.x, self.obj.y
-        print x,y
         if self.direction[0] == Direction.EAST:
             x += self.distance
         elif self.direction[0] == Direction.WEST:
@@ -373,13 +372,13 @@ class Move(Animation):
             y += self.distance
         elif self.direction[1] == Direction.SOUTH:
             y -= self.distance
-        print x,y
         return x, y
     def update(self):
         if not self.destination_set:
             self.pos = self.final_destination()
-            self.obj.move_towards(self.pos[0], self.pos[1])
             self.destination_set = True
+        else:
+            self.obj.move_towards(self.pos[0], self.pos[1])
         if self.pos[0] == self.obj.x and self.pos[1] == self.obj.y:
             raise AnimationEnd()
 
@@ -402,7 +401,7 @@ class Hero(Creature):
         )
         self.speed = 3
         self.intended_interact = False
-        self.animation = None
+        self.animation = Move([Direction.EAST, None], 10, self)
         self.arrow = self.get_arrow()
         if inv is None:
             self.inv = []
