@@ -18,7 +18,7 @@
 import itertools
 from random import randint
 from exception import (ReplaceObjectException, CreatureDeathException,
-                       AnimationEnd, PreviousLevelException)
+                       PreviousLevelException)
 from util import Container, Object
 from decorations import autoset
 from functools import partial
@@ -31,7 +31,7 @@ ASC_STAIRS = partial(
     True,
     '<',
     'Ascending stairs',
-#    interact = ascend_stairs,
+    interact = ascend_stairs,
     id = 3,
     x = 130,
     y = 90
