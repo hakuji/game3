@@ -28,29 +28,29 @@ from exception import StartGame
 class Screen(Container):
     def __init__(self, contents):
         super(Screen, self).__init__(contents)
-        self.fadeout = 255
+        self.fade = 255
         self.ex = None
         self.fstep = FADEOUT_STEP
-    def fadeout(self, next_screen):
-        self.fadeout = 0
+    def fade(self, next_screen):
+        self.fade = 0
     def update(self):
         super(Screen, self).update()
-        self.fadeout = min(self.fadeout + self.fstep, 255)
-        if self.ex is not None and self.fadeout == 255:
+        self.fade = min(self.fade + self.fstep, 255)
+        if self.ex is not None and self.fade == 255:
             ex = self.ex
             self.ex = None
             raise ex
     def draw(self):
         super(Screen, self).draw()
-        if self.fadeout < 255:
-            fadeout(self.fadeout)
+        if self.fade < 255:
+            fadeout(self.fade)
     def react(self, key, modifiers):
         try:
             for i in self.contents:
                 if hasattr(i, 'react'):
                     i.react(key, modifiers)
         except StartGame as ex:
-            self.fadeout = 0
+            self.fade = 0
             self.ex = ex
 
 class LabeledField(Container):
