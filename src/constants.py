@@ -35,7 +35,7 @@ GAME_OVER = 'GAME OVER'
 ROAM_LIST = [-1, 0, 0, 0, 1]
 HITBOX_GAP = 3
 INTERACT_COOLDOWN = 10
-BACKGROUND_COLOR = (0,0,0,0)
+BACKGROUND_COLOR = [0, 0, 0, 0]
 class Direction(object):
     NORTH = 'N'
     EAST = 'E'
