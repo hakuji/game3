@@ -15,13 +15,14 @@
 # You should have received a copy of the GNU General Public License
 # along with game 3.  If not, see <http://www.gnu.org/licenses/>.
 
-from util import (Object, Creature, Room, MagneticPathway, MeleeHitbox)
+from util import (Object, Creature, MeleeHitbox)
 from level import Level
 from exception import (
     ReplaceObjectException,
     NextLevelException,
     PreviousLevelException)
 from functools import partial
+from room import Room, MagneticPathway
 
 def descend_stairs(self):
     raise NextLevelException()
