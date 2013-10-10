@@ -18,7 +18,7 @@
 """List of game menus"""
 import pyglet
 from util import KeySubscription, Drawable, Reactable
-from screens import Screen
+from screens import Screen, MenuScreen
 from decorations import autoset
 from pyglet.window import key
 from constants import (WINDOW_WIDTH, WINDOW_HEIGHT, NORMAL_DIFICULTY, GAME_NAME,
@@ -50,7 +50,7 @@ def go_back():
 def quit_game():
     raise QuitGame()
 
-CHOOSE_DIFICULTY = Screen([
+CHOOSE_DIFICULTY = MenuScreen([
     pyglet.text.Label('Choose the game dificulty',
                           font_name='Times',
                           font_size=25,
@@ -76,7 +76,7 @@ QUIT_SUBSCRIPTIONS = [
         KeySubscription(quit_game, key.C, key.MOD_CTRL)
 ]
 
-MAIN_MENU = Screen([
+MAIN_MENU = MenuScreen([
     pyglet.text.Label(GAME_NAME,
                           font_name='Times',
                           font_size=36,

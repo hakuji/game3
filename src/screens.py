@@ -26,29 +26,33 @@ from function import fadeout
 from exception import StartGame
 
 class Screen(Container):
+    def react(self, key, modifiers):
+        for i in self.contents:
+            if hasattr(i, 'react'):
+                i.react(key, modifiers)
+
+class MenuScreen(Screen):
     def __init__(self, contents):
-        super(Screen, self).__init__(contents)
+        super(MenuScreen, self).__init__(contents)
         self.fade = 255
         self.ex = None
         self.fstep = FADEOUT_STEP
     def fade(self, next_screen):
         self.fade = 0
     def update(self):
-        super(Screen, self).update()
+        super(MenuScreen, self).update()
         self.fade = min(self.fade + self.fstep, 255)
         if self.ex is not None and self.fade == 255:
             ex = self.ex
             self.ex = None
             raise ex
     def draw(self):
-        super(Screen, self).draw()
+        super(MenuScreen, self).draw()
         if self.fade < 255:
             fadeout(self.fade)
     def react(self, key, modifiers):
         try:
-            for i in self.contents:
-                if hasattr(i, 'react'):
-                    i.react(key, modifiers)
+            super(MenuScreen, self).react(key, modifiers)
         except StartGame as ex:
             self.fade = 0
             self.ex = ex
