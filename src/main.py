@@ -49,7 +49,6 @@ def init():
     keys = key.KeyStateHandler()
     window.push_handlers(keys)
     state.khandler = keys
-    state.screens.append(MAIN_MENU)
     MAIN_MENU.contents.append(Option(
         state.subs[0:1],
         'Quit',

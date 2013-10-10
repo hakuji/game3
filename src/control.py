@@ -28,16 +28,14 @@ from screens import CommonScreen
 from stage_objects import LEVELS
 from constants import INTERVAL
 from decorations import autoset
-from menu import QUIT_SUBSCRIPTIONS, VICTORY_SCREEN, DEFEAT_SCREEN
+from menu import QUIT_SUBSCRIPTIONS, VICTORY_SCREEN, DEFEAT_SCREEN, MAIN_MENU
 
 class GameController(Reactable):
     """Ui controller"""
-    def __init__(self, main_menu = None):
-        if main_menu is None:
-            main_menu = []
+    def __init__(self):
         self.victory = VICTORY_SCREEN
         self.defeat = DEFEAT_SCREEN
-        self.screens = main_menu
+        self.screens = [MAIN_MENU]
         self.subs = QUIT_SUBSCRIPTIONS
     def top_screen(self):
         return self.screens[-1]
