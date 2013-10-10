@@ -85,5 +85,13 @@ class CommonScreen(Screen):
         pfield = LabeledField('Level', pfunc, STATS_PANEL_X, STATS_PANEL_Y - 30)
         self.contents = [hfield, pfield,
                          state.level]#message_box
+        self.fade = 255
+        self.step = FADEOUT_STEP
     def update(self):
-        self.state.update()
+        self.fade = max(self.fade - self.step, 0)
+        if self.fade < 50:
+            self.state.update()
+    def draw(self):
+        super(CommonScreen, self).draw()
+        if self.fade > 0:
+            fadeout(self.fade)
