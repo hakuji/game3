@@ -46,17 +46,10 @@ def init():
     gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
     gl.glEnable(gl.GL_BLEND)
     gl.glClearColor(*BACKGROUND_COLOR)
-    state.subs.extend([
-        KeySubscription(state.back_one_screen, key.Q),
-        KeySubscription(state.back_one_screen, key.ESCAPE),
-        KeySubscription(state.quit, key.C, key.MOD_CTRL)
-    ])
     keys = key.KeyStateHandler()
     window.push_handlers(keys)
     state.khandler = keys
     state.screens.append(MAIN_MENU)
-    state.victory = VICTORY_SCREEN
-    state.defeat = DEFEAT_SCREEN
     MAIN_MENU.contents.append(Option(
         state.subs[0:1],
         'Quit',

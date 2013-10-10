@@ -23,7 +23,7 @@ from decorations import autoset
 from pyglet.window import key
 from constants import (WINDOW_WIDTH, WINDOW_HEIGHT, NORMAL_DIFICULTY, GAME_NAME,
                        VICTORY, GAME_OVER, ACCEPT_KEY)
-from exception import StartGame
+from exception import StartGame, BackOneScreen, QuitGame
 
 class Option(Drawable, Reactable):
     """Option accessed with a key"""
@@ -40,9 +40,15 @@ class Option(Drawable, Reactable):
         return self.keypart() + ' - ' + self.description
 
 def start_game(dificulty):
-    def f(): 
+    def f():
         raise StartGame(dificulty)
     return f
+
+def go_back():
+    raise BackOneScreen()
+
+def quit_game():
+    raise QuitGame()
 
 CHOOSE_DIFICULTY = Screen([
     pyglet.text.Label('Choose the game dificulty',
@@ -93,3 +99,9 @@ DEFEAT_SCREEN = Screen([
                           x=WINDOW_WIDTH//2, y=WINDOW_HEIGHT//2,
                           anchor_x='center', anchor_y='center')
 ])
+
+QUIT_SUBSCRIPTIONS = [
+        KeySubscription(go_back, key.Q),
+        KeySubscription(go_back, key.ESCAPE),
+        KeySubscription(quit_game, key.C, key.MOD_CTRL)
+]

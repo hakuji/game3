@@ -21,23 +21,24 @@ from exception import (
     NextLevelException,
     GameOverException,
     PreviousLevelException,
-    StartGame)
+    StartGame,
+    BackOneScreen,
+    QuitGame)
 from screens import CommonScreen
 from stage_objects import LEVELS
 from constants import INTERVAL
 from decorations import autoset
+from menu import QUIT_SUBSCRIPTIONS, VICTORY_SCREEN, DEFEAT_SCREEN
 
 class GameController(Reactable):
     """Ui controller"""
-    def __init__(self, main_menu = None, subs = None):
+    def __init__(self, main_menu = None):
         if main_menu is None:
             main_menu = []
-        if subs is None:
-            subs = []
-        self.victory = None
-        self.defeat = None
+        self.victory = VICTORY_SCREEN
+        self.defeat = DEFEAT_SCREEN
         self.screens = main_menu
-        self.subs = subs
+        self.subs = QUIT_SUBSCRIPTIONS
     def top_screen(self):
         return self.screens[-1]
     def add_screen(self, screen):
@@ -72,14 +73,18 @@ class GameController(Reactable):
                 self.add_screen(self.defeat)
             else:
                 self.add_screen(self.victory)
+        except StartGame as ex:
+            self.start_game(ex.dificulty)
     def react(self, key, modifiers):
         """Calls default reactions and screen specific reactions to keyboard
 events"""
-        super(GameController, self).react(key, modifiers)
         try:
+            super(GameController, self).react(key, modifiers)
             self.top_screen().react(key, modifiers)
-        except StartGame as ex:
-            self.start_game(ex.dificulty)
+        except QuitGame:
+            self.quit()
+        except BackOneScreen:
+            self.back_one_screen()
 
 class GameState(object):
     """State of the playable parts of the game"""

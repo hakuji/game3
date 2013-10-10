@@ -17,7 +17,7 @@
 
 """Utility functions"""
 
-import pyglet
+import pyglet, time
 
 from constants import (
     WINDOW_WIDTH,
@@ -82,9 +82,11 @@ def vertex_list_from_rect(x, y, w, h, color = (0, 0, 255, 255)):
                  r, g, b, a)
         ))
 
-def fadeout():
+def fadeout(alpha):
     """Makes the entire screen fadeout"""
     bg = BACKGROUND_COLOR
+    bg = list(bg)
+    bg[3] = alpha
     rect = vertex_list_from_rect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT,
                                  bg)
     rect.draw(pyglet.gl.GL_QUAD_STRIP)

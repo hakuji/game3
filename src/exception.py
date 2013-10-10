@@ -24,6 +24,17 @@ class StartGame(Exception):
     def __init__(self, dificulty):
         pass
 
+class BackOneScreen(Exception):
+    pass
+
+class QuitGame(Exception):
+    pass
+
+class Fadeout(Exception):
+    @autoset
+    def __init__(self, step):
+        pass
+
 class SubscriptionFound(Exception):
     pass
 
