@@ -33,7 +33,9 @@ class Screen(Container):
         super(Screen, self).update()
         self.fadeout = min(self.fadeout + self.fstep, 255)
         if self.ex is not None and self.fadeout == 255:
-            raise self.ex
+            ex = self.ex
+            self.ex = None
+            raise ex
     def draw(self):
         super(Screen, self).draw()
         if self.fadeout < 255:
