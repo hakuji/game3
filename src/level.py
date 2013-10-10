@@ -18,7 +18,8 @@
 import itertools
 from random import randint
 from exception import (ReplaceObjectException, CreatureDeathException)
-from util import Container, Object
+from util import Container
+from obj import Object
 from decorations import autoset
 
 class Level(Container):

@@ -16,7 +16,8 @@
 # along with game 3.  If not, see <http://www.gnu.org/licenses/>.
 
 import pyglet
-from util import Reactable, Hero
+from util import Reactable
+from hero import Hero
 from exception import (
     NextLevelException,
     GameOverException,

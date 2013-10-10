@@ -15,7 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with game 3.  If not, see <http://www.gnu.org/licenses/>.
 
-from util import (Object, Creature, MeleeHitbox)
+from util import MeleeHitbox
+from obj import Object
+from creature import Creature
 from level import Level
 from exception import (
     ReplaceObjectException,
