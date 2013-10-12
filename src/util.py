@@ -19,7 +19,7 @@
 
 import pyglet, itertools
 from pyglet.window import key
-from constants import Direction
+from constants import Direction, HERO_ID
 from rect import Rect
 from decorations import autoset
 from exception import (
@@ -119,3 +119,33 @@ class Move(Animation):
             self.obj.move_towards(self.pos[0], self.pos[1])
         if self.pos[0] == self.obj.x and self.pos[1] == self.obj.y:
             raise AnimationEnd()
+
+class RunOnceTrigger(object):
+    """A trigger that once the predicate evaluate true, cause a reaction on objects"""
+    @autoset
+    def __init__(self, reaction, predicate, objects_id):
+        self.used = False
+        self.trigger_objs = None
+    def set_objects(self, predicate_objs, trigger_objs):
+        self.predicate.objects = predicate_objs
+        self.objects = trigger_objs
+    def update(self):
+        if not self.used:
+            if self.predicate.eval():
+                self.reaction(self.objects)
+
+class Predicate(object):
+    """A condition of a trigger"""
+    @autoset
+    def __init__(self, object_ids, fun):
+        pass
+    def eval(self):
+        return self.fun(self.objects)
+
+class HeroEnterRegion(Predicate):
+    """A predicate that evaluates true if the hero is inside a region"""
+    def __init__(self, x, y, w, h):
+        rect = Rect.from_dimensions(x, y, w, h)
+        def fun(objects):
+            return rect.overlaps(objects[0].rect)
+        super(HeroEnterRegion, self).__init__([HERO_ID], fun)

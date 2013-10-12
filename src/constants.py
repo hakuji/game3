@@ -44,3 +44,4 @@ class Direction(object):
 ACCEPT_KEY = key.I
 ROOM_FLOOR_COLOR = (150, 50, 255, 255)
 FADEOUT_STEP = 30
+HERO_ID = -1

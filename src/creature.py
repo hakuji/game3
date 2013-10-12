@@ -25,16 +25,30 @@ from function import range_inc
 class Creature(Object):
     """Actual creature on the screen"""
     @autoset
-    def __init__(self, symbol, description, health, speed, strength,
-                 light_radius, attack_type, stationary = False, hostile = True,
-                 go_through = False, range = 1, interaction=empty_interaction,
-                 cooldown_ = 10, roaming = True):
+    def __init__(
+            self,
+            symbol,
+            description,
+            health,
+            speed,
+            strength,
+            light_radius,
+            attack_type,
+            stationary = False,
+            hostile = True,
+            go_through = False,
+            range = 1,
+            interaction=empty_interaction,
+            cooldown_ = 10,
+            roaming = True,
+            id = None):
         super(Creature, self).__init__(
             go_through,
             symbol,
             description,
             interaction,
-            range
+            range,
+            id
         )
         self.intended_x = self.x
         self.intended_y = self.y

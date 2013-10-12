@@ -21,7 +21,7 @@ from pyglet.window import key
 from creature import Creature
 from decorations import autoset
 from util import MeleeHitbox, Move
-from constants import Direction, INTERACT_COOLDOWN, ACCEPT_KEY
+from constants import Direction, INTERACT_COOLDOWN, ACCEPT_KEY, HERO_ID
 from exception import CreatureDeathException, GameOverException, AnimationEnd
 
 class Hero(Creature):
@@ -40,7 +40,8 @@ class Hero(Creature):
             cooldown_=3,
             attack_type=MeleeHitbox,
             roaming=False,
-            hostile=False
+            hostile=False,
+            id=HERO_ID
         )
         self.speed = 3
         self.intended_interact = False
