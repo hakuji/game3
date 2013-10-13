@@ -26,12 +26,13 @@ class Level(Container):
     """A game level, stage etc"""
     @autoset
     def __init__(self, hero, objects, rooms, pathways,
-                 creatures):
+                 creatures, triggers):
         self.objects = Object.from_list(objects)
         self.creatures = Object.from_list(creatures)
         self.arrange_objects()
         self.init_rooms()
         self.set_enemies()
+        self.set_triggers()
         self.contents = []
         self.hitboxes = []
         self.contents.append(self.rooms)
@@ -63,6 +64,18 @@ class Level(Container):
         for i in self.creatures:
             if getattr(i, 'hostile', False):
                 i.target = self.hero
+    def set_triggers(self):
+        def obj_from_id(oid):
+            compare_ids = lambda obj: obj.id == oid
+            return filter(compare_ids, self.placeable_objects())
+        for t in self.triggers:
+            pred_objs = []
+            trigger_objs = []
+            for oid in t.predicate.object_ids:
+                pred_objs.extend(obj_from_id(oid))
+            for oid in t.object_ids:
+                trigger_objs.extend(obj_from_id(oid))
+            t.set_objects(pred_objs, trigger_objs)
     def remove_object(self, obj):
         self.objects.remove(obj)
     def add_object(self, obj, x, y):
@@ -89,6 +102,10 @@ does not exist. Fail silently"""
             self.hero_interact()
         except ReplaceObjectException as ex:
             self.replace_object(ex)
+        self.update_triggers()
+    def update_triggers(self):
+        for t in self.triggers:
+            t.update()
     def update_creatures(self):
         for c in self.creatures[:]:
             try:

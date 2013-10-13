@@ -123,7 +123,7 @@ class Move(Animation):
 class RunOnceTrigger(object):
     """A trigger that once the predicate evaluate true, cause a reaction on objects"""
     @autoset
-    def __init__(self, reaction, predicate, objects_id):
+    def __init__(self, reaction, predicate, object_ids):
         self.used = False
         self.trigger_objs = None
     def set_objects(self, predicate_objs, trigger_objs):

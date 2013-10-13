@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with game 3.  If not, see <http://www.gnu.org/licenses/>.
 
-from util import MeleeHitbox
+from util import MeleeHitbox, RunOnceTrigger, HeroEnterRegion
 from obj import Object
 from creature import Creature
 from level import Level
@@ -88,6 +88,13 @@ LEVER = partial(
         partial(replace_object(2, CLOSED_SHAFT)))
 )
 
+BOULDER = partial(
+    Object,
+    go_through = False,
+    symbol = 'O',
+    description = 'A enourmous boulder that blocks the path',
+)
+
 BASE_CHEST = partial(
     Object,
     go_through = True,
@@ -123,6 +130,8 @@ WOLF = partial(
     attack_type=MeleeHitbox
 )
 
+BLOCK_STAIRS_TRIGGER = RunOnceTrigger(debug, HeroEnterRegion(200, 200, 100, 100), [])
+
 room1 = Room(50, 50, 100, 100,
              objects=[CLOSED_SHAFT],
              start=True)
@@ -137,15 +146,17 @@ room3 = Room(50, 220, 100, 100,
 p1 = MagneticPathway(room1, room3)
 p2 = MagneticPathway(room2, room3)
 
-L1 = partial(Level,
-             objects = [TREASURE_CHEST, ASC_STAIRS],
+L1 = partial(
+    Level,
+    objects = [TREASURE_CHEST, ASC_STAIRS],
     rooms = [
         room1,
         room2,
         room3
     ],
     pathways = [p1, p2],
-    creatures = []
+    creatures = [],
+    triggers = [BLOCK_STAIRS_TRIGGER]
 )
 
 LEVELS = [
