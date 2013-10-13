@@ -87,7 +87,12 @@ class CommonScreen(Screen):
         def pfunc():
             return str(self.state.level_no)
         pfield = LabeledField('Level', pfunc, STATS_PANEL_X, STATS_PANEL_Y - 30)
-        document = pyglet.text.decode_html("<p>Top kek</p>")
+        document = pyglet.text.decode_html(
+"""A <b>red wolf</b> bites you<br/>
+A <b>green slime</b> burns you with acid<br/>
+A <b>minotaur</b> gores you<br/>
+You found a <b>shruberry</b><br/>
+You hear a faint whirring coming from the east""")
         document.set_style(0, sys.maxint, dict(color=(255, 255, 255, 255)))
         self.message_log = pyglet.text.layout.IncrementalTextLayout(
             document,
@@ -96,8 +101,7 @@ class CommonScreen(Screen):
             True)
         self.message_log.x = TEXT_X
         self.message_log.y = TEXT_Y
-        self.contents = [hfield, pfield,
-                         state.level, self.message_log]
+        self.contents = [state.level, hfield, pfield, self.message_log]
         self.fade = 255
         self.step = FADEOUT_STEP
     def update(self):
