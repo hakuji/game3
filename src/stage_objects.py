@@ -22,7 +22,8 @@ from level import Level
 from exception import (
     ReplaceObjectException,
     NextLevelException,
-    PreviousLevelException)
+    PreviousLevelException,
+    CreateObject)
 from functools import partial
 from room import Room, MagneticPathway
 
@@ -93,6 +94,8 @@ BOULDER = partial(
     go_through = False,
     symbol = 'O',
     description = 'A enourmous boulder that blocks the path',
+    x = 130,
+    y = 90
 )
 
 BASE_CHEST = partial(
@@ -130,7 +133,13 @@ WOLF = partial(
     attack_type=MeleeHitbox
 )
 
-BLOCK_STAIRS_TRIGGER = RunOnceTrigger(debug, HeroEnterRegion(200, 200, 100, 100), [])
+def create_boulder(objects):
+    raise CreateObject(BOULDER)
+
+BLOCK_STAIRS_TRIGGER = RunOnceTrigger(
+    create_boulder,
+    HeroEnterRegion(144, 100, 10, 10),
+    [])
 
 room1 = Room(50, 50, 100, 100,
              objects=[CLOSED_SHAFT],

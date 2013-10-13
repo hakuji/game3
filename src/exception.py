@@ -63,5 +63,10 @@ class ReplaceObjectException(Exception):
     def __init__(self, this, that):
         pass
 
+class CreateObject(Exception):
+    @autoset
+    def __init__(self, obj):
+        pass
+
 class AnimationEnd(Exception):
     pass

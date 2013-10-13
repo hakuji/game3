@@ -17,7 +17,7 @@
 
 import itertools
 from random import randint
-from exception import (ReplaceObjectException, CreatureDeathException)
+from exception import (ReplaceObjectException, CreatureDeathException, CreateObject)
 from util import Container
 from obj import Object
 from decorations import autoset
@@ -78,10 +78,13 @@ class Level(Container):
             t.set_objects(pred_objs, trigger_objs)
     def remove_object(self, obj):
         self.objects.remove(obj)
-    def add_object(self, obj, x, y):
+    def add_object(self, obj, x = None, y = None):
         """Add and place an object"""
+        if x is None:
+            obj = obj()
+        else:
+            obj.set_location(x, y)
         self.objects.append(obj)
-        obj.set_location(x, y)
     def replace_object(self, ex):
         """Use a replace exception to replace an object, if the object
 does not exist. Fail silently"""
@@ -98,11 +101,15 @@ does not exist. Fail silently"""
             obj.update()
         self.update_creatures()
         self.update_hitboxes()
+        self.handle_events(self.hero_interact)
+        self.handle_events(self.update_triggers)
+    def handle_events(self, fun):
         try:
-            self.hero_interact()
+            fun()
         except ReplaceObjectException as ex:
             self.replace_object(ex)
-        self.update_triggers()
+        except CreateObject as ex:
+            self.add_object(ex.obj)
     def update_triggers(self):
         for t in self.triggers:
             t.update()
