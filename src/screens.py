@@ -15,13 +15,17 @@
 # You should have received a copy of the GNU General Public License
 # along with game 3.  If not, see <http://www.gnu.org/licenses/>.
 
-import pyglet
+import pyglet, sys
 from util import Container
 from constants import (
     STATS_PANEL_X,
     STATS_PANEL_Y,
     FIELD_FONT_SIZE,
-    FADEOUT_STEP)
+    FADEOUT_STEP,
+    TEXT_X,
+    TEXT_Y,
+    TEXT_WIDTH,
+    TEXT_HEIGHT)
 from function import fadeout
 from exception import StartGame
 
@@ -83,8 +87,17 @@ class CommonScreen(Screen):
         def pfunc():
             return str(self.state.level_no)
         pfield = LabeledField('Level', pfunc, STATS_PANEL_X, STATS_PANEL_Y - 30)
+        document = pyglet.text.decode_html("<p>Top kek</p>")
+        document.set_style(0, sys.maxint, dict(color=(255, 255, 255, 255)))
+        self.message_log = pyglet.text.layout.IncrementalTextLayout(
+            document,
+            TEXT_WIDTH,
+            TEXT_HEIGHT,
+            True)
+        self.message_log.x = TEXT_X
+        self.message_log.y = TEXT_Y
         self.contents = [hfield, pfield,
-                         state.level]#message_box
+                         state.level, self.message_log]
         self.fade = 255
         self.step = FADEOUT_STEP
     def update(self):
