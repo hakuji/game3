@@ -133,6 +133,7 @@ class RunOnceTrigger(object):
         if not self.used:
             if self.predicate.eval():
                 self.reaction(self.objects)
+                self.used = True
 
 class Predicate(object):
     """A condition of a trigger"""
