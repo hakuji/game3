@@ -201,11 +201,8 @@ times before raising an exception"""
                 x, y = self.get_random_position_in_room(width, height, room)
                 obj.set_location(x, y)
                 contained = self.contained_in_a_room(obj, room)
-            if contained:
-                if obj.go_through:
-                    return
-                elif not self.collide_with_objects(obj):
-                    return
+            if contained and not self.collide_with_objects(obj):
+                return
         raise Exception('Could not assign a position to object: '
                         + str(obj))
     def draw(self):
