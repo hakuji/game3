@@ -182,11 +182,11 @@ room or pathway"""
 pathway"""
         return any(self.contained_in_a_room(obj, r)
                    for r in itertools.chain(self.rooms, self.pathways))
-    def collide_with_objects(self, obj):
+    def collide_with_objects(self, obj, ignore_go_through = False):
         """True if the rect defined by the given dimensions collide with any object
 except for ex"""
         return any(self.collide_with_rect(obj, i) for i in self.placeable_objects()
-                   if i != obj and not i.go_through)
+                   if i != obj and (ignore_go_through or not i.go_through))
     def set_location(self, obj, room = None):
         """Assign a random free position to an object. Will try at most 10000
 times before raising an exception"""
@@ -201,7 +201,7 @@ times before raising an exception"""
                 x, y = self.get_random_position_in_room(width, height, room)
                 obj.set_location(x, y)
                 contained = self.contained_in_a_room(obj, room)
-            if contained and not self.collide_with_objects(obj):
+            if contained and not self.collide_with_objects(obj, True):
                 return
         raise Exception('Could not assign a position to object: '
                         + str(obj))
