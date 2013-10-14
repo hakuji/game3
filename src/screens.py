@@ -58,8 +58,9 @@ class MenuScreen(Screen):
         try:
             super(MenuScreen, self).react(key, modifiers)
         except StartGame as ex:
-            self.fade = 0
-            self.ex = ex
+            if self.ex is None:
+                self.fade = 0
+                self.ex = ex
 
 class LabeledField(Container):
     def __init__(self, label, value_func, x, y):
