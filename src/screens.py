@@ -101,7 +101,8 @@ You hear a faint whirring coming from the east""")
             True)
         self.message_log.x = TEXT_X
         self.message_log.y = TEXT_Y
-        self.contents = [state.level, hfield, pfield, self.message_log]
+        self.contents = [hfield, pfield, self.message_log]
+        self.level = state.level
         self.fade = 255
         self.step = FADEOUT_STEP
     def update(self):
@@ -109,6 +110,10 @@ You hear a faint whirring coming from the east""")
         if self.fade < 50:
             self.state.update()
     def draw(self):
+        pyglet.gl.glPushMatrix()
+        pyglet.gl.glTranslatef(0.0, 65.0, 0.0)
+        self.level.draw()
+        pyglet.gl.glPopMatrix()
         super(CommonScreen, self).draw()
         if self.fade > 0:
             fadeout(self.fade)
