@@ -25,7 +25,10 @@ from constants import (
     TEXT_X,
     TEXT_Y,
     TEXT_WIDTH,
-    TEXT_HEIGHT)
+    TEXT_HEIGHT,
+    TEXT_COLOR,
+    TEXT_FONT,
+    TEXT_SIZE)
 from function import fadeout
 from exception import StartGame
 
@@ -66,11 +69,11 @@ class LabeledField(Container):
     def __init__(self, label, value_func, x, y):
         self.label = pyglet.text.Label(
             label + ':',
-            font_name='Times',
+            font_name=TEXT_FONT,
             font_size=FIELD_FONT_SIZE,
             x=x, y=y)
         self.value = pyglet.text.Label(
-            font_name='Times',
+            font_name=TEXT_FONT,
             font_size=FIELD_FONT_SIZE,
             x = x + self.label.content_width + 15,
             y = y)
@@ -80,6 +83,29 @@ class LabeledField(Container):
         self.value.text = str(self.value_func())
         super(LabeledField, self).draw()
 
+class MessageLog(object):
+    def __init__(self):
+        self.document = pyglet.text.decode_attributed(" ")
+        self.document.set_style(
+            0,
+            sys.maxint,
+            {
+                'color' : TEXT_COLOR,
+                'font_name' : TEXT_FONT,
+                'font_size' : TEXT_SIZE
+            })
+        self.layout = pyglet.text.layout.IncrementalTextLayout(
+            self.document, TEXT_WIDTH, TEXT_HEIGHT, True)
+        self.layout.x = TEXT_X
+        self.layout.y = TEXT_Y
+        for i in range(10):
+            self.append_message(str(i) + " All work and no play makes Jack a dull boy\n")
+    def append_message(self, msg):
+        self.document.insert_text(len(self.document.text), msg)
+    def draw(self):
+        self.layout.ensure_line_visible(-1)
+        self.layout.draw()
+
 class CommonScreen(Screen):
     def __init__(self, state):
         self.state = state
@@ -88,20 +114,7 @@ class CommonScreen(Screen):
         def pfunc():
             return str(self.state.level_no)
         pfield = LabeledField('Level', pfunc, STATS_PANEL_X, STATS_PANEL_Y - 30)
-        document = pyglet.text.decode_html(
-"""A <b>red wolf</b> bites you<br/>
-A <b>green slime</b> burns you with acid<br/>
-A <b>minotaur</b> gores you<br/>
-You found a <b>shruberry</b><br/>
-You hear a faint whirring coming from the east""")
-        document.set_style(0, sys.maxint, dict(color=(255, 255, 255, 255)))
-        self.message_log = pyglet.text.layout.IncrementalTextLayout(
-            document,
-            TEXT_WIDTH,
-            TEXT_HEIGHT,
-            True)
-        self.message_log.x = TEXT_X
-        self.message_log.y = TEXT_Y
+        self.message_log = MessageLog()
         self.contents = [hfield, pfield, self.message_log]
         self.level = state.level
         self.fade = 255
