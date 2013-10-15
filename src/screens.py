@@ -105,8 +105,8 @@ class MessageLog(object):
     def append_messages(self, msgs):
         for m in msgs:
             self.append_message(m)
-    def draw(self):
         self.layout.ensure_line_visible(-1)
+    def draw(self):
         self.layout.draw()
 
 class CommonScreen(Screen):
