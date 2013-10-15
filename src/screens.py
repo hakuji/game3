@@ -85,7 +85,7 @@ class LabeledField(Container):
 
 class MessageLog(object):
     def __init__(self):
-        self.document = pyglet.text.decode_attributed(" ")
+        self.document = pyglet.text.decode_attributed(' ')
         self.document.set_style(
             0,
             sys.maxint,
@@ -98,8 +98,6 @@ class MessageLog(object):
             self.document, TEXT_WIDTH, TEXT_HEIGHT, True)
         self.layout.x = TEXT_X
         self.layout.y = TEXT_Y
-        for i in range(10):
-            self.append_message(str(i) + " All work and no play makes Jack a dull boy")
     def append_message(self, msg):
         self.document.insert_text(len(self.document.text), msg + '.\n')
         self.display_line = self.layout.get_line_count() - 2
