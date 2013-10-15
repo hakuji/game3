@@ -16,7 +16,7 @@
 # along with game 3.  If not, see <http://www.gnu.org/licenses/>.
 
 import pyglet, sys
-from util import Container
+from util import Container, KeySubscription, Reactable
 from constants import (
     STATS_PANEL_X,
     STATS_PANEL_Y,
@@ -102,14 +102,22 @@ class MessageLog(object):
             self.append_message(str(i) + " All work and no play makes Jack a dull boy")
     def append_message(self, msg):
         self.document.insert_text(len(self.document.text), msg + '.\n')
+        self.display_line = self.layout.get_line_count() - 2
+        self.layout.ensure_line_visible(-1)
     def append_messages(self, msgs):
         for m in msgs:
             self.append_message(m)
-        self.layout.ensure_line_visible(-1)
+    def page_up(self):
+        self.display_line = max(0, self.display_line - 5)
+        self.layout.ensure_line_visible(self.display_line)
+    def page_down(self):
+        self.display_line = min(self.layout.get_line_count() - 1,
+                                self.display_line + 5)
+        self.layout.ensure_line_visible(self.display_line)
     def draw(self):
         self.layout.draw()
 
-class CommonScreen(Screen):
+class CommonScreen(Screen, Reactable):
     def __init__(self, state):
         self.state = state
         hfunc = lambda : self.state.hero.health
@@ -122,6 +130,12 @@ class CommonScreen(Screen):
         self.level = state.level
         self.fade = 255
         self.step = FADEOUT_STEP
+        self.subs = [
+            KeySubscription(self.message_log.page_up, pyglet.window.key.PAGEUP),
+            KeySubscription(self.message_log.page_down, pyglet.window.key.PAGEDOWN)]
+    def react(self, key, modifiers):
+        super(CommonScreen, self).react(key, modifiers)
+        Reactable.react(self, key, modifiers)
     def update(self):
         self.fade = max(self.fade - self.step, 0)
         if self.fade < 50:
