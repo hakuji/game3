@@ -99,9 +99,12 @@ class MessageLog(object):
         self.layout.x = TEXT_X
         self.layout.y = TEXT_Y
         for i in range(10):
-            self.append_message(str(i) + " All work and no play makes Jack a dull boy\n")
+            self.append_message(str(i) + " All work and no play makes Jack a dull boy")
     def append_message(self, msg):
-        self.document.insert_text(len(self.document.text), msg)
+        self.document.insert_text(len(self.document.text), msg + '.\n')
+    def append_messages(self, msgs):
+        for m in msgs:
+            self.append_message(m)
     def draw(self):
         self.layout.ensure_line_visible(-1)
         self.layout.draw()
@@ -123,6 +126,8 @@ class CommonScreen(Screen):
         self.fade = max(self.fade - self.step, 0)
         if self.fade < 50:
             self.state.update()
+            self.message_log.append_messages(self.state.messages)
+            self.state.messages = []
     def draw(self):
         pyglet.gl.glPushMatrix()
         pyglet.gl.glTranslatef(0.0, 65.0, 0.0)

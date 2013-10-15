@@ -52,3 +52,4 @@ TEXT_Y = -10
 TEXT_COLOR = (255, 255, 255, 255)
 TEXT_FONT = 'Times'
 TEXT_SIZE = 12
+FIRST_MESSAGE = 'Press ? for help with the controls'
