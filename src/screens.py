@@ -127,7 +127,9 @@ class CommonScreen(Screen):
         if self.fade < 50:
             self.state.update()
             self.message_log.append_messages(self.state.messages)
+            self.message_log.append_messages(self.level.messages)
             self.state.messages = []
+            self.level.messages = []
     def draw(self):
         pyglet.gl.glPushMatrix()
         pyglet.gl.glTranslatef(0.0, 65.0, 0.0)

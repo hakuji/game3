@@ -51,7 +51,7 @@ CLOSED_SHAFT = partial(
     Object,
     True,
     '|',
-    'Closed shaft',
+    'closed shaft',
     id = 1
 )
 
@@ -59,7 +59,7 @@ DESC_STAIRS = partial(
     Object,
     True,
     '>',
-    'Descending stairs',
+    'descending stairs',
     interact = descend_stairs,
     id = 2
 )
@@ -71,7 +71,7 @@ ASC_STAIRS = partial(
     Object,
     True,
     '<',
-    'Ascending stairs',
+    'ascending stairs',
     interact = ascend_stairs,
     id = -2,
     x = 130,
@@ -82,7 +82,7 @@ LEVER = partial(
     Object,
     go_through = True,
     symbol = 'L',
-    description = 'A lever',
+    description = 'lever',
     range = 5,
     interact = on_off_switch(
         partial(replace_object(1, DESC_STAIRS)),
@@ -93,7 +93,7 @@ BOULDER = partial(
     Object,
     go_through = False,
     symbol = 'O',
-    description = 'A enourmous boulder that blocks the path',
+    description = 'enourmous boulder blocking the stairs',
     x = 130,
     y = 90
 )
@@ -107,7 +107,7 @@ BASE_CHEST = partial(
 
 DECORATIVE_CHEST = partial(
     BASE_CHEST,
-    description = 'A decorative chest'
+    description = 'decorative chest'
 )
 
 def debug(self):
@@ -115,7 +115,7 @@ def debug(self):
 
 TREASURE_CHEST = partial(
     BASE_CHEST,
-    description = 'A treasure chest',
+    description = 'treasure chest',
     interact = debug,
     x = 100,
     y = 100
@@ -124,7 +124,7 @@ TREASURE_CHEST = partial(
 WOLF = partial(
     Creature,
     symbol = 'W',
-    description = 'Wolf',
+    description = 'wolf',
     health=1,
     speed=2,
     strength=5,

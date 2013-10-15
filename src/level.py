@@ -35,6 +35,8 @@ class Level(Container):
         self.set_triggers()
         self.contents = []
         self.hitboxes = []
+        self.messages = []
+        self.hero_saw = []
         self.contents.append(self.rooms)
         self.contents.append(self.pathways)
         self.contents.append(self.objects)
@@ -103,6 +105,7 @@ does not exist. Fail silently"""
         self.update_hitboxes()
         self.handle_events(self.hero_interact)
         self.handle_events(self.update_triggers)
+        self.update_messages()
     def handle_events(self, fun):
         try:
             fun()
@@ -121,6 +124,13 @@ does not exist. Fail silently"""
                 self.add_hitbox(c)
             except CreatureDeathException:
                 self.creatures.remove(c)
+    def update_messages(self):
+        for o in self.placeable_objects():
+            if (o not in self.hero_saw
+                and self.hero.within_range(o)
+                and o != self.hero):
+                self.hero_saw.append(o)
+                self.messages.append('You see a ' + str(o))
     def add_hitbox(self, creature):
         if creature.hitbox is not None:
             self.hitboxes.append(creature.hitbox)

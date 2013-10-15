@@ -124,4 +124,4 @@ class Object(Drawable):
         rect.draw(pyglet.gl.GL_QUAD_STRIP)
         super(Object, self).draw()
     def __str__(self):
-        return self.symbol + ' ' + self.description
+        return self.description + '({0})'.format(self.symbol)
