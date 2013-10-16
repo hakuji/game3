@@ -22,7 +22,7 @@ from screens import Screen, MenuScreen
 from decorations import autoset
 from pyglet.window import key
 from constants import (WINDOW_WIDTH, WINDOW_HEIGHT, NORMAL_DIFICULTY, GAME_NAME,
-                       VICTORY, GAME_OVER, ACCEPT_KEY, TEXT_FONT, TEXT_SIZE)
+                       VICTORY, GAME_OVER, Controls, TEXT_FONT, TEXT_SIZE)
 from exception import StartGame, BackOneScreen, QuitGame
 
 class Option(Drawable, Reactable):
@@ -82,7 +82,7 @@ MAIN_MENU = MenuScreen([
                           font_size=36,
                           x=WINDOW_WIDTH//2, y=WINDOW_HEIGHT//2,
                           anchor_x='center', anchor_y='center'),
-    Option([KeySubscription(start_game(NORMAL_DIFICULTY), ACCEPT_KEY)],
+    Option([KeySubscription(start_game(NORMAL_DIFICULTY), Controls.ACCEPT)],
            'New game',
            pyglet.text.Label(font_name=TEXT_FONT,
                              font_size=TEXT_SIZE,

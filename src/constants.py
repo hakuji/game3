@@ -41,7 +41,6 @@ class Direction(object):
     EAST = 'E'
     SOUTH = 'S'
     WEST = 'W'
-ACCEPT_KEY = key.I
 ROOM_FLOOR_COLOR = (150, 50, 255, 255)
 FADEOUT_STEP = 30
 HERO_ID = -1
@@ -59,3 +58,10 @@ class Color(object):
     BLUE = (0, 0, 255, 255)
 HEALTH_BAR_WIDTH = 100
 HEALTH_BAR_HEIGHT = 18
+class Controls(object):
+    NORTH = key.W
+    EAST = key.D
+    WEST = key.A
+    SOUTH = key.S
+    ATTACK = key.J
+    ACCEPT = key.I

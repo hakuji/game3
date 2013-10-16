@@ -21,7 +21,7 @@ from pyglet.window import key
 from creature import Creature
 from decorations import autoset
 from util import MeleeHitbox, Move
-from constants import Direction, INTERACT_COOLDOWN, ACCEPT_KEY, HERO_ID
+from constants import Direction, INTERACT_COOLDOWN, Controls, HERO_ID
 from exception import CreatureDeathException, GameOverException, AnimationEnd
 
 class Hero(Creature):
@@ -101,19 +101,19 @@ class Hero(Creature):
             return
         self.intended_interact = False
         facing = [None, None]
-        if self.khandler[key.W]:
+        if self.khandler[Controls.NORTH]:
             self.intended_y = self.y + self.speed
             facing[1] = Direction.NORTH
-        if self.khandler[key.S]:
+        if self.khandler[Controls.SOUTH]:
             self.intended_y = self.y - self.speed
             facing[1] = Direction.SOUTH
-        if self.khandler[key.A]:
+        if self.khandler[Controls.WEST]:
             self.intended_x = self.x - self.speed
             facing[0] = Direction.WEST
-        if self.khandler[key.D]:
+        if self.khandler[Controls.EAST]:
             self.intended_x = self.x + self.speed
             facing[0] = Direction.EAST
-        if self.khandler[ACCEPT_KEY]:
+        if self.khandler[Controls.ACCEPT]:
             if self.cooldown == 0:
                 self.intended_interact = True
                 self.cooldown = INTERACT_COOLDOWN
@@ -121,7 +121,7 @@ class Hero(Creature):
                 pass
         if facing != [None, None]:
             self.facing = facing
-        if self.khandler[key.J]:
+        if self.khandler[Controls.ATTACK]:
             self.attack()
     def set_animation(self, animation):
         self.animation = animation
