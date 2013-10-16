@@ -56,7 +56,7 @@ class Creature(Object):
         self.last_desired_direction = [0, 0]
         self.change_countdown = 0
         self.last_desired_speed = 1
-        self.health = self.health
+        self.health_total = self.health
         self.cooldown = 0
         self.facing = [None, Direction.NORTH]
         self.hitbox = None

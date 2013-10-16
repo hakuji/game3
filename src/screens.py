@@ -28,8 +28,11 @@ from constants import (
     TEXT_HEIGHT,
     TEXT_COLOR,
     TEXT_FONT,
-    TEXT_SIZE)
-from function import fadeout
+    TEXT_SIZE,
+    Color,
+    HEALTH_BAR_WIDTH,
+    HEALTH_BAR_HEIGHT)
+from function import fadeout, vertex_list_from_rect
 from exception import StartGame
 
 class Screen(Container):
@@ -83,6 +86,22 @@ class LabeledField(Container):
         self.value.text = str(self.value_func())
         super(LabeledField, self).draw()
 
+class HealthBar(LabeledField):
+    def __init__(self, hero, x, y):
+        hfunc = lambda : hero.health
+        super(HealthBar, self).__init__('Health', hfunc, x, y)
+        self.hero = hero
+    def draw(self):
+        width = int(HEALTH_BAR_WIDTH * float(self.hero.health) / self.hero.health_total)
+        bar = vertex_list_from_rect(
+            self.value.x,
+            self.value.y - 3,
+            width,
+            HEALTH_BAR_HEIGHT,
+            Color.GREEN)
+        bar.draw(pyglet.gl.GL_QUAD_STRIP)
+        super(HealthBar, self).draw()
+
 class MessageLog(object):
     def __init__(self):
         self.document = pyglet.text.decode_attributed(' ')
@@ -118,8 +137,7 @@ class MessageLog(object):
 class CommonScreen(Screen, Reactable):
     def __init__(self, state):
         self.state = state
-        hfunc = lambda : self.state.hero.health
-        hfield = LabeledField('Health', hfunc, STATS_PANEL_X, STATS_PANEL_Y)
+        hfield = HealthBar(state.hero, STATS_PANEL_X, STATS_PANEL_Y)
         def pfunc():
             return str(self.state.level_no)
         pfield = LabeledField('Level', pfunc, STATS_PANEL_X, STATS_PANEL_Y - 30)
