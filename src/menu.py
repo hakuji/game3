@@ -22,7 +22,7 @@ from screens import Screen, MenuScreen
 from decorations import autoset
 from pyglet.window import key
 from constants import (WINDOW_WIDTH, WINDOW_HEIGHT, NORMAL_DIFICULTY, GAME_NAME,
-                       VICTORY, GAME_OVER, ACCEPT_KEY)
+                       VICTORY, GAME_OVER, ACCEPT_KEY, TEXT_FONT, TEXT_SIZE)
 from exception import StartGame, BackOneScreen, QuitGame
 
 class Option(Drawable, Reactable):
@@ -52,20 +52,20 @@ def quit_game():
 
 CHOOSE_DIFICULTY = MenuScreen([
     pyglet.text.Label('Choose the game dificulty',
-                          font_name='Times',
+                          font_name=TEXT_FONT,
                           font_size=25,
                           x=WINDOW_WIDTH//2, y=WINDOW_HEIGHT//2,
                           anchor_x='center', anchor_y='center'),
     Option([KeySubscription(start_game(NORMAL_DIFICULTY), key.N)],
            'Normal',
-           pyglet.text.Label(font_name='Times',
-                          font_size=12,
+           pyglet.text.Label(font_name=TEXT_FONT,
+                          font_size=TEXT_SIZE,
                           x=WINDOW_WIDTH//2, y=WINDOW_HEIGHT//2 - 52,
                           anchor_x='center', anchor_y='center')),
     Option([KeySubscription(start_game(not NORMAL_DIFICULTY), key.H)],
            'Hard',
-           pyglet.text.Label(font_name='Times',
-                          font_size=12,
+           pyglet.text.Label(font_name=TEXT_FONT,
+                          font_size=TEXT_SIZE,
                           x=WINDOW_WIDTH//2, y=WINDOW_HEIGHT//2 - 72,
                           anchor_x='center', anchor_y='center'))
 ])
@@ -78,27 +78,27 @@ QUIT_SUBSCRIPTIONS = [
 
 MAIN_MENU = MenuScreen([
     pyglet.text.Label(GAME_NAME,
-                          font_name='Times',
+                          font_name=TEXT_FONT,
                           font_size=36,
                           x=WINDOW_WIDTH//2, y=WINDOW_HEIGHT//2,
                           anchor_x='center', anchor_y='center'),
     Option([KeySubscription(start_game(NORMAL_DIFICULTY), ACCEPT_KEY)],
            'New game',
-           pyglet.text.Label(font_name='Times',
-                             font_size=12,
+           pyglet.text.Label(font_name=TEXT_FONT,
+                             font_size=TEXT_SIZE,
                              x=WINDOW_WIDTH//2, y=WINDOW_HEIGHT//2 - 72,
                              anchor_x='center', anchor_y='center')),
     Option(QUIT_SUBSCRIPTIONS[0:1],
            'Quit',
-           pyglet.text.Label(font_name='Times',
-                             font_size=12,
+           pyglet.text.Label(font_name=TEXT_FONT,
+                             font_size=TEXT_SIZE,
                              x=WINDOW_WIDTH//2, y=WINDOW_HEIGHT//2 - 92,
                              anchor_x='center', anchor_y='center'))
 ])
 
 VICTORY_SCREEN = Screen([
     pyglet.text.Label(VICTORY,
-                          font_name='Times',
+                          font_name=TEXT_FONT,
                           font_size=36,
                           x=WINDOW_WIDTH//2, y=WINDOW_HEIGHT//2,
                           anchor_x='center', anchor_y='center')
@@ -106,7 +106,7 @@ VICTORY_SCREEN = Screen([
 
 DEFEAT_SCREEN = Screen([
     pyglet.text.Label(GAME_OVER,
-                          font_name='Times',
+                          font_name=TEXT_FONT,
                           font_size=36,
                           x=WINDOW_WIDTH//2, y=WINDOW_HEIGHT//2,
                           anchor_x='center', anchor_y='center')
