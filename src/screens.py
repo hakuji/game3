@@ -29,7 +29,6 @@ from constants import (
     TEXT_COLOR,
     TEXT_FONT,
     TEXT_SIZE,
-    Color,
     HEALTH_BAR_WIDTH,
     HEALTH_BAR_HEIGHT)
 from function import fadeout, vertex_list_from_rect
@@ -92,13 +91,15 @@ class HealthBar(LabeledField):
         super(HealthBar, self).__init__('Health', hfunc, x, y)
         self.hero = hero
     def draw(self):
-        width = int(HEALTH_BAR_WIDTH * float(self.hero.health) / self.hero.health_total)
+        proportion = float(self.hero.health) / self.hero.health_total
+        color = (int((1.0 - proportion) * 255), int(proportion * 255), 0, 255)
+        width = int(HEALTH_BAR_WIDTH * proportion)
         bar = vertex_list_from_rect(
             self.value.x,
             self.value.y - 3,
             width,
             HEALTH_BAR_HEIGHT,
-            Color.GREEN)
+            color)
         bar.draw(pyglet.gl.GL_QUAD_STRIP)
         super(HealthBar, self).draw()
 
