@@ -63,9 +63,11 @@ class Creature(Object):
     def be_attacked(self, other):
         """Be attacked by another creature"""
         self.health -= other.strength
+    def dead(self):
+        return self.health <= 0
     def death(self):
         """Deals with the eventual death of the creature"""
-        if self.health <= 0:
+        if self.dead():
             raise CreatureDeathException()
     def update(self):
         self.death()

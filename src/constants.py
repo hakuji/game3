@@ -64,9 +64,19 @@ class Controls(object):
     SOUTH = key.S
     ATTACK = key.J
     ACCEPT = key.I
+    SCROLL_UP = key.PAGEUP
+    SCROLL_DOWN = key.PAGEDOWN
+kss = key.symbol_string
 MOVE_AROUND_MESSAGE = 'Use the {0} {1} {2} {3} keys to move around'.format(
-    key.symbol_string(Controls.WEST),
-    key.symbol_string(Controls.SOUTH),
-    key.symbol_string(Controls.EAST),
-    key.symbol_string(Controls.NORTH)
+    kss(Controls.WEST),
+    kss(Controls.SOUTH),
+    kss(Controls.EAST),
+    kss(Controls.NORTH)
+)
+ATTACK_MESSAGE = 'Use the {0} key to attack creatures'.format(
+    kss(Controls.ATTACK)
+)
+SCROLL_MESSAGE = 'You can press {0} and {1} to scroll through these messages'.format(
+    kss(Controls.SCROLL_UP),
+    kss(Controls.SCROLL_DOWN)
 )

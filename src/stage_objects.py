@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with game 3.  If not, see <http://www.gnu.org/licenses/>.
 
-from util import MeleeHitbox, RunOnceTrigger, HeroEnterRegion
+from util import MeleeHitbox, RunOnceTrigger, HeroEnterRegion, Predicate
 from obj import Object
 from creature import Creature
 from level import Level
@@ -27,7 +27,7 @@ from exception import (
     AppendMessage)
 from functools import partial
 from room import Room, MagneticPathway
-from constants import MOVE_AROUND_MESSAGE
+from constants import MOVE_AROUND_MESSAGE, ATTACK_MESSAGE, SCROLL_MESSAGE
 
 def descend_stairs(self):
     raise NextLevelException()
@@ -95,7 +95,7 @@ BOULDER = partial(
     Object,
     go_through = False,
     symbol = 'O',
-    description = 'enourmous boulder blocking the stairs',
+    description = 'large boulder blocking the stairs',
     x = 130,
     y = 90
 )
@@ -123,16 +123,19 @@ TREASURE_CHEST = partial(
     y = 100
 )
 
+wolfid = 3
+
 WOLF = partial(
     Creature,
     symbol = 'W',
-    description = 'wolf',
+    description = 'dire wolf',
     health=1,
     speed=2,
     strength=5,
     light_radius=20,
     range=10,
-    attack_type=MeleeHitbox
+    attack_type=MeleeHitbox,
+    id=wolfid
 )
 
 def create_boulder(objects):
@@ -153,6 +156,22 @@ TUTORIAL1 = RunOnceTrigger(
     HeroEnterRegion(144, 100, 10, 10),
     [])
 
+TUTORIAL2 = RunOnceTrigger(
+    append_message(ATTACK_MESSAGE),
+    HeroEnterRegion(50, 160, 100, 10),
+    [])
+
+def scroll_message_pred(objects):
+    return any(o.dead() for o in objects)
+
+def scroll_message_fun(objects):
+    raise AppendMessage(SCROLL_MESSAGE)
+
+TUTORIAL3 = RunOnceTrigger(
+    scroll_message_fun,
+    Predicate([wolfid], scroll_message_pred),
+    [])
+
 room1 = Room(50, 50, 100, 100,
              objects=[CLOSED_SHAFT],
              start=True)
@@ -162,7 +181,7 @@ room2 = Room(300, 200, 100, 150,
              objects=[LEVER])
 
 room3 = Room(50, 220, 100, 100,
-             objects=[DECORATIVE_CHEST])
+             creatures=[WOLF])
 
 p1 = MagneticPathway(room1, room3)
 p2 = MagneticPathway(room2, room3)
@@ -177,7 +196,11 @@ L1 = partial(
     ],
     pathways = [p1, p2],
     creatures = [],
-    triggers = [BLOCK_STAIRS_TRIGGER, TUTORIAL1]
+    triggers = [
+        BLOCK_STAIRS_TRIGGER,
+        TUTORIAL1,
+        TUTORIAL2,
+        TUTORIAL3]
 )
 
 LEVELS = [

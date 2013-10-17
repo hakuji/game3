@@ -30,7 +30,8 @@ from constants import (
     TEXT_FONT,
     TEXT_SIZE,
     HEALTH_BAR_WIDTH,
-    HEALTH_BAR_HEIGHT)
+    HEALTH_BAR_HEIGHT,
+    Controls)
 from function import fadeout, vertex_list_from_rect
 from exception import StartGame
 
@@ -149,8 +150,8 @@ class CommonScreen(Screen, Reactable):
         self.fade = 255
         self.step = FADEOUT_STEP
         self.subs = [
-            KeySubscription(self.message_log.page_up, pyglet.window.key.PAGEUP),
-            KeySubscription(self.message_log.page_down, pyglet.window.key.PAGEDOWN)]
+            KeySubscription(self.message_log.page_up, Controls.SCROLL_UP),
+            KeySubscription(self.message_log.page_down, Controls.SCROLL_DOWN)]
     def react(self, key, modifiers):
         super(CommonScreen, self).react(key, modifiers)
         Reactable.react(self, key, modifiers)
