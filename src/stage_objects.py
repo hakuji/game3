@@ -100,13 +100,20 @@ LEVER = partial(
     id = leverid
 )
 
+def append_message(msg):
+    def fun(objects):
+        raise AppendMessage(msg)
+    return fun
+
 BOULDER = partial(
     Object,
     go_through = False,
     symbol = 'O',
     description = 'large boulder blocking the stairs',
     x = 130,
-    y = 90
+    y = 90,
+    range = 5,
+    interact=append_message("It won't budge")
 )
 
 BASE_CHEST = partial(
@@ -128,11 +135,6 @@ TREASURE_CHEST = partial(
 )
 
 wolfid = 3
-
-def append_message(msg):
-    def fun(objects):
-        raise AppendMessage(msg)
-    return fun
 
 WOLF = partial(
     Creature,
