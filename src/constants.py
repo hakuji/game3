@@ -15,8 +15,10 @@
 # You should have received a copy of the GNU General Public License
 # along with game 3.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
 from pyglet.window import key
 
+DEBUG = os.path.exists('../debug')
 WINDOW_WIDTH = 640
 WINDOW_HEIGHT = 480
 FIELD_FONT_SIZE = 12

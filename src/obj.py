@@ -18,7 +18,7 @@
 import pyglet, types
 from util import Drawable
 from rect import Point, Rect
-from constants import OBJECT_FONT_SIZE, OBJECT_FONT_FACE
+from constants import OBJECT_FONT_SIZE, OBJECT_FONT_FACE, DEBUG
 from decorations import autoset
 from function import vertex_list_from_rect
 
@@ -118,10 +118,11 @@ class Object(Drawable):
     def within_range(self, obj):
         return self.within_distance(obj, self.range)
     def draw(self):
-        x, y = self.x, self.y
-        w, h = self.w, self.h
-        rect = vertex_list_from_rect(x, y, w, h)
-        rect.draw(pyglet.gl.GL_QUAD_STRIP)
+        if DEBUG:
+            x, y = self.x, self.y
+            w, h = self.w, self.h
+            rect = vertex_list_from_rect(x, y, w, h)
+            rect.draw(pyglet.gl.GL_QUAD_STRIP)
         super(Object, self).draw()
     def __str__(self):
         return self.description + '({0})'.format(self.symbol)
