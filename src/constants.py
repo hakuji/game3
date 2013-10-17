@@ -80,3 +80,7 @@ SCROLL_MESSAGE = 'You can press {0} and {1} to scroll through these messages'.fo
     kss(Controls.SCROLL_UP),
     kss(Controls.SCROLL_DOWN)
 )
+
+INTERACT_MESSAGE = 'Some objects and creatures can be interacted with using the {0} key'.format(
+    kss(Controls.ACCEPT)
+)

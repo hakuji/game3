@@ -94,8 +94,11 @@ was moving before."""
             return super(Creature, self).within_range(self.target)
         else:
             return super(Creature, self).within_range(obj)
+    def visible(self, obj):
+        """Return true if obj is visible to self"""
+        return self.within_distance(obj, self.light_radius)
     def target_visible(self):
-        return self.within_distance(self.target, self.light_radius)
+        return self.visible(self.target)
     def roam(self):
         """Move randomly"""
         x, y = self.x, self.y

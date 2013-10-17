@@ -27,7 +27,12 @@ from exception import (
     AppendMessage)
 from functools import partial
 from room import Room, MagneticPathway
-from constants import MOVE_AROUND_MESSAGE, ATTACK_MESSAGE, SCROLL_MESSAGE
+from constants import (
+    MOVE_AROUND_MESSAGE,
+    ATTACK_MESSAGE,
+    SCROLL_MESSAGE,
+    INTERACT_MESSAGE,
+    HERO_ID)
 
 def descend_stairs(self):
     raise NextLevelException()
@@ -80,6 +85,8 @@ ASC_STAIRS = partial(
     y = 90
 )
 
+leverid = 4
+
 LEVER = partial(
     Object,
     go_through = True,
@@ -88,7 +95,9 @@ LEVER = partial(
     range = 5,
     interact = on_off_switch(
         partial(replace_object(1, DESC_STAIRS)),
-        partial(replace_object(2, CLOSED_SHAFT)))
+        partial(replace_object(2, CLOSED_SHAFT))
+    ),
+    id = leverid
 )
 
 BOULDER = partial(
@@ -125,6 +134,11 @@ TREASURE_CHEST = partial(
 
 wolfid = 3
 
+def append_message(msg):
+    def fun(objects):
+        raise AppendMessage(msg)
+    return fun
+
 WOLF = partial(
     Creature,
     symbol = 'W',
@@ -135,7 +149,8 @@ WOLF = partial(
     light_radius=20,
     range=10,
     attack_type=MeleeHitbox,
-    id=wolfid
+    id=wolfid,
+    interaction=append_message('This wolf is too busy trying to kill you')
 )
 
 def create_boulder(objects):
@@ -145,11 +160,6 @@ BLOCK_STAIRS_TRIGGER = RunOnceTrigger(
     create_boulder,
     HeroEnterRegion(144, 100, 10, 10),
     [])
-
-def append_message(msg):
-    def fun(objects):
-        raise AppendMessage(msg)
-    return fun
 
 TUTORIAL1 = RunOnceTrigger(
     append_message(MOVE_AROUND_MESSAGE),
@@ -170,6 +180,17 @@ def scroll_message_fun(objects):
 TUTORIAL3 = RunOnceTrigger(
     scroll_message_fun,
     Predicate([wolfid], scroll_message_pred),
+    [])
+
+def interact_message_pred(objects):
+    return objects[0].visible(objects[1])
+
+def interact_message_fun(objects):
+    raise AppendMessage(INTERACT_MESSAGE)
+
+TUTORIAL4 = RunOnceTrigger(
+    interact_message_fun,
+    Predicate([HERO_ID, leverid], interact_message_pred),
     [])
 
 room1 = Room(50, 50, 100, 100,
@@ -200,7 +221,8 @@ L1 = partial(
         BLOCK_STAIRS_TRIGGER,
         TUTORIAL1,
         TUTORIAL2,
-        TUTORIAL3]
+        TUTORIAL3,
+        TUTORIAL4]
 )
 
 LEVELS = [

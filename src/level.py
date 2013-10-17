@@ -107,8 +107,8 @@ does not exist. Fail silently"""
             obj.update()
         self.update_creatures()
         self.update_hitboxes()
-        self.handle_events(self.hero_interact)
-        self.handle_events(self.update_triggers)
+        self.hero_interact()
+        self.update_triggers()
         self.update_messages()
     def handle_events(self, fun):
         try:
@@ -117,12 +117,11 @@ does not exist. Fail silently"""
             self.replace_object(ex)
         except CreateObject as ex:
             self.add_object(ex.obj)
+        except AppendMessage as ex:
+            self.messages.append(ex.message)
     def update_triggers(self):
         for t in self.triggers:
-            try:
-                t.update()
-            except AppendMessage as ex:
-                self.messages.append(ex.message)
+            self.handle_events(t.update)
     def update_creatures(self):
         for c in self.creatures[:]:
             try:
@@ -155,7 +154,7 @@ does not exist. Fail silently"""
                 if o == self.hero:
                     continue
                 if o.within_range(self.hero):
-                    o.interact()
+                    self.handle_events(o.interact)
                     return
     def update_position(self, creature):
         if not creature.go_through:
