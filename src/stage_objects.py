@@ -116,11 +116,6 @@ BASE_CHEST = partial(
     range = 5
 )
 
-DECORATIVE_CHEST = partial(
-    BASE_CHEST,
-    description = 'decorative chest'
-)
-
 def debug(self):
     print 'hello'
 
