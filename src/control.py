@@ -27,7 +27,7 @@ from exception import (
     QuitGame)
 from screens import CommonScreen
 from stage_objects import LEVELS
-from constants import INTERVAL, FIRST_MESSAGE
+from constants import INTERVAL
 from decorations import autoset
 from menu import QUIT_SUBSCRIPTIONS, VICTORY_SCREEN, DEFEAT_SCREEN, MAIN_MENU
 
@@ -90,7 +90,7 @@ class GameState(object):
     @autoset
     def __init__(self, dificulty, hero, level_no):
         self.level = LEVELS[level_no](hero)
-        self.messages = [FIRST_MESSAGE]
+        self.messages = []
     def goto_next_level(self):
         """Move to the next level or end the game"""
         self.level_no += 1

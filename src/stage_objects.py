@@ -23,9 +23,11 @@ from exception import (
     ReplaceObjectException,
     NextLevelException,
     PreviousLevelException,
-    CreateObject)
+    CreateObject,
+    AppendMessage)
 from functools import partial
 from room import Room, MagneticPathway
+from constants import MOVE_AROUND_MESSAGE
 
 def descend_stairs(self):
     raise NextLevelException()
@@ -141,6 +143,16 @@ BLOCK_STAIRS_TRIGGER = RunOnceTrigger(
     HeroEnterRegion(144, 100, 10, 10),
     [])
 
+def append_message(msg):
+    def fun(objects):
+        raise AppendMessage(msg)
+    return fun
+
+TUTORIAL1 = RunOnceTrigger(
+    append_message(MOVE_AROUND_MESSAGE),
+    HeroEnterRegion(144, 100, 10, 10),
+    [])
+
 room1 = Room(50, 50, 100, 100,
              objects=[CLOSED_SHAFT],
              start=True)
@@ -165,7 +177,7 @@ L1 = partial(
     ],
     pathways = [p1, p2],
     creatures = [],
-    triggers = [BLOCK_STAIRS_TRIGGER]
+    triggers = [BLOCK_STAIRS_TRIGGER, TUTORIAL1]
 )
 
 LEVELS = [

@@ -17,7 +17,11 @@
 
 import itertools
 from random import randint
-from exception import (ReplaceObjectException, CreatureDeathException, CreateObject)
+from exception import (
+    ReplaceObjectException,
+    CreatureDeathException,
+    CreateObject,
+    AppendMessage)
 from util import Container
 from obj import Object
 from decorations import autoset
@@ -115,7 +119,10 @@ does not exist. Fail silently"""
             self.add_object(ex.obj)
     def update_triggers(self):
         for t in self.triggers:
-            t.update()
+            try:
+                t.update()
+            except AppendMessage as ex:
+                self.messages.append(ex.message)
     def update_creatures(self):
         for c in self.creatures[:]:
             try:

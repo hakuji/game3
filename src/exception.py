@@ -70,3 +70,6 @@ class CreateObject(Exception):
 
 class AnimationEnd(Exception):
     pass
+
+class AppendMessage(Exception):
+    pass

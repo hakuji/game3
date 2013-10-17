@@ -51,7 +51,6 @@ TEXT_Y = 0
 TEXT_COLOR = (255, 255, 255, 255)
 TEXT_FONT = 'Times'
 TEXT_SIZE = 12
-FIRST_MESSAGE = '\nPress ? for help with the controls'
 class Color(object):
     RED = (255, 0, 0, 255)
     GREEN = (0, 255, 0, 255)
@@ -65,8 +64,9 @@ class Controls(object):
     SOUTH = key.S
     ATTACK = key.J
     ACCEPT = key.I
-MOVE_AROUND_MESSAGE = 'Use {0} {1} {2} {3} keys to move around.'.format(
-    key.symbol_string(Controls.NORTH),
-    key.symbol_string(Controls.EAST),
+MOVE_AROUND_MESSAGE = 'Use the {0} {1} {2} {3} keys to move around'.format(
+    key.symbol_string(Controls.WEST),
     key.symbol_string(Controls.SOUTH),
-    key.symbol_string(Controls.WEST))
+    key.symbol_string(Controls.EAST),
+    key.symbol_string(Controls.NORTH)
+)
