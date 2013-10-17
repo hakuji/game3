@@ -18,9 +18,9 @@
 import random
 from obj import Object, empty_interaction
 from exception import CreatureDeathException
-from constants import Direction, HITBOX_GAP, ROAM_LIST
+from constants import Direction, HITBOX_GAP, ROAM_LIST, ROAM_RATE
 from decorations import autoset
-from function import range_inc
+from function import range_inc, from_probability_to_bool
 
 class Creature(Object):
     """Actual creature on the screen"""
@@ -103,7 +103,8 @@ was moving before."""
         """Move randomly"""
         x, y = self.x, self.y
         self.change_countdown -= 1
-        if not self.continue_last_desired():
+        if (not self.continue_last_desired()
+            and from_probability_to_bool(ROAM_RATE)):
             dx = random.choice(ROAM_LIST)
             dy = random.choice(ROAM_LIST)
             self.set_last_desired_direction(dx, dy, 1)

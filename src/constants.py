@@ -32,7 +32,8 @@ OBJECT_FONT_FACE = 'Monospace'
 INTERVAL = 0.1
 VICTORY = 'YOU WIN!'
 GAME_OVER = 'GAME OVER'
-ROAM_LIST = [-1, 0, 0, 0, 1]
+ROAM_LIST = [-1, 0, 1]
+ROAM_RATE = 0.1
 HITBOX_GAP = 3
 BACKGROUND_COLOR = [0, 0, 0, 0]
 class Direction(object):

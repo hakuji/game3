@@ -17,7 +17,7 @@
 
 """Utility functions"""
 
-import pyglet
+import pyglet, random
 
 from constants import (
     WINDOW_WIDTH,
@@ -89,3 +89,7 @@ def fadeout(alpha):
     rect = vertex_list_from_rect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT,
                                  bg)
     rect.draw(pyglet.gl.GL_QUAD_STRIP)
+
+def from_probability_to_bool(rate):
+    """Return True rate percent of the time"""
+    return random.random() <= rate
