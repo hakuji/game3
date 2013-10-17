@@ -151,7 +151,7 @@ WOLF = partial(
 )
 
 def create_boulder(objects):
-    raise CreateObject(BOULDER)
+    raise ReplaceObjectException(-2, BOULDER)
 
 BLOCK_STAIRS_TRIGGER = RunOnceTrigger(
     create_boulder,
