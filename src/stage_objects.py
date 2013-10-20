@@ -123,13 +123,10 @@ BASE_CHEST = partial(
     range = 5
 )
 
-def debug(self):
-    print 'hello'
-
 TREASURE_CHEST = partial(
     BASE_CHEST,
     description = 'treasure chest',
-    interact = debug,
+    interact = append_message("It's empty"),
     x = 100,
     y = 100
 )
