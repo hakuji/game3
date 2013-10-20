@@ -2,8 +2,8 @@ Copyright 2013 by akuji.
 See the end of the file for license conditions.
 
 ## About ##
-Game 3 is a rouge inspired game, that hase a gameplay similar to pre-nintendo 64
-zelda. It is coded in python and uses pyglet for the graphical parts.
+Game 3 is a game inspired by rouge and other classic rpg games.
+It is coded in python and uses pyglet for the graphical parts.
 
 ## Dependencies ##
 To test it you need pyglet installed.
