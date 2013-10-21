@@ -33,7 +33,7 @@ class Hero(Creature):
             health=100,
             speed=3,
             strength=3,
-            light_radius=20,
+            light_radius=30,
             go_through=False,
             range=10,
             cooldown_=3,
