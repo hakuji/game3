@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with game 3.  If not, see <http://www.gnu.org/licenses/>.
 
-import itertools, fog
+import itertools, fog, math
 from random import randint
 from exception import (
     ReplaceObjectException,
@@ -167,6 +167,15 @@ does not exist. Fail silently"""
                     and not self.collide_with_objects(creature)):
                     if creature == self.hero:
                         self.update_fog()
+                    else:
+                        x = creature.x
+                        y = creature.y
+                        x1 = self.hero.x
+                        y1 = self.hero.y
+                        if math.hypot(x1 - x, y1 - y) <= self.hero.light_radius:
+                            creature.visible_ = True
+                        else:
+                            creature.visible_ = False
                     break
                 else:
                     pass

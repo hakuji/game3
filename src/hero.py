@@ -48,6 +48,7 @@ class Hero(Creature):
         self.arrow = self.get_arrow()
         if inv is None:
             self.inv = []
+        self.visible_ = True
     def draw(self):
         super(Hero, self).draw()
         if self.facing[1] == Direction.NORTH:
