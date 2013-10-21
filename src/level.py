@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with game 3.  If not, see <http://www.gnu.org/licenses/>.
 
-import itertools
+import itertools, fog
 from random import randint
 from exception import (
     ReplaceObjectException,
@@ -37,6 +37,7 @@ class Level(Container):
         self.init_rooms()
         self.set_enemies()
         self.set_triggers()
+        self.update_fog()
         self.contents = []
         self.hitboxes = []
         self.messages = []
@@ -110,6 +111,8 @@ does not exist. Fail silently"""
         self.hero_interact()
         self.update_triggers()
         self.update_messages()
+    def update_fog(self):
+        fog.update_fog(self.hero.x, self.hero.y, self.hero.light_radius)
     def handle_events(self, fun):
         try:
             fun()
@@ -162,6 +165,8 @@ does not exist. Fail silently"""
                 creature.set_location(*i)
                 if (self.contained_in_any_room(creature)
                     and not self.collide_with_objects(creature)):
+                    if creature == self.hero:
+                        self.update_fog()
                     break
                 else:
                     pass
@@ -225,3 +230,4 @@ times before raising an exception"""
         for l in self.contents:
             for i in l:
                 i.draw()
+        fog.draw_fog()
