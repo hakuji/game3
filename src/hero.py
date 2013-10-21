@@ -33,7 +33,7 @@ class Hero(Creature):
             health=100,
             speed=3,
             strength=3,
-            light_radius=20,
+            light_radius=30,
             go_through=False,
             range=10,
             cooldown_=3,
@@ -48,6 +48,7 @@ class Hero(Creature):
         self.arrow = self.get_arrow()
         if inv is None:
             self.inv = []
+        self.visible_ = True
     def draw(self):
         super(Hero, self).draw()
         if self.facing[1] == Direction.NORTH:

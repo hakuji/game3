@@ -60,6 +60,7 @@ class Creature(Object):
         self.cooldown = 0
         self.facing = [None, Direction.NORTH]
         self.hitbox = None
+        self.visible_ = False
     def be_attacked(self, other):
         """Be attacked by another creature"""
         self.health -= other.strength
@@ -186,3 +187,6 @@ intended direction"""
     def intent(self, x, y):
         self.intended_x = x
         self.intended_y = y
+    def draw(self):
+        if self.visible_:
+            super(Creature, self).draw()
