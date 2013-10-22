@@ -28,6 +28,8 @@ def get_tile(x, y, tile_size, group, batch):
                  x + tile_size, y + tile_size
              ))
     )
+    vl.x = x
+    vl.y = y
     vl.explored = 0
     return vl
 
@@ -62,8 +64,18 @@ def tile_visible_from(x, y, light_radius, tile):
     return math.hypot(x - x1, y - y1) <= light_radius
 
 def update_fog(x, y, light_radius):
-    for i in matrix:
-        for t in i:
+    margin = 10
+    i1 = (x / tile_size) - (light_radius / tile_size) - margin
+    j1 = (y / tile_size) - (light_radius / tile_size) - margin
+    i1 = max(i1, 0)
+    j1 = max(j1, 0)
+    i2 = i1 + 15 + margin
+    j2 = j1 + 5 + margin
+    i2 = min(i2, len(matrix[0]))
+    j2 = min(j2, len(matrix))
+    for i in range(i1, i2):
+        for j in range(j1, j2):
+            t = matrix[j][i]
             if tile_visible_from(x, y, light_radius, t):
                 batch.migrate(t, pyglet.gl.GL_QUAD_STRIP, visible_group, batch)
                 t.explored = 1
