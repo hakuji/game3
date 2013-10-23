@@ -18,7 +18,7 @@
 import random
 from obj import Object, empty_interaction
 from exception import CreatureDeathException
-from constants import Direction, HITBOX_GAP, ROAM_LIST, ROAM_RATE
+from constants import Direction, HITBOX_GAP, ROAM_LIST, ROAM_RATE, DEBUG
 from decorations import autoset
 from function import range_inc, from_probability_to_bool
 
@@ -60,7 +60,7 @@ class Creature(Object):
         self.cooldown = 0
         self.facing = [None, Direction.NORTH]
         self.hitbox = None
-        self.visible_ = False
+        self.visible_ = DEBUG
     def be_attacked(self, other):
         """Be attacked by another creature"""
         self.health -= other.strength

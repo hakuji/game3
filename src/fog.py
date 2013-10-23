@@ -16,7 +16,7 @@
 # along with game 3.  If not, see <http://www.gnu.org/licenses/>.
 
 import pyglet, math
-from constants import WINDOW_WIDTH, WINDOW_HEIGHT
+from constants import WINDOW_WIDTH, WINDOW_HEIGHT, DEBUG
 
 def get_tile(x, y, tile_size, group, batch):
     vl = batch.add(

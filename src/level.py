@@ -25,6 +25,7 @@ from exception import (
 from util import Container
 from obj import Object
 from decorations import autoset
+from constants import DEBUG
 
 class Level(Container):
     """A game level, stage etc"""
@@ -172,7 +173,7 @@ does not exist. Fail silently"""
                         y = creature.y
                         x1 = self.hero.x
                         y1 = self.hero.y
-                        if math.hypot(x1 - x, y1 - y) <= self.hero.light_radius:
+                        if math.hypot(x1 - x, y1 - y) <= self.hero.light_radius or DEBUG:
                             creature.visible_ = True
                         else:
                             creature.visible_ = False
@@ -239,4 +240,5 @@ times before raising an exception"""
         for l in self.contents:
             for i in l:
                 i.draw()
-        fog.draw_fog()
+        if not DEBUG:
+            fog.draw_fog()
