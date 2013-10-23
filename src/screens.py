@@ -31,7 +31,8 @@ from constants import (
     TEXT_SIZE,
     HEALTH_BAR_WIDTH,
     HEALTH_BAR_HEIGHT,
-    Controls)
+    Controls,
+    DEBUG)
 from function import fadeout, vertex_list_from_rect
 from exception import StartGame
 
@@ -168,6 +169,7 @@ class CommonScreen(Screen, Reactable):
         pyglet.gl.glTranslatef(0.0, 65.0, 0.0)
         self.level.draw()
         pyglet.gl.glPopMatrix()
-        super(CommonScreen, self).draw()
-        if self.fade > 0:
-            fadeout(self.fade)
+        if not DEBUG:
+            super(CommonScreen, self).draw()
+            if self.fade > 0:
+                fadeout(self.fade)
