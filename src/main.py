@@ -30,7 +30,7 @@ window = pyglet.window.Window(
     height = WINDOW_HEIGHT)
 
 @window.event
-def on_key_press(symbol, modifiers):
+def on_key_release(symbol, modifiers):
     try:
         state.react(symbol, modifiers)
     except SubscriptionFound:
