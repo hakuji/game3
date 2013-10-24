@@ -32,12 +32,17 @@ window = pyglet.window.Window(
     height = WINDOW_HEIGHT)
 
 
-state = CommonScreen(GameState(False, Hero(None), 0))
+hero = Hero(None)
+state = CommonScreen(GameState(False, hero, 0))
 
 @window.event
 def on_key_release(symbol, modifiers):
     if key.Q == symbol:
         pyglet.app.exit()
+    if key.R == symbol:
+        import stage_objects
+        state.level = stage_objects.LEVELS[0](hero)
+
 @window.event
 def on_draw():
     window.clear()
