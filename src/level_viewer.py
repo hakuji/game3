@@ -25,6 +25,7 @@ from pyglet.window import key
 from screens import CommonScreen
 from pyglet import gl
 from hero import Hero
+from function import vertex_list_from_rect
 
 window = pyglet.window.Window(
     caption = GAME_NAME,
@@ -35,6 +36,7 @@ window = pyglet.window.Window(
 hero = Hero(None)
 state = CommonScreen(GameState(False, hero, 0))
 xy0 = None
+vl = vertex_list_from_rect(0, 0, 0, 0, (155, 155, 155, 255))
 
 def delta_xy(x, y):
     x0 = min(x, xy0[0])
@@ -66,9 +68,18 @@ def on_mouse_press(x, y, button, modifiers):
     xy0 = (x, y)
 
 @window.event
+def on_mouse_drag(x, y, dx, dy, button, modifiers):
+    dxy = (x - xy0[0], y - xy0[1])
+    vl.vertices[:] = [xy0[0], xy0[1],
+                      xy0[0] + dxy[0], xy0[1],
+                      xy0[0], xy0[1] + dxy[1],
+                      xy0[0] + dxy[0], xy0[1] + dxy[1]]
+
+@window.event
 def on_draw():
     window.clear()
     state.draw()
+    vl.draw(gl.GL_QUAD_STRIP)
 
 def init():
     gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
