@@ -34,6 +34,16 @@ window = pyglet.window.Window(
 
 hero = Hero(None)
 state = CommonScreen(GameState(False, hero, 0))
+xy0 = None
+
+def delta_xy(x, y):
+    x0 = min(x, xy0[0])
+    y0 = min(y, xy0[1])
+    x1 = max(x, xy0[0])
+    y1 = max(y, xy0[1])
+    dx = x1 - x0
+    dy = y1 - y0
+    return (x0, y0, dx, dy)
 
 @window.event
 def on_key_release(symbol, modifiers):
@@ -45,7 +55,15 @@ def on_key_release(symbol, modifiers):
 
 @window.event
 def on_mouse_release(x, y, button, modifiers):
-    print(x, y)
+    if xy0 != (x, y):
+        print(delta_xy(x, y))
+    else:
+        print(x, y)
+
+@window.event
+def on_mouse_press(x, y, button, modifiers):
+    global xy0
+    xy0 = (x, y)
 
 @window.event
 def on_draw():
