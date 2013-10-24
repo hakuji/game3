@@ -44,6 +44,10 @@ def on_key_release(symbol, modifiers):
         state.level = stage_objects.LEVELS[0](hero)
 
 @window.event
+def on_mouse_release(x, y, button, modifiers):
+    print(x, y)
+
+@window.event
 def on_draw():
     window.clear()
     state.draw()
