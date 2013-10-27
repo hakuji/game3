@@ -17,7 +17,7 @@
 
 import random
 from obj import Object, empty_interaction
-from exception import CreatureDeathException
+from exception import CreatureDeath
 from constants import Direction, HITBOX_GAP, ROAM_LIST, ROAM_RATE, DEBUG
 from decorations import autoset
 from function import range_inc, from_probability_to_bool
@@ -69,7 +69,7 @@ class Creature(Object):
     def death(self):
         """Deals with the eventual death of the creature"""
         if self.dead():
-            raise CreatureDeathException()
+            raise CreatureDeath()
     def update(self):
         self.death()
         self.cooldown = max(0, self.cooldown - 1)

@@ -38,19 +38,16 @@ class Fadeout(Exception):
 class SubscriptionFound(Exception):
     pass
 
-class UnplaceableRoomException(Exception):
+class NextLevel(Exception):
     pass
 
-class NextLevelException(Exception):
+class PreviousLevel(Exception):
     pass
 
-class PreviousLevelException(Exception):
+class CreatureDeath(Exception):
     pass
 
-class CreatureDeathException(Exception):
-    pass
-
-class GameOverException(Exception):
+class GameOver(Exception):
     @autoset
     def __init__(self, defeat):
         pass
@@ -58,7 +55,7 @@ class GameOverException(Exception):
 class ImpossiblePathwayException(Exception):
     pass
 
-class ReplaceObjectException(Exception):
+class ReplaceObject(Exception):
     @autoset
     def __init__(self, this, that):
         pass

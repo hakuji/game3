@@ -20,9 +20,9 @@ from obj import Object
 from creature import Creature
 from level import Level
 from exception import (
-    ReplaceObjectException,
-    NextLevelException,
-    PreviousLevelException,
+    ReplaceObject,
+    NextLevel,
+    PreviousLevel,
     CreateObject,
     AppendMessage)
 from functools import partial
@@ -35,12 +35,12 @@ from constants import (
     HERO_ID)
 
 def descend_stairs(self):
-    raise NextLevelException()
+    raise NextLevel()
 
 def replace_object(this, that):
     """Replace this with that"""
     def r(self):
-        raise ReplaceObjectException(this, that)
+        raise ReplaceObject(this, that)
     return r
 
 def on_off_switch(f1, f2):
@@ -72,7 +72,7 @@ DESC_STAIRS = partial(
 )
 
 def ascend_stairs(self):
-    raise PreviousLevelException()
+    raise PreviousLevel()
 
 ASC_STAIRS = partial(
     Object,
@@ -148,7 +148,7 @@ WOLF = partial(
 )
 
 def create_boulder(objects):
-    raise ReplaceObjectException(-2, BOULDER)
+    raise ReplaceObject(-2, BOULDER)
 
 BLOCK_STAIRS_TRIGGER = RunOnceTrigger(
     create_boulder,

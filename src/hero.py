@@ -21,7 +21,7 @@ from creature import Creature
 from decorations import autoset
 from util import MeleeHitbox, Move
 from constants import Direction, Controls, HERO_ID
-from exception import CreatureDeathException, GameOverException, AnimationEnd
+from exception import CreatureDeath, GameOver, AnimationEnd
 
 class Hero(Creature):
     """Player controlable character"""
@@ -91,8 +91,8 @@ class Hero(Creature):
     def update(self):
         try:
             super(Hero, self).update()
-        except CreatureDeathException:
-            raise GameOverException(True)
+        except CreatureDeath:
+            raise GameOver(True)
         if self.animation is not None:
             try:
                 self.animation.update()

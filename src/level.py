@@ -18,8 +18,8 @@
 import itertools, fog, math
 from random import randint
 from exception import (
-    ReplaceObjectException,
-    CreatureDeathException,
+    ReplaceObject,
+    CreatureDeath,
     CreateObject,
     AppendMessage)
 from util import Container
@@ -117,7 +117,7 @@ does not exist. Fail silently"""
     def handle_events(self, fun):
         try:
             fun()
-        except ReplaceObjectException as ex:
+        except ReplaceObject as ex:
             self.replace_object(ex)
         except CreateObject as ex:
             self.add_object(ex.obj)
@@ -132,7 +132,7 @@ does not exist. Fail silently"""
                 c.update()
                 self.update_position(c)
                 self.add_hitbox(c)
-            except CreatureDeathException:
+            except CreatureDeath:
                 self.creatures.remove(c)
     def update_messages(self):
         for o in self.placeable_objects():
