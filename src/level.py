@@ -21,7 +21,8 @@ from exception import (
     ReplaceObject,
     CreatureDeath,
     CreateObject,
-    AppendMessage)
+    AppendMessage,
+    EventList)
 from util import Container
 from obj import Object
 from decorations import autoset
@@ -123,6 +124,13 @@ does not exist. Fail silently"""
             self.add_object(ex.obj)
         except AppendMessage as ex:
             self.messages.append(ex.message)
+        except EventList as ev:
+            def raise_ev(ev):
+                def f():
+                    raise ev
+                return f
+            for i in ev.events:
+                self.handle_events(raise_ev(i))
     def update_triggers(self):
         for t in self.triggers:
             self.handle_events(t.update)

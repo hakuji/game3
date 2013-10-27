@@ -23,7 +23,7 @@ from exception import (
     ReplaceObject,
     NextLevel,
     PreviousLevel,
-    CreateObject,
+    EventList,
     AppendMessage)
 from functools import partial
 from room import Room, MagneticPathway
@@ -36,12 +36,6 @@ from constants import (
 
 def descend_stairs(self):
     raise NextLevel()
-
-def replace_object(this, that):
-    """Replace this with that"""
-    def r(self):
-        raise ReplaceObject(this, that)
-    return r
 
 def on_off_switch(f1, f2):
     """Will call f1 if the switch set otherwise f2"""
@@ -87,6 +81,12 @@ ASC_STAIRS = partial(
 
 leverid = 4
 
+def replace_for_lever(this, that):
+    def r(self):
+        msg_ev = AppendMessage('You hear a rumbling noise form southeast')
+        raise EventList([ReplaceObject(this, that), msg_ev])
+    return r
+
 LEVER = partial(
     Object,
     go_through = True,
@@ -94,8 +94,8 @@ LEVER = partial(
     description = 'lever',
     range = 5,
     interact = on_off_switch(
-        partial(replace_object(1, DESC_STAIRS)),
-        partial(replace_object(2, CLOSED_SHAFT))
+        partial(replace_for_lever(1, DESC_STAIRS)),
+        partial(replace_for_lever(2, CLOSED_SHAFT))
     ),
     id = leverid
 )

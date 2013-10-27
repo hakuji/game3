@@ -70,3 +70,9 @@ class AnimationEnd(Exception):
 
 class AppendMessage(Exception):
     pass
+
+class EventList(Exception):
+    """An event that has a list of events"""
+    @autoset
+    def __init__(self, events):
+        pass
