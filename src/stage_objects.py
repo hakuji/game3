@@ -114,7 +114,8 @@ BOULDER = partial(
     x = 130,
     y = 90,
     range = 5,
-    interact=append_message("You will deal with this later")
+    interact=append_message("You will deal with this later"),
+    color=Color.UMBER
 )
 
 BASE_CHEST = partial(
