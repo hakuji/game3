@@ -93,3 +93,16 @@ def fadeout(alpha):
 def from_probability_to_bool(rate):
     """Return True rate percent of the time"""
     return random.random() <= rate
+
+def movements(x, y , intended_x, intended_y):
+    """Iterator function that returns all the possible positions in the
+    intended direction"""
+    if x == intended_x and y == intended_y:
+        raise StopIteration()
+    for i in reversed(range_inc(x,
+                                intended_x)):
+        for j in reversed(range_inc(y,
+                                    intended_y)):
+#            if self.symbol == '@':
+#                print (self.sprite.x, self.sprite.y), (self.intended_x, self.intended_y), (i, j)
+            yield (i, j)

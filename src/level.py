@@ -27,6 +27,7 @@ from util import Container
 from obj import Object
 from decorations import autoset
 from constants import DEBUG
+from function import movements
 
 class Level(Container):
     """A game level, stage etc"""
@@ -170,7 +171,8 @@ does not exist. Fail silently"""
                     return
     def update_position(self, creature):
         if not creature.go_through:
-            for i in creature.movements():
+            for i in movements(creature.x, creature.y, creature.intended_x,
+                               creature.intended_y):
                 creature.set_location(*i)
                 if (self.contained_in_any_room(creature)
                     and not self.collide_with_objects(creature)):

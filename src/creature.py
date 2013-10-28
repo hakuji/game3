@@ -26,7 +26,7 @@ from constants import (
     DEBUG,
     TEXT_COLOR)
 from decorations import autoset
-from function import range_inc, from_probability_to_bool
+from function import from_probability_to_bool
 
 class Creature(Object):
     """Actual creature on the screen"""
@@ -181,14 +181,6 @@ was moving before."""
         nx = self.x + mov_x * (1 if x > ox else -1)
         ny = self.y + mov_y * (1 if y > oy else -1)
         self.intent(nx, ny)
-    def movements(self):
-        """Iterator function that returns all the possible positions in the
-intended direction"""
-        for i in reversed(range_inc(self.x,
-                                    self.intended_x)):
-            for j in reversed(range_inc(self.y,
-                                        self.intended_y)):
-                yield (i, j)
     def set_location(self, x, y):
         super(Creature, self).set_location(x, y)
         self.intent(x, y)
