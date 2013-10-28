@@ -32,7 +32,8 @@ from constants import (
     HEALTH_BAR_WIDTH,
     HEALTH_BAR_HEIGHT,
     Controls,
-    DEBUG)
+    DEBUG,
+    STATUS_PANEL_HEIGHT)
 from function import fadeout, vertex_list_from_rect
 from exception import StartGame
 
@@ -166,7 +167,7 @@ class CommonScreen(Screen, Reactable):
             self.level.messages = []
     def draw(self):
         pyglet.gl.glPushMatrix()
-        pyglet.gl.glTranslatef(0.0, 65.0, 0.0)
+        pyglet.gl.glTranslatef(0.0, STATUS_PANEL_HEIGHT, 0.0)
         self.level.draw()
         pyglet.gl.glPopMatrix()
         if not DEBUG:
