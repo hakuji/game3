@@ -43,7 +43,6 @@ class Direction(object):
     EAST = 'E'
     SOUTH = 'S'
     WEST = 'W'
-ROOM_FLOOR_COLOR = (150, 50, 255, 255)
 FADEOUT_STEP = 30
 HERO_ID = -1
 TEXT_WIDTH = 400
@@ -62,6 +61,9 @@ class Color(object):
     UMBER = (99, 81, 71, 255)
     BURLYWOOD = (222, 184, 135, 255)
     ARTICHOKE = (143, 151, 121, 255)
+    BATTLESHIPGREY = (132, 132, 130, 255)
+    ARSENIC = (59, 68, 75, 255)
+ROOM_FLOOR_COLOR = Color.ARSENIC
 TEXT_COLOR = Color.WHITE
 HEALTH_BAR_WIDTH = 100
 HEALTH_BAR_HEIGHT = 18

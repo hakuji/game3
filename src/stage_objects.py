@@ -54,7 +54,8 @@ CLOSED_SHAFT = partial(
     True,
     '|',
     'closed shaft',
-    id = 1
+    id = 1,
+    color = Color.BATTLESHIPGREY
 )
 
 DESC_STAIRS = partial(
