@@ -53,6 +53,7 @@ def on_key_release(symbol, modifiers):
         pyglet.app.exit()
     if key.R == symbol:
         import stage_objects
+        reload(stage_objects)
         state.level = stage_objects.LEVELS[0](hero)
 
 @window.event
