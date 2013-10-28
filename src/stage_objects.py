@@ -113,7 +113,7 @@ BOULDER = partial(
     x = 130,
     y = 90,
     range = 5,
-    interact=append_message("It won't budge")
+    interact=append_message("You will deal with this later")
 )
 
 BASE_CHEST = partial(
