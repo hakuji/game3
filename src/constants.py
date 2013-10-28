@@ -50,7 +50,6 @@ TEXT_WIDTH = 400
 TEXT_HEIGHT = 5 * 20
 TEXT_X = 30
 TEXT_Y = 0
-TEXT_COLOR = (255, 255, 255, 255)
 TEXT_FONT = 'Times'
 TEXT_SIZE = 12
 class Color(object):
@@ -58,6 +57,8 @@ class Color(object):
     GREEN = (0, 255, 0, 255)
     BLUE = (0, 0, 255, 255)
     BLACK = (0, 0, 0, 255)
+    WHITE = (255, 255, 255, 255)
+TEXT_COLOR = Color.WHITE
 HEALTH_BAR_WIDTH = 100
 HEALTH_BAR_HEIGHT = 18
 class Controls(object):
