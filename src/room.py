@@ -18,7 +18,7 @@
 import pyglet
 from decorations import autoset
 from rect import Rect
-from constants import WALL_WIDTH, ROOM_FLOOR_COLOR
+from constants import WALL_WIDTH, ROOM_FLOOR_COLOR, Color
 from function import vertex_list_from_rect
 from random import randint
 from exception import ImpossiblePathwayException
@@ -130,10 +130,10 @@ class Room(object):
         for w in self.walls:
             w.draw(pyglet.gl.GL_QUAD_STRIP)
     @classmethod
-    def walls_from_rect(cls, rect):
+    def walls_from_rect(cls, rect, color = Color.ARTICHOKE):
         x, y, w, h = rect.dimension()
-        left = vertex_list_from_rect(x, y, WALL_WIDTH, WALL_WIDTH + h)
-        top = vertex_list_from_rect(x, y + h, w, WALL_WIDTH)
-        bottom = vertex_list_from_rect(x, y, w, WALL_WIDTH)
-        right = vertex_list_from_rect(x + w, y, WALL_WIDTH, WALL_WIDTH + h)
+        left = vertex_list_from_rect(x, y, WALL_WIDTH, WALL_WIDTH + h, color)
+        top = vertex_list_from_rect(x, y + h, w, WALL_WIDTH, color)
+        bottom = vertex_list_from_rect(x, y, w, WALL_WIDTH, color)
+        right = vertex_list_from_rect(x + w, y, WALL_WIDTH, WALL_WIDTH + h, color)
         return (left, top, bottom, right)
