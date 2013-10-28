@@ -18,7 +18,11 @@
 import pyglet, types
 from util import Drawable
 from rect import Point, Rect
-from constants import OBJECT_FONT_SIZE, OBJECT_FONT_FACE, DEBUG
+from constants import (
+    OBJECT_FONT_SIZE,
+    OBJECT_FONT_FACE,
+    DEBUG,
+    TEXT_COLOR)
 from decorations import autoset
 from function import vertex_list_from_rect
 
@@ -41,7 +45,7 @@ class Object(Drawable):
         return list(fun())
     def __init__(self, go_through, symbol, description,
                  interact = empty_interaction, range = 1, id = None, x = 0,
-                 y = 0):
+                 y = 0, color = TEXT_COLOR):
         self._set_properties(go_through, symbol, description, interact, range,
                              id)
         sprite = pyglet.text.Label(
