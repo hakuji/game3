@@ -32,7 +32,8 @@ from constants import (
     ATTACK_MESSAGE,
     SCROLL_MESSAGE,
     INTERACT_MESSAGE,
-    HERO_ID)
+    HERO_ID,
+    Color)
 
 def descend_stairs(self):
     raise NextLevel()
@@ -136,7 +137,7 @@ wolfid = 3
 WOLF = partial(
     Creature,
     symbol = 'W',
-    description = 'dire wolf',
+    description = 'guardian wolf',
     health=1,
     speed=2,
     strength=5,
@@ -144,7 +145,8 @@ WOLF = partial(
     range=10,
     attack_type=MeleeHitbox,
     id=wolfid,
-    interaction=append_message('This wolf is too busy trying to kill you')
+    interaction=append_message('This wolf is too busy trying to kill you'),
+    color=Color.GOLD
 )
 
 def create_boulder(objects):

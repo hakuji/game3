@@ -58,6 +58,7 @@ class Color(object):
     BLUE = (0, 0, 255, 255)
     BLACK = (0, 0, 0, 255)
     WHITE = (255, 255, 255, 255)
+    GOLD = (255, 215, 0, 255)
 TEXT_COLOR = Color.WHITE
 HEALTH_BAR_WIDTH = 100
 HEALTH_BAR_HEIGHT = 18
