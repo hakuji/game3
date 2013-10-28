@@ -18,7 +18,7 @@
 
 import pyglet, constants
 from constants import (WINDOW_WIDTH, WINDOW_HEIGHT, GAME_NAME,
-                       BACKGROUND_COLOR)
+                       BACKGROUND_COLOR, STATUS_PANEL_HEIGHT)
 constants.DEBUG = True
 from control import GameState
 from pyglet.window import key
@@ -58,6 +58,7 @@ def on_key_release(symbol, modifiers):
 
 @window.event
 def on_mouse_release(x, y, button, modifiers):
+    y -= int(STATUS_PANEL_HEIGHT)
     if xy0 != (x, y):
         print(delta_xy(x, y))
     else:
@@ -65,6 +66,7 @@ def on_mouse_release(x, y, button, modifiers):
 
 @window.event
 def on_mouse_press(x, y, button, modifiers):
+    y -= int(STATUS_PANEL_HEIGHT)
     global xy0
     xy0 = (x, y)
 
