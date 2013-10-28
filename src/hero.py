@@ -30,7 +30,7 @@ class Hero(Creature):
         super(Hero, self).__init__(
             symbol='@',
             description='You',
-            health=100,
+            health=99999,
             speed=3,
             strength=3,
             light_radius=30,
