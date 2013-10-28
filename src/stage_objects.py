@@ -100,7 +100,9 @@ LEVER = partial(
         partial(replace_for_lever(2, CLOSED_SHAFT))
     ),
     id = leverid,
-    color=Color.BATTLESHIPGREY
+    color=Color.BATTLESHIPGREY,
+    x=389,
+    y=210
 )
 
 def append_message(msg):
@@ -199,7 +201,7 @@ room1 = Room(50, 50, 100, 100,
 
 room2 = Room(300, 200, 100, 150,
              creatures=[(WOLF, 6)],
-             objects=[LEVER])
+             objects=[])
 
 room3 = Room(50, 220, 100, 100,
              creatures=[WOLF])
@@ -209,7 +211,7 @@ p2 = MagneticPathway(room2, room3)
 
 L1 = partial(
     Level,
-    objects = [TREASURE_CHEST, ASC_STAIRS],
+    objects = [TREASURE_CHEST, ASC_STAIRS, LEVER],
     rooms = [
         room1,
         room2,
