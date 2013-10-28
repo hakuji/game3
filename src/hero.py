@@ -20,7 +20,7 @@ from pyglet import gl
 from creature import Creature
 from decorations import autoset
 from util import MeleeHitbox, Move
-from constants import Direction, Controls, HERO_ID
+from constants import Direction, Controls, HERO_ID, Color
 from exception import CreatureDeath, GameOver, AnimationEnd
 
 class Hero(Creature):
@@ -40,7 +40,8 @@ class Hero(Creature):
             attack_type=MeleeHitbox,
             roaming=False,
             hostile=False,
-            id=HERO_ID
+            id=HERO_ID,
+            color = Color.BLACK
         )
         self.speed = 3
         self.intended_interact = False

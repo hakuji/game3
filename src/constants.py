@@ -57,6 +57,7 @@ class Color(object):
     RED = (255, 0, 0, 255)
     GREEN = (0, 255, 0, 255)
     BLUE = (0, 0, 255, 255)
+    BLACK = (0, 0, 0, 255)
 HEALTH_BAR_WIDTH = 100
 HEALTH_BAR_HEIGHT = 18
 class Controls(object):

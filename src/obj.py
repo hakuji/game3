@@ -51,7 +51,7 @@ class Object(Drawable):
         sprite = pyglet.text.Label(
             symbol,
             font_name=OBJECT_FONT_FACE,
-            font_size=OBJECT_FONT_SIZE)
+            font_size=OBJECT_FONT_SIZE, color=color)
         self.interact = types.MethodType(interact, self)
         super(Object, self).__init__(sprite)
         self.x = x
