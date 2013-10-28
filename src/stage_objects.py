@@ -99,7 +99,8 @@ LEVER = partial(
         partial(replace_for_lever(1, DESC_STAIRS)),
         partial(replace_for_lever(2, CLOSED_SHAFT))
     ),
-    id = leverid
+    id = leverid,
+    color=Color.BATTLESHIPGREY
 )
 
 def append_message(msg):
@@ -167,7 +168,7 @@ TUTORIAL1 = RunOnceTrigger(
 
 TUTORIAL2 = RunOnceTrigger(
     append_message(ATTACK_MESSAGE),
-    HeroEnterRegion(50, 160, 100, 10),
+    HeroEnterRegion(50, 200, 100, 10),
     [])
 
 def scroll_message_pred(objects):
@@ -197,7 +198,7 @@ room1 = Room(50, 50, 100, 100,
              start=True)
 
 room2 = Room(300, 200, 100, 150,
-             creatures=[(WOLF, 2)],
+             creatures=[(WOLF, 6)],
              objects=[LEVER])
 
 room3 = Room(50, 220, 100, 100,
