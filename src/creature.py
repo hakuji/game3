@@ -18,7 +18,13 @@
 import random
 from obj import Object, empty_interaction
 from exception import CreatureDeath
-from constants import Direction, HITBOX_GAP, ROAM_LIST, ROAM_RATE, DEBUG
+from constants import (
+    Direction,
+    HITBOX_GAP,
+    ROAM_LIST,
+    ROAM_RATE,
+    DEBUG,
+    TEXT_COLOR)
 from decorations import autoset
 from function import range_inc, from_probability_to_bool
 
@@ -41,14 +47,16 @@ class Creature(Object):
             interaction=empty_interaction,
             cooldown_ = 10,
             roaming = True,
-            id = None):
+            id = None,
+            color = TEXT_COLOR):
         super(Creature, self).__init__(
             go_through,
             symbol,
             description,
             interaction,
             range,
-            id
+            id,
+            color=color
         )
         self.intended_x = self.x
         self.intended_y = self.y
