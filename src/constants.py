@@ -60,6 +60,7 @@ class Color(object):
     WHITE = (255, 255, 255, 255)
     GOLD = (255, 215, 0, 255)
     UMBER = (99, 81, 71, 255)
+    BURLYWOOD = (222, 184, 135, 255)
 TEXT_COLOR = Color.WHITE
 HEALTH_BAR_WIDTH = 100
 HEALTH_BAR_HEIGHT = 18

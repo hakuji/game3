@@ -122,7 +122,8 @@ BASE_CHEST = partial(
     Object,
     go_through = True,
     symbol = 'C',
-    range = 5
+    range = 5,
+    color=Color.BURLYWOOD
 )
 
 TREASURE_CHEST = partial(
