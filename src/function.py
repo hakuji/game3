@@ -103,6 +103,11 @@ def movements(x, y , intended_x, intended_y):
                                 intended_x)):
         for j in reversed(range_inc(y,
                                     intended_y)):
-#            if self.symbol == '@':
-#                print (self.sprite.x, self.sprite.y), (self.intended_x, self.intended_y), (i, j)
             yield (i, j)
+
+def raise_ev(ev_cls, *args):
+    """returns a function raises the given exception with the arguments
+    passed"""
+    def f(self):
+        raise ev_cls(*args)
+    return f

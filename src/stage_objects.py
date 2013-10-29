@@ -19,6 +19,7 @@ from util import MeleeHitbox, RunOnceTrigger, HeroEnterRegion, Predicate
 from obj import Object
 from creature import Creature
 from level import Level
+from function import raise_ev
 from exception import (
     ReplaceObject,
     NextLevel,
@@ -34,11 +35,6 @@ from constants import (
     INTERACT_MESSAGE,
     HERO_ID,
     Color)
-
-def raise_ev(ev_cls, *args):
-    def f(self):
-        raise ev_cls(*args)
-    return f
 
 def on_off_switch(f1, f2):
     """Will call f1 if the switch set otherwise f2"""
