@@ -121,6 +121,25 @@ WOLF = partial(
     color=Color.GOLD
 )
 
+HOLY_SWORDSMAN = partial(
+    Creature,
+    symbol = 'H',
+    description = 'holy swordsman',
+    health=1,
+    speed=2,
+    strength=2000,
+    light_radius=30,
+    range=10,
+    attack_type=MeleeHitbox,
+    interaction=append_message('Swordsman: Die monster!'),
+    color=Color.WHITE
+)
+
+SWORDSMAN_TRIGGER = RunOnceTrigger(
+    raise_ev(AppendMessage, '?????: Do not let that demon reach the next level!'),
+    HeroEnterRegion(360, 190, 100, 10),
+    [])
+
 BLOCK_STAIRS_TRIGGER = RunOnceTrigger(
     raise_ev(ReplaceObject, -2, BOULDER),
     HeroEnterRegion(144, 100, 10, 10),
@@ -154,7 +173,6 @@ TUTORIAL4 = RunOnceTrigger(
     [])
 
 room1 = Room(50, 50, 100, 100,
-             objects=[CLOSED_SHAFT],
              start=True)
 
 room2 = Room(300, 200, 100, 150,
@@ -164,7 +182,9 @@ room2 = Room(300, 200, 100, 150,
 room3 = Room(50, 220, 100, 100,
              creatures=[WOLF])
 
-room4 = Room(335, 90, 40, 27)
+room4 = Room(335, 90, 40, 27,
+             objects=[DESC_STAIRS],
+             creatures=[(HOLY_SWORDSMAN, 3)])
 
 p1 = MagneticPathway(room1, room3)
 p2 = MagneticPathway(room2, room3)
@@ -203,7 +223,8 @@ L1 = partial(
         TUTORIAL1,
         TUTORIAL2,
         TUTORIAL3,
-        TUTORIAL4]
+        TUTORIAL4,
+        SWORDSMAN_TRIGGER]
 )
 
 LEVELS = [
