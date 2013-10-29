@@ -35,8 +35,10 @@ from constants import (
     HERO_ID,
     Color)
 
-def descend_stairs(self):
-    raise NextLevel()
+def raise_ev(ev_cls, *args):
+    def f(self):
+        raise ev_cls(*args)
+    return f
 
 def on_off_switch(f1, f2):
     """Will call f1 if the switch set otherwise f2"""
@@ -63,19 +65,16 @@ DESC_STAIRS = partial(
     True,
     '>',
     'descending stairs',
-    interact = descend_stairs,
+    interact = raise_ev(NextLevel),
     id = 2
 )
-
-def ascend_stairs(self):
-    raise PreviousLevel()
 
 ASC_STAIRS = partial(
     Object,
     True,
     '<',
     'ascending stairs',
-    interact = ascend_stairs,
+    interact = raise_ev(PreviousLevel),
     id = -2,
     x = 130,
     y = 90
@@ -89,26 +88,7 @@ def replace_for_lever(this, that):
         raise EventList([ReplaceObject(this, that), msg_ev])
     return r
 
-LEVER = partial(
-    Object,
-    go_through = True,
-    symbol = 'L',
-    description = 'lever',
-    range = 5,
-    interact = on_off_switch(
-        partial(replace_for_lever(1, DESC_STAIRS)),
-        partial(replace_for_lever(2, CLOSED_SHAFT))
-    ),
-    id = leverid,
-    color=Color.BATTLESHIPGREY,
-    x=389,
-    y=210
-)
-
-def append_message(msg):
-    def fun(objects):
-        raise AppendMessage(msg)
-    return fun
+append_message = partial(raise_ev, AppendMessage)
 
 BOULDER = partial(
     Object,
@@ -155,11 +135,8 @@ WOLF = partial(
     color=Color.GOLD
 )
 
-def create_boulder(objects):
-    raise ReplaceObject(-2, BOULDER)
-
 BLOCK_STAIRS_TRIGGER = RunOnceTrigger(
-    create_boulder,
+    raise_ev(ReplaceObject, -2, BOULDER),
     HeroEnterRegion(144, 100, 10, 10),
     [])
 
@@ -176,22 +153,17 @@ TUTORIAL2 = RunOnceTrigger(
 def scroll_message_pred(objects):
     return any(o.dead() for o in objects)
 
-def scroll_message_fun(objects):
-    raise AppendMessage(SCROLL_MESSAGE)
-
 TUTORIAL3 = RunOnceTrigger(
-    scroll_message_fun,
+    raise_ev(AppendMessage, SCROLL_MESSAGE),
     Predicate([wolfid], scroll_message_pred),
     [])
 
 def interact_message_pred(objects):
     return objects[0].visible(objects[1])
 
-def interact_message_fun(objects):
-    raise AppendMessage(INTERACT_MESSAGE)
 
 TUTORIAL4 = RunOnceTrigger(
-    interact_message_fun,
+    raise_ev(AppendMessage, INTERACT_MESSAGE),
     Predicate([HERO_ID, leverid], interact_message_pred),
     [])
 
@@ -206,8 +178,24 @@ room2 = Room(300, 200, 100, 150,
 room3 = Room(50, 220, 100, 100,
              creatures=[WOLF])
 
+room4 = Room(335, 90, 40, 27)
+
 p1 = MagneticPathway(room1, room3)
 p2 = MagneticPathway(room2, room3)
+p3 = MagneticPathway(room2, room4)
+
+LEVER = partial(
+    Object,
+    go_through = True,
+    symbol = 'L',
+    description = 'lever',
+    range = 5,
+#    interact = once(raise_ev(AddPathway, p3)),
+    id = leverid,
+    color=Color.BATTLESHIPGREY,
+    x=389,
+    y=210
+)
 
 L1 = partial(
     Level,
@@ -215,7 +203,8 @@ L1 = partial(
     rooms = [
         room1,
         room2,
-        room3
+        room3,
+        room4
     ],
     pathways = [p1, p2],
     creatures = [],
