@@ -22,6 +22,7 @@ from exception import (
     CreatureDeath,
     CreateObject,
     AppendMessage,
+    AddPathway,
     EventList)
 from util import Container
 from obj import Object
@@ -125,6 +126,8 @@ does not exist. Fail silently"""
             self.add_object(ex.obj)
         except AppendMessage as ex:
             self.messages.append(ex.message)
+        except AddPathway as ex:
+            self.pathways.append(ex.pathway)
         except EventList as ev:
             def raise_ev(ev):
                 def f():

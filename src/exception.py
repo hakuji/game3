@@ -76,3 +76,8 @@ class EventList(Exception):
     @autoset
     def __init__(self, events):
         pass
+
+class AddPathway(Exception):
+    @autoset
+    def __init__(self, pathway):
+        pass

@@ -19,13 +19,14 @@ from util import MeleeHitbox, RunOnceTrigger, HeroEnterRegion, Predicate
 from obj import Object
 from creature import Creature
 from level import Level
-from function import raise_ev
+from function import raise_ev, once
 from exception import (
     ReplaceObject,
     NextLevel,
     PreviousLevel,
     EventList,
-    AppendMessage)
+    AppendMessage,
+    AddPathway)
 from functools import partial
 from room import Room, MagneticPathway
 from constants import (
@@ -35,17 +36,6 @@ from constants import (
     INTERACT_MESSAGE,
     HERO_ID,
     Color)
-
-def on_off_switch(f1, f2):
-    """Will call f1 if the switch set otherwise f2"""
-    def fun(self):
-        if getattr(self, 'on', False):
-            self.on = False
-            f2(self)
-        else:
-            self.on = True
-            f1(self)
-    return fun
 
 CLOSED_SHAFT = partial(
     Object,
@@ -186,7 +176,7 @@ LEVER = partial(
     symbol = 'L',
     description = 'lever',
     range = 5,
-#    interact = once(raise_ev(AddPathway, p3)),
+    interact = once(raise_ev(AddPathway, p3)),
     id = leverid,
     color=Color.BATTLESHIPGREY,
     x=389,
