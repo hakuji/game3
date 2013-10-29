@@ -73,9 +73,8 @@ class AppendMessage(Exception):
 
 class EventList(Exception):
     """An event that has a list of events"""
-    @autoset
-    def __init__(self, events):
-        pass
+    def __init__(self, *events):
+        self.events = events
 
 class AddPathway(Exception):
     @autoset

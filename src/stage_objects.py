@@ -176,7 +176,11 @@ LEVER = partial(
     symbol = 'L',
     description = 'lever',
     range = 5,
-    interact = once(raise_ev(AddPathway, p3)),
+    interact = once(raise_ev(
+        EventList,
+        AddPathway(p3),
+        AppendMessage('A secret door opens')
+    )),
     id = leverid,
     color=Color.BATTLESHIPGREY,
     x=389,
