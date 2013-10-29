@@ -111,3 +111,22 @@ def raise_ev(ev_cls, *args):
     def f(self):
         raise ev_cls(*args)
     return f
+
+def on_off_switch(f1, f2):
+    """Will call f1 if the switch set otherwise f2"""
+    def fun(self):
+        if getattr(self, 'on', False):
+            self.on = False
+            f2(self)
+        else:
+            self.on = True
+            f1(self)
+    return fun
+
+def once(fun):
+    fun.off = True
+    def f(*args):
+        if fun.off:
+            fun.off = False
+            fun(*args)
+    return f
