@@ -24,7 +24,7 @@ from exception import (
     AppendMessage,
     AddPathway,
     EventList)
-from util import Container
+from util import Container, ObjectMessage
 from obj import Object
 from decorations import autoset
 from constants import DEBUG
@@ -152,7 +152,8 @@ does not exist. Fail silently"""
                 and self.hero.within_range(o)
                 and o != self.hero):
                 self.hero_saw.append(o)
-                self.messages.append('You see a ' + str(o))
+                self.messages.append(
+                    ObjectMessage('You see a {0}({1})', o))
     def add_hitbox(self, creature):
         if creature.hitbox is not None:
             self.hitboxes.append(creature.hitbox)

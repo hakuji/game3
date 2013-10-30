@@ -126,9 +126,16 @@ class MessageLog(object):
         self.document.insert_text(len(self.document.text), msg + '.\n')
         self.display_line = self.layout.get_line_count() - 2
         self.layout.ensure_line_visible(-1)
+    def append_formated(self, msg):
+        idx = len(self.document.text) + msg.index()
+        self.append_message(str(msg))
+        self.document.set_style(idx, idx + 1, {'color' : msg.obj.sprite.color})
     def append_messages(self, msgs):
         for m in msgs:
-            self.append_message(m)
+            if type(m) == str:
+                self.append_message(m)
+            else:
+                self.append_formated(m)
     def page_up(self):
         self.display_line = max(0, self.display_line - 5)
         self.layout.ensure_line_visible(self.display_line)

@@ -120,6 +120,16 @@ class Move(Animation):
         if self.pos[0] == self.obj.x and self.pos[1] == self.obj.y:
             raise AnimationEnd()
 
+class ObjectMessage(object):
+    @autoset
+    def __init__(self, message, obj):
+        pass
+    def __str__(self):
+        return self.message.format(self.obj.description, self.obj.symbol)
+    def index(self):
+        """Where to start formating"""
+        return str(self).index(self.obj.symbol)
+
 class RunOnceTrigger(object):
     """A trigger that once the predicate evaluate true, cause a reaction on objects"""
     @autoset
