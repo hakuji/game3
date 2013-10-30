@@ -32,7 +32,7 @@ class Hero(Creature):
             description='You',
             health=99999,
             speed=3,
-            strength=3,
+            strength=5000,
             light_radius=30,
             go_through=False,
             range=10,
