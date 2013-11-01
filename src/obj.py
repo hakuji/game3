@@ -44,22 +44,29 @@ class Object(Drawable):
                     yield d()
         return list(fun())
     def __init__(self, go_through, symbol, description,
-                 interact = empty_interaction, range = 1, id = None, x = 0,
+                 event_map = {}, range = 1, id = None, x = 0,
                  y = 0, color = TEXT_COLOR):
-        self._set_properties(go_through, symbol, description, interact, range,
+        self._set_properties(go_through, symbol, description, range,
                              id)
         sprite = pyglet.text.Label(
             symbol,
             font_name=OBJECT_FONT_FACE,
             font_size=OBJECT_FONT_SIZE, color=color)
-        self.interact = types.MethodType(interact, self)
+        self.set_events(event_map)
         super(Object, self).__init__(sprite)
         self.x = x
         self.y = y
         self.rect_ = Rect.from_dimensions(0, 0, self.w, self.h)
+    def get_default_map(self):
+        return {'on_interact': empty_interaction}
+    def set_events(self, event_map):
+        nm = self.get_default_map()
+        nm.update(event_map)
+        for k in nm:
+             self.__setattr__(k, types.MethodType(nm[k], self))
     @autoset
     def _set_properties(self, go_through, symbol, description,
-                 interact, range, id):
+                 range, id):
         """Used during the initialization to autoset attributes"""
         pass
     @property

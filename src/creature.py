@@ -44,7 +44,7 @@ class Creature(Object):
             hostile = True,
             go_through = False,
             range = 1,
-            interaction=empty_interaction,
+            event_map={},
             cooldown_ = 10,
             roaming = True,
             id = None,
@@ -53,7 +53,7 @@ class Creature(Object):
             go_through,
             symbol,
             description,
-            interaction,
+            event_map,
             range,
             id,
             color=color

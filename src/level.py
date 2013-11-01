@@ -171,7 +171,7 @@ does not exist. Fail silently"""
                 if o == self.hero:
                     continue
                 if o.within_range(self.hero):
-                    self.handle_events(o.interact)
+                    self.handle_events(o.on_interact)
                     return
     def update_position(self, creature):
         if not creature.go_through:

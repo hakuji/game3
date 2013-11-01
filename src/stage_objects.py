@@ -37,6 +37,14 @@ from constants import (
     HERO_ID,
     Color)
 
+def on_interact_map(fun):
+    return {'on_interact': fun}
+
+append_message = partial(raise_ev, AppendMessage)
+
+def on_interact_append_message(message):
+    return on_interact_map(append_message(message))
+
 CLOSED_SHAFT = partial(
     Object,
     True,
@@ -51,7 +59,7 @@ DESC_STAIRS = partial(
     True,
     '>',
     'descending stairs',
-    interact = raise_ev(NextLevel),
+    event_map = on_interact_map(raise_ev(NextLevel)),
     id = 2
 )
 
@@ -60,7 +68,7 @@ ASC_STAIRS = partial(
     True,
     '<',
     'ascending stairs',
-    interact = raise_ev(PreviousLevel),
+    event_map = on_interact_map(raise_ev(PreviousLevel)),
     id = -2,
     x = 130,
     y = 90
@@ -74,8 +82,6 @@ def replace_for_lever(this, that):
         raise EventList([ReplaceObject(this, that), msg_ev])
     return r
 
-append_message = partial(raise_ev, AppendMessage)
-
 BOULDER = partial(
     Object,
     go_through = False,
@@ -84,7 +90,7 @@ BOULDER = partial(
     x = 130,
     y = 90,
     range = 5,
-    interact=append_message("You will deal with this later"),
+    event_map = on_interact_append_message('You will deal with this later'),
     color=Color.UMBER
 )
 
@@ -99,7 +105,7 @@ BASE_CHEST = partial(
 TREASURE_CHEST = partial(
     BASE_CHEST,
     description = 'treasure chest',
-    interact = append_message("It's empty"),
+    event_map = on_interact_append_message("It's empty"),
     x = 100,
     y = 100
 )
@@ -117,7 +123,7 @@ WOLF = partial(
     range=10,
     attack_type=MeleeHitbox,
     id=wolfid,
-    interaction=append_message('This wolf is too busy trying to kill you'),
+    event_map = on_interact_append_message('This wolf is too busy trying to kill you'),
     color=Color.GOLD
 )
 
@@ -131,7 +137,7 @@ HOLY_SWORDSMAN = partial(
     light_radius=30,
     range=10,
     attack_type=MeleeHitbox,
-    interaction=append_message('Swordsman: Die monster!'),
+    event_map = on_interact_append_message('Swordsman: Die monster!'),
     color=Color.WHITE
 )
 
@@ -196,11 +202,11 @@ LEVER = partial(
     symbol = 'L',
     description = 'lever',
     range = 5,
-    interact = once(raise_ev(
+    event_map = on_interact_map(once(raise_ev(
         EventList,
         AddPathway(p3),
         AppendMessage('A secret door opens')
-    )),
+    ))),
     id = leverid,
     color=Color.BATTLESHIPGREY,
     x=389,
