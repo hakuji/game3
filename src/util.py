@@ -130,6 +130,13 @@ class ObjectMessage(object):
         """Where to start formating"""
         return str(self).index(self.obj.symbol)
 
+class Dialog(ObjectMessage):
+    def __str__(self):
+        return '{0}({1}): {2}'.format(
+            self.obj.description,
+            self.obj.symbol,
+            self.message)
+
 class RunOnceTrigger(object):
     """A trigger that once the predicate evaluate true, cause a reaction on objects"""
     @autoset

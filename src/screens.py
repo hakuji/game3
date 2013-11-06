@@ -123,7 +123,12 @@ class MessageLog(object):
         self.layout.y = TEXT_Y
         self.document.insert_text(1, '\n')
     def append_message(self, msg):
-        self.document.insert_text(len(self.document.text), msg + '.\n')
+        msg = msg[0].upper() + msg[1:]
+        if msg[-1] not in ".?!":
+            msg += '.\n'
+        else:
+            msg += '\n'
+        self.document.insert_text(len(self.document.text), msg)
         self.display_line = self.layout.get_line_count() - 2
         self.layout.ensure_line_visible(-1)
     def append_formated(self, msg):

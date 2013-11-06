@@ -15,7 +15,12 @@
 # You should have received a copy of the GNU General Public License
 # along with game 3.  If not, see <http://www.gnu.org/licenses/>.
 
-from util import MeleeHitbox, RunOnceTrigger, HeroEnterRegion, Predicate
+from util import (
+    MeleeHitbox,
+    RunOnceTrigger,
+    HeroEnterRegion,
+    Predicate,
+    Dialog)
 from obj import Object
 from creature import Creature
 from level import Level
@@ -91,7 +96,7 @@ BOULDER = partial(
     y = 90,
     range = 5,
     event_map = on_interact_append_message('You will deal with this later'),
-    color=Color.UMBER
+    color=Color.UMBER,
 )
 
 BASE_CHEST = partial(
@@ -127,6 +132,11 @@ WOLF = partial(
     color=Color.GOLD
 )
 
+def set_swordsman_events(self):
+    self.event_map = {
+        'on_interact' : append_message(Dialog('Die monster!', self))
+    }
+
 HOLY_SWORDSMAN = partial(
     Creature,
     symbol = 'H',
@@ -137,8 +147,8 @@ HOLY_SWORDSMAN = partial(
     light_radius=30,
     range=10,
     attack_type=MeleeHitbox,
-    event_map = on_interact_append_message('Swordsman: Die monster!'),
-    color=Color.WHITE
+    color=Color.WHITE,
+    delayed = set_swordsman_events
 )
 
 SWORDSMAN_TRIGGER = RunOnceTrigger(

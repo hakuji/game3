@@ -48,7 +48,8 @@ class Creature(Object):
             cooldown_ = 10,
             roaming = True,
             id = None,
-            color = TEXT_COLOR):
+            color = TEXT_COLOR,
+            delayed = empty_interaction):
         super(Creature, self).__init__(
             go_through,
             symbol,
@@ -56,7 +57,8 @@ class Creature(Object):
             event_map,
             range,
             id,
-            color=color
+            color=color,
+            delayed=delayed
         )
         self.intended_x = self.x
         self.intended_y = self.y
