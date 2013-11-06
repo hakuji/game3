@@ -15,8 +15,15 @@
 # You should have received a copy of the GNU General Public License
 # along with game 3.  If not, see <http://www.gnu.org/licenses/>.
 
-from level1 import L1
+from exception import AppendMessage
+from functools import partial
+from function import raise_ev
 
-LEVELS = [
-    L1
-]
+def on_interact_map(fun):
+    return {'on_interact': fun}
+
+append_message = partial(raise_ev, AppendMessage)
+
+def on_interact_append_message(message):
+    return on_interact_map(append_message(message))
+
