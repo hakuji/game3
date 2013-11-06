@@ -147,8 +147,22 @@ HOLY_SWORDSMAN = partial(
     delayed = set_swordsman_events
 )
 
+LEVER_BASE = partial(
+    Object,
+    go_through = True,
+    symbol = 'L',
+    description = 'lever',
+    range = 5
+)
+
+RUINED_LEVER = partial(
+    LEVER_BASE,
+    event_map = on_interact_append_message('It is ruined'),
+    color = Color.BROWNNOSE
+)
+
 SWORDSMAN_TRIGGER = RunOnceTrigger(
-    raise_ev(AppendMessage, '?????: Do not let that demon reach the next level!'),
+    raise_ev(AppendMessage, '?????: Hold him back!'),
     HeroEnterRegion(360, 190, 100, 10),
     [])
 
@@ -195,19 +209,15 @@ room3 = Room(50, 220, 100, 100,
              creatures=[WOLF])
 
 room4 = Room(335, 90, 40, 27,
-             objects=[DESC_STAIRS],
+             objects=[DESC_STAIRS, RUINED_LEVER],
              creatures=[(HOLY_SWORDSMAN, 3)])
 
 p1 = MagneticPathway(room1, room3)
 p2 = MagneticPathway(room2, room3)
 p3 = MagneticPathway(room2, room4)
 
-LEVER = partial(
-    Object,
-    go_through = True,
-    symbol = 'L',
-    description = 'lever',
-    range = 5,
+PATHWAY_LEVER = partial(
+    LEVER_BASE,
     event_map = on_interact_map(once(raise_ev(
         EventList,
         AddPathway(p3),
@@ -221,7 +231,7 @@ LEVER = partial(
 
 L1 = partial(
     Level,
-    objects = [TREASURE_CHEST, ASC_STAIRS, LEVER],
+    objects = [TREASURE_CHEST, ASC_STAIRS, PATHWAY_LEVER],
     rooms = [
         room1,
         room2,
