@@ -31,7 +31,9 @@ from exception import (
     PreviousLevel,
     EventList,
     AppendMessage,
-    AddPathway)
+    AddPathway,
+    RemovePathway
+)
 from functools import partial
 from room import Room, MagneticPathway
 from constants import (
@@ -158,12 +160,14 @@ LEVER_BASE = partial(
 RUINED_LEVER = partial(
     LEVER_BASE,
     event_map = on_interact_append_message('It is ruined'),
-    color = Color.BROWNNOSE
+    color = Color.BROWNNOSE,
+    x = 365,
+    y = 60
 )
 
 SWORDSMAN_TRIGGER = RunOnceTrigger(
-    raise_ev(AppendMessage, '?????: Hold him back!'),
-    HeroEnterRegion(360, 190, 100, 10),
+    raise_ev(AppendMessage, '?????: Hold him!'),
+    HeroEnterRegion(350, 190, 100, 10),
     [])
 
 BLOCK_STAIRS_TRIGGER = RunOnceTrigger(
@@ -192,7 +196,6 @@ TUTORIAL3 = RunOnceTrigger(
 def interact_message_pred(objects):
     return objects[0].visible(objects[1])
 
-
 TUTORIAL4 = RunOnceTrigger(
     raise_ev(AppendMessage, INTERACT_MESSAGE),
     Predicate([HERO_ID, leverid], interact_message_pred),
@@ -208,13 +211,22 @@ room2 = Room(300, 200, 100, 150,
 room3 = Room(50, 220, 100, 100,
              creatures=[WOLF])
 
-room4 = Room(335, 90, 40, 27,
-             objects=[DESC_STAIRS, RUINED_LEVER],
+room4 = Room(335, 50, 40, 77,
+             objects=[DESC_STAIRS],
              creatures=[(HOLY_SWORDSMAN, 3)])
 
 p1 = MagneticPathway(room1, room3)
 p2 = MagneticPathway(room2, room3)
 p3 = MagneticPathway(room2, room4)
+
+REMOVE_PATHWAY_TRIGGER = RunOnceTrigger(
+    raise_ev(
+        EventList,
+        AppendMessage('Holy swordsman: Seal the exit!'),
+        RemovePathway(p3)
+    ),
+    HeroEnterRegion(350, 120, 100, 10),
+    [])
 
 PATHWAY_LEVER = partial(
     LEVER_BASE,
@@ -231,7 +243,7 @@ PATHWAY_LEVER = partial(
 
 L1 = partial(
     Level,
-    objects = [TREASURE_CHEST, ASC_STAIRS, PATHWAY_LEVER],
+    objects = [TREASURE_CHEST, ASC_STAIRS, PATHWAY_LEVER, RUINED_LEVER],
     rooms = [
         room1,
         room2,
@@ -246,5 +258,6 @@ L1 = partial(
         TUTORIAL2,
         TUTORIAL3,
         TUTORIAL4,
-        SWORDSMAN_TRIGGER]
+        SWORDSMAN_TRIGGER,
+        REMOVE_PATHWAY_TRIGGER]
 )

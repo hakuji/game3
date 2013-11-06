@@ -23,7 +23,9 @@ from exception import (
     CreateObject,
     AppendMessage,
     AddPathway,
-    EventList)
+    EventList,
+    RemovePathway
+)
 from util import Container, ObjectMessage
 from obj import Object
 from decorations import autoset
@@ -128,6 +130,8 @@ does not exist. Fail silently"""
             self.messages.append(ex.message)
         except AddPathway as ex:
             self.pathways.append(ex.pathway)
+        except RemovePathway as ex:
+            self.pathways.remove(ex.pathway)
         except EventList as ev:
             def raise_ev(ev):
                 def f():

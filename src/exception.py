@@ -80,3 +80,8 @@ class AddPathway(Exception):
     @autoset
     def __init__(self, pathway):
         pass
+
+class RemovePathway(Exception):
+    @autoset
+    def __init__(self, pathway):
+        pass
