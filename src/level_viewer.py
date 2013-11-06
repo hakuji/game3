@@ -60,7 +60,7 @@ def on_key_release(symbol, modifiers):
         reload(stage_objects)
         print m
         state.level = m.LEVEL(hero)
-    elif key.N == symbol:
+    elif key.L == symbol:
         new_level = True
         buff = ""
     elif key.ENTER == symbol:
