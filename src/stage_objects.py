@@ -15,8 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with game 3.  If not, see <http://www.gnu.org/licenses/>.
 
-from level1 import L1
+import level1
 
 LEVELS = [
-    L1
+    level1.LEVEL
 ]

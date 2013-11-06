@@ -241,7 +241,7 @@ PATHWAY_LEVER = partial(
     y=210
 )
 
-L1 = partial(
+LEVEL = partial(
     Level,
     objects = [TREASURE_CHEST, ASC_STAIRS, PATHWAY_LEVER, RUINED_LEVER],
     rooms = [

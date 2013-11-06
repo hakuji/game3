@@ -37,6 +37,9 @@ hero = Hero(None)
 state = CommonScreen(GameState(False, hero, 0))
 xy0 = None
 vl = vertex_list_from_rect(0, 0, 0, 0, (155, 155, 155, 255))
+new_level = False
+buff = ""
+m = __import__('level' + buff)
 
 def delta_xy(x, y):
     x0 = min(x, xy0[0])
@@ -49,12 +52,38 @@ def delta_xy(x, y):
 
 @window.event
 def on_key_release(symbol, modifiers):
+    global new_level, buff, m
     if key.Q == symbol:
         pyglet.app.exit()
-    if key.R == symbol:
+    elif key.R == symbol:
         import stage_objects
         reload(stage_objects)
-        state.level = stage_objects.LEVELS[0](hero)
+        print m
+        state.level = m.LEVEL(hero)
+    elif key.N == symbol:
+        new_level = True
+        buff = ""
+    elif key.ENTER == symbol:
+        new_level = False
+        if buff != "":
+            try:
+                m = __import__('level' + buff)
+                reload(m)
+                print 'level' + buff + ' loaded'
+            except ImportError as err:
+                print err
+    else:
+        if new_level:
+            n = processNumber(symbol)
+            if n is not None:
+                buff += n
+
+def processNumber(symbol):
+    for i in range(0, 10):
+        i = str(i)
+        if symbol == getattr(key, '_' + i):
+            return i
+    return None
 
 @window.event
 def on_mouse_release(x, y, button, modifiers):
