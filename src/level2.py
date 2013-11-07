@@ -17,12 +17,38 @@
 
 from functools import partial
 from level import Level
+from room import Room, MagneticPathway
+
+r1 = Room(335, 54, 65, 119)
+r2 = Room(192, 58, 52, 37)
+r3 = Room(53, 142, 61, 42)
+r4 = Room(65, 24, 56, 38)
+r5 = Room(468, 96, 57, 42)
+r6 = Room(344, 302, 62, 49)
+r7 = Room(512, 310, 49, 46)
+r8 = Room(198, 241, 52, 115)
+r9 = Room(51, 325, 71, 36)
+r10 = Room(51, 251, 83, 28)
+r11 = Room(510, 213, 54, 42)
+r12 = Room(304, 234, 29, 32)
+
+p1 = MagneticPathway(r1, r2)
+p2 = MagneticPathway(r1, r3)
+p3 = MagneticPathway(r4, r3)
+p4 = MagneticPathway(r1, r5)
+p5 = MagneticPathway(r1, r6)
+p6 = MagneticPathway(r6, r7)
+p7 = MagneticPathway(r6, r8)
+p8 = MagneticPathway(r8, r9)
+p9 = MagneticPathway(r9, r10)
+p10 = MagneticPathway(r7, r11)
+p11 = MagneticPathway(r8, r12)
 
 LEVEL = partial(
     Level,
     objects=[],
-    rooms=[],
-    pathways=[],
+    rooms=[r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12],
+    pathways=[p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11],
     creatures=[],
     triggers=[]
 )
