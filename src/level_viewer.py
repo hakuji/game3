@@ -32,6 +32,8 @@ window = pyglet.window.Window(
     width = WINDOW_WIDTH,
     height = WINDOW_HEIGHT)
 
+NEW_ROOM = 1
+NEW_LEVEL = 2
 
 hero = Hero(None)
 state = CommonScreen(GameState(False, hero, 0))
@@ -39,7 +41,8 @@ xy0 = None
 vl = vertex_list_from_rect(0, 0, 0, 0, (155, 155, 155, 255))
 new_level = False
 buff = ""
-m = __import__('level' + buff)
+m = __import__('level1' + buff)
+ui_state = None
 
 def delta_xy(x, y):
     x0 = min(x, xy0[0])
@@ -52,7 +55,7 @@ def delta_xy(x, y):
 
 @window.event
 def on_key_release(symbol, modifiers):
-    global new_level, buff, m
+    global new_level, buff, m, ui_state
     if key.Q == symbol:
         pyglet.app.exit()
     elif key.R == symbol:
@@ -60,11 +63,13 @@ def on_key_release(symbol, modifiers):
         reload(stage_objects)
         print m
         state.level = m.LEVEL(hero)
-    elif key.L == symbol:
-        new_level = True
+    elif key.N == symbol:
+        ui_state = NEW_LEVEL
         buff = ""
+    elif key.M == symbol:
+        ui_state = NEW_ROOM
     elif key.ENTER == symbol:
-        new_level = False
+        ui_state = None
         if buff != "":
             try:
                 m = __import__('level' + buff)
@@ -73,7 +78,7 @@ def on_key_release(symbol, modifiers):
             except ImportError as err:
                 print err
     else:
-        if new_level:
+        if ui_state == NEW_LEVEL:
             n = processNumber(symbol)
             if n is not None:
                 buff += n
