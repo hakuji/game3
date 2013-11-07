@@ -35,13 +35,14 @@ window = pyglet.window.Window(
 NEW_ROOM = 1
 NEW_LEVEL = 2
 STATUS_PANEL_HEIGHT = int(STATUS_PANEL_HEIGHT)
+SELECTION_COLOR = (155, 155, 155, 255)
 
 hero = Hero(None)
 state = CommonScreen(GameState(False, hero, 0))
 xy0 = None
 vl = pyglet.graphics.vertex_list(
         6, ('v2i', (0, 0) * 6 ),
-        ('c4B', (155, 155, 155, 255)*6))
+        ('c4B', SELECTION_COLOR * 6))
 new_level = False
 buff = ""
 m = __import__('level1' + buff)
@@ -100,6 +101,7 @@ def on_mouse_release(x, y, button, modifiers):
         dxy = delta_xy(x, y)
         room = Room(dxy[0], dxy[1], dxy[2], dxy[3])
         state.level.rooms.append(room)
+        vl.colors[:] = BACKGROUND_COLOR * 6
         print(dxy)
     else:
         print(x, y)
@@ -110,6 +112,7 @@ def on_mouse_press(x, y, button, modifiers):
     global xy0
     xy0 = (x, y)
     vl.vertices[:] = [x, y + STATUS_PANEL_HEIGHT] * 6
+    vl.colors[:] = SELECTION_COLOR * 6
 
 
 @window.event
