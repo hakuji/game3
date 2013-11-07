@@ -18,8 +18,9 @@
 from functools import partial
 from level import Level
 from room import Room, MagneticPathway
+from level_util import ASC_STAIRS
 
-r1 = Room(335, 54, 65, 119)
+r1 = Room(335, 54, 65, 119, start=True)
 r2 = Room(192, 58, 52, 37)
 r3 = Room(53, 142, 61, 42)
 r4 = Room(65, 24, 56, 38)
@@ -46,7 +47,7 @@ p11 = MagneticPathway(r8, r12)
 
 LEVEL = partial(
     Level,
-    objects=[],
+    objects=[ASC_STAIRS],
     rooms=[r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12],
     pathways=[p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11],
     creatures=[],

@@ -46,7 +46,7 @@ from constants import (
 from level_util import (
     append_message,
     on_interact_append_message,
-    on_interact_map)
+    on_interact_map, ASC_STAIRS)
 
 CLOSED_SHAFT = partial(
     Object,
@@ -67,12 +67,7 @@ DESC_STAIRS = partial(
 )
 
 ASC_STAIRS = partial(
-    Object,
-    True,
-    '<',
-    'ascending stairs',
-    event_map = on_interact_map(raise_ev(PreviousLevel)),
-    id = -2,
+    ASC_STAIRS,
     x = 130,
     y = 90
 )
