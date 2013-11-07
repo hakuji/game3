@@ -25,7 +25,7 @@ from pyglet.window import key
 from screens import CommonScreen
 from pyglet import gl
 from hero import Hero
-from function import vertex_list_from_rect
+from room import Room
 
 window = pyglet.window.Window(
     caption = GAME_NAME,
@@ -34,11 +34,14 @@ window = pyglet.window.Window(
 
 NEW_ROOM = 1
 NEW_LEVEL = 2
+STATUS_PANEL_HEIGHT = int(STATUS_PANEL_HEIGHT)
 
 hero = Hero(None)
 state = CommonScreen(GameState(False, hero, 0))
 xy0 = None
-vl = vertex_list_from_rect(0, 0, 0, 0, (155, 155, 155, 255))
+vl = pyglet.graphics.vertex_list(
+        6, ('v2i', (0, 0) * 6 ),
+        ('c4B', (155, 155, 155, 255)*6))
 new_level = False
 buff = ""
 m = __import__('level1' + buff)
@@ -51,7 +54,7 @@ def delta_xy(x, y):
     y1 = max(y, xy0[1])
     dx = x1 - x0
     dy = y1 - y0
-    return (x0, y0, dx, dy)
+    return (x0, y0, dx - 20, dy - 20)
 
 @window.event
 def on_key_release(symbol, modifiers):
@@ -94,7 +97,10 @@ def processNumber(symbol):
 def on_mouse_release(x, y, button, modifiers):
     y -= int(STATUS_PANEL_HEIGHT)
     if xy0 != (x, y):
-        print(delta_xy(x, y))
+        dxy = delta_xy(x, y)
+        room = Room(dxy[0], dxy[1], dxy[2], dxy[3])
+        state.level.rooms.append(room)
+        print(dxy)
     else:
         print(x, y)
 
@@ -103,14 +109,22 @@ def on_mouse_press(x, y, button, modifiers):
     y -= int(STATUS_PANEL_HEIGHT)
     global xy0
     xy0 = (x, y)
+    vl.vertices[:] = [x, y + STATUS_PANEL_HEIGHT] * 6
+
 
 @window.event
 def on_mouse_drag(x, y, dx, dy, button, modifiers):
-    dxy = (x - xy0[0], y - xy0[1])
-    vl.vertices[:] = [xy0[0], xy0[1],
-                      xy0[0] + dxy[0], xy0[1],
-                      xy0[0], xy0[1] + dxy[1],
-                      xy0[0] + dxy[0], xy0[1] + dxy[1]]
+    oldx = vl.vertices[-2]
+    oldy = vl.vertices[-1]
+    newx = oldx + dx
+    newy = oldy + dy
+    vl.vertices[:] = [xy0[0], xy0[1] + STATUS_PANEL_HEIGHT,
+                      xy0[0], xy0[1] + STATUS_PANEL_HEIGHT,
+                      newx  , xy0[1] + STATUS_PANEL_HEIGHT,
+                      xy0[0], newy,
+                      newx,   newy,
+                      newx,   newy
+]
 
 @window.event
 def on_draw():
