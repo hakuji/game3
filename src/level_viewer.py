@@ -96,19 +96,19 @@ def processNumber(symbol):
 
 @window.event
 def on_mouse_release(x, y, button, modifiers):
-    y -= int(STATUS_PANEL_HEIGHT)
+    y -= STATUS_PANEL_HEIGHT
     if xy0 != (x, y):
         dxy = delta_xy(x, y)
         room = Room(dxy[0], dxy[1], dxy[2], dxy[3])
         state.level.rooms.append(room)
         vl.colors[:] = BACKGROUND_COLOR * 6
-        print(dxy)
+        print('Room{0}'.format(str(dxy)))
     else:
         print(x, y)
 
 @window.event
 def on_mouse_press(x, y, button, modifiers):
-    y -= int(STATUS_PANEL_HEIGHT)
+    y -= STATUS_PANEL_HEIGHT
     global xy0
     xy0 = (x, y)
     vl.vertices[:] = [x, y + STATUS_PANEL_HEIGHT] * 6
