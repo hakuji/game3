@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with game 3.  If not, see <http://www.gnu.org/licenses/>.
 
-import pyglet, constants
+import pyglet, constants, traceback
 from constants import (WINDOW_WIDTH, WINDOW_HEIGHT, GAME_NAME,
                        BACKGROUND_COLOR, STATUS_PANEL_HEIGHT, Color)
 constants.DEBUG = True
@@ -86,8 +86,8 @@ def reload_stage():
     try:
         reload(stage_objects)
         reload(m)
-    except Exception as ex:
-        print(ex)
+    except Exception:
+        traceback.print_exc()
     state.level = m.LEVEL(hero)
     state.level.objects.append(prop)
 
@@ -109,11 +109,14 @@ def on_key_release(symbol, modifiers):
         change_state(DEFAULT_STATE)
         if buff != "":
             try:
-                m = __import__('level' + buff)
+                try:
+                    m = __import__('level' + buff)
+                except Exception:
+                    traceback.print_exc()
                 reload_stage()
-                print 'level' + buff + ' loaded'
+                print('level{0} loaded'.format(buff))
             except ImportError as err:
-                print err
+                print(err)
             finally:
                 set_level_buff("")
     else:
