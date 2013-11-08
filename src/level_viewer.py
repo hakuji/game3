@@ -18,7 +18,7 @@
 
 import pyglet, constants
 from constants import (WINDOW_WIDTH, WINDOW_HEIGHT, GAME_NAME,
-                       BACKGROUND_COLOR, STATUS_PANEL_HEIGHT)
+                       BACKGROUND_COLOR, STATUS_PANEL_HEIGHT, Color)
 constants.DEBUG = True
 from control import GameState
 from pyglet.window import key
@@ -36,6 +36,7 @@ window = pyglet.window.Window(
 NEW_ROOM = 1
 NEW_LEVEL = 2
 MOVE_PROP = 3
+DEFAULT_STATE = MOVE_PROP
 STATUS_PANEL_HEIGHT = int(STATUS_PANEL_HEIGHT)
 SELECTION_COLOR = (155, 155, 155, 255)
 
@@ -51,6 +52,20 @@ m = __import__('level1' + buff)
 ui_state = None
 prop = Object(False, 'T', 'Prop')
 state.level.objects.append(prop)
+label = pyglet.text.Label("", color=Color.WHITE, x=20, y=20)
+
+def change_state(state):
+    global ui_state
+    print "here"
+    ui_state = state
+    if ui_state == NEW_ROOM:
+        label.text = "Place new room"
+    if ui_state == NEW_LEVEL:
+        label.text = "Type new level number and press enter"
+    if ui_state == MOVE_PROP:
+        label.text = "Click to move test prop"
+
+change_state(DEFAULT_STATE)
 
 def delta_xy(x, y):
     x0 = min(x, xy0[0])
@@ -65,7 +80,6 @@ def reload_stage():
     import stage_objects
     reload(stage_objects)
     reload(m)
-    print m
     state.level = m.LEVEL(hero)
     state.level.objects.append(prop)
 
@@ -77,14 +91,14 @@ def on_key_release(symbol, modifiers):
     elif key.R == symbol:
         reload_stage()
     elif key.N == symbol:
-        ui_state = NEW_LEVEL
+        change_state(NEW_LEVEL)
         buff = ""
     elif key.O == symbol:
-        ui_state = NEW_ROOM
+        change_state(NEW_ROOM)
     elif key.M == symbol:
-        ui_state = MOVE_PROP
+        change_state(MOVE_PROP)
     elif key.ENTER == symbol:
-        ui_state = None
+        change_state(DEFAULT_STATE)
         if buff != "":
             try:
                 m = __import__('level' + buff)
@@ -147,6 +161,7 @@ def on_draw():
     window.clear()
     state.draw()
     vl.draw(gl.GL_QUAD_STRIP)
+    label.draw()
 
 def init():
     gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
