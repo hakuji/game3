@@ -56,7 +56,6 @@ label = pyglet.text.Label("", color=Color.WHITE, x=20, y=20)
 
 def change_state(state):
     global ui_state
-    print "here"
     ui_state = state
     if ui_state == NEW_ROOM:
         label.text = "Place new room"
@@ -78,8 +77,11 @@ def delta_xy(x, y):
 
 def reload_stage():
     import stage_objects
-    reload(stage_objects)
-    reload(m)
+    try:
+        reload(stage_objects)
+        reload(m)
+    except Exception as ex:
+        print(ex)
     state.level = m.LEVEL(hero)
     state.level.objects.append(prop)
 
