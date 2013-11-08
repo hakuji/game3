@@ -52,17 +52,23 @@ m = __import__('level1' + buff)
 ui_state = None
 prop = Object(False, 'T', 'Prop')
 state.level.objects.append(prop)
-label = pyglet.text.Label("", color=Color.WHITE, x=20, y=20)
+status = pyglet.text.Label("", color=Color.WHITE, x=20, y=20)
+input_label = pyglet.text.Label("", color=Color.WHITE, x=350, y=20)
 
 def change_state(state):
     global ui_state
     ui_state = state
     if ui_state == NEW_ROOM:
-        label.text = "Place new room"
+        status.text = "Place new room"
     if ui_state == NEW_LEVEL:
-        label.text = "Type new level number and press enter"
+        status.text = "Type new level number and press enter: "
     if ui_state == MOVE_PROP:
-        label.text = "Click to move test prop"
+        status.text = "Click to move test prop"
+
+def set_level_buff(newbuff):
+    global buff
+    buff = newbuff
+    input_label.text = buff
 
 change_state(DEFAULT_STATE)
 
@@ -94,7 +100,7 @@ def on_key_release(symbol, modifiers):
         reload_stage()
     elif key.N == symbol:
         change_state(NEW_LEVEL)
-        buff = ""
+        set_level_buff("")
     elif key.O == symbol:
         change_state(NEW_ROOM)
     elif key.M == symbol:
@@ -108,11 +114,13 @@ def on_key_release(symbol, modifiers):
                 print 'level' + buff + ' loaded'
             except ImportError as err:
                 print err
+            finally:
+                set_level_buff("")
     else:
         if ui_state == NEW_LEVEL:
             n = processNumber(symbol)
             if n is not None:
-                buff += n
+                set_level_buff(buff + n)
 
 def processNumber(symbol):
     for i in range(0, 10):
@@ -163,7 +171,8 @@ def on_draw():
     window.clear()
     state.draw()
     vl.draw(gl.GL_QUAD_STRIP)
-    label.draw()
+    status.draw()
+    input_label.draw()
 
 def init():
     gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
