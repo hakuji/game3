@@ -86,8 +86,10 @@ def reload_stage():
     try:
         reload(stage_objects)
         reload(m)
+        print('reloaded')
     except Exception:
         traceback.print_exc()
+        return
     state.level = m.LEVEL(hero)
     state.level.objects.append(prop)
 
