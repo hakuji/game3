@@ -20,6 +20,8 @@ from level import Level
 from room import Room, MagneticPathway
 from level_util import ASC_STAIRS
 
+ASC_STAIRS = partial(ASC_STAIRS, x=372, y=169)
+
 r1 = Room(335, 54, 65, 119, start=True)
 r2 = Room(192, 58, 52, 37)
 r3 = Room(53, 142, 61, 42)
