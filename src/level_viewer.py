@@ -26,6 +26,7 @@ from screens import CommonScreen
 from pyglet import gl
 from hero import Hero
 from room import Room
+from obj import Object
 
 window = pyglet.window.Window(
     caption = GAME_NAME,
@@ -34,6 +35,7 @@ window = pyglet.window.Window(
 
 NEW_ROOM = 1
 NEW_LEVEL = 2
+MOVE_PROP = 3
 STATUS_PANEL_HEIGHT = int(STATUS_PANEL_HEIGHT)
 SELECTION_COLOR = (155, 155, 155, 255)
 
@@ -47,6 +49,8 @@ new_level = False
 buff = ""
 m = __import__('level1' + buff)
 ui_state = None
+prop = Object(False, 'T', 'Prop')
+state.level.objects.append(prop)
 
 def delta_xy(x, y):
     x0 = min(x, xy0[0])
@@ -57,27 +61,34 @@ def delta_xy(x, y):
     dy = y1 - y0
     return (x0, y0, dx - 20, dy - 20)
 
+def reload_stage():
+    import stage_objects
+    reload(stage_objects)
+    reload(m)
+    print m
+    state.level = m.LEVEL(hero)
+    state.level.objects.append(prop)
+
 @window.event
 def on_key_release(symbol, modifiers):
     global new_level, buff, m, ui_state
     if key.Q == symbol:
         pyglet.app.exit()
     elif key.R == symbol:
-        import stage_objects
-        reload(stage_objects)
-        print m
-        state.level = m.LEVEL(hero)
+        reload_stage()
     elif key.N == symbol:
         ui_state = NEW_LEVEL
         buff = ""
-    elif key.M == symbol:
+    elif key.O == symbol:
         ui_state = NEW_ROOM
+    elif key.M == symbol:
+        ui_state = MOVE_PROP
     elif key.ENTER == symbol:
         ui_state = None
         if buff != "":
             try:
                 m = __import__('level' + buff)
-                reload(m)
+                reload_stage()
                 print 'level' + buff + ' loaded'
             except ImportError as err:
                 print err
@@ -97,14 +108,16 @@ def processNumber(symbol):
 @window.event
 def on_mouse_release(x, y, button, modifiers):
     y -= STATUS_PANEL_HEIGHT
-    if xy0 != (x, y):
+    if xy0 != (x, y) and ui_state == NEW_ROOM:
         dxy = delta_xy(x, y)
         room = Room(dxy[0], dxy[1], dxy[2], dxy[3])
         state.level.rooms.append(room)
         vl.colors[:] = BACKGROUND_COLOR * 6
         print('Room{0}'.format(str(dxy)))
-    else:
-        print(x, y)
+    elif ui_state == MOVE_PROP:
+        prop.x = x
+        prop.y = y
+        print (x, y)
 
 @window.event
 def on_mouse_press(x, y, button, modifiers):
