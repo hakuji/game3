@@ -124,7 +124,7 @@ class MessageLog(object):
         self.document.insert_text(1, '\n')
     def append_message(self, msg):
         msg = msg[0].upper() + msg[1:]
-        if msg[-1] not in ".?!":
+        if msg[-1] not in '.?!':
             msg += '.\n'
         else:
             msg += '\n'
