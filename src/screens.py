@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with game 3.  If not, see <http://www.gnu.org/licenses/>.
 
-import pyglet, sys
+import pyglet
 from util import Container, KeySubscription, Reactable
 from constants import (
     STATS_PANEL_X,
@@ -111,7 +111,7 @@ class MessageLog(object):
         self.document = pyglet.text.decode_attributed(' ')
         self.document.set_style(
             0,
-            sys.maxint,
+            32000000,
             {
                 'color' : TEXT_COLOR,
                 'font_name' : TEXT_FONT,
