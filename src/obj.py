@@ -47,17 +47,26 @@ class Object(Drawable):
                  event_map = {}, range = 1, id = None, x = 0,
                  y = 0, color = TEXT_COLOR, delayed = empty_interaction):
         self._set_properties(go_through, symbol, description, range,
-                             id, event_map)
+                             id, event_map, color)
         delayed(self)
-        sprite = pyglet.text.Label(
-            symbol,
-            font_name=OBJECT_FONT_FACE,
-            font_size=OBJECT_FONT_SIZE, color=color)
         self.set_events(self.event_map)
-        super(Object, self).__init__(sprite)
+        self.set_visual()
         self.x = x
         self.y = y
         self.rect_ = Rect.from_dimensions(0, 0, self.w, self.h)
+    def unset_visual(self):
+        """Method that unsets all references to the visual representation of an
+        object"""
+        del self.sprite
+        self.sprite = None
+    def set_visual(self):
+        """Method that sets the visual representation of an object"""
+        sprite = pyglet.text.Label(
+            text=self.symbol,
+            font_name=OBJECT_FONT_FACE,
+            font_size=OBJECT_FONT_SIZE,
+            color=self.color)
+        super(Object, self).__init__(sprite)
     def get_default_map(self):
         return {'on_interact': empty_interaction}
     def set_events(self, event_map):
@@ -67,7 +76,7 @@ class Object(Drawable):
              self.__setattr__(k, types.MethodType(nm[k], self))
     @autoset
     def _set_properties(self, go_through, symbol, description,
-                        range, id, event_map):
+                        range, id, event_map, color):
         """Used during the initialization to autoset attributes"""
         pass
     @property
