@@ -49,12 +49,34 @@ h = WINDOW_HEIGHT - y
 tile_size = 5
 
 class FogMatrix(object):
-    def __init__(self):
-        self.unexplored_group = FogGroup(255)
+    def __init__(self, unexplored_group=None, batch=None, matrix=None):
+        if unexplored_group is None:
+            self.unexplored_group = FogGroup(255)
+        else:
+            self.unexplored_group = unexplored_group
         self.explored_group = FogGroup(100)
         self.visible_group = FogGroup(0)
-        self.batch = pyglet.graphics.Batch()
-        self.matrix = self.get_vertex_matrix()
+        if batch is None:
+            self.batch = pyglet.graphics.Batch()
+        else:
+            self.batch = batch
+        if matrix is None:
+            self.matrix = self.get_vertex_matrix()
+        else:
+            self.matrix = matrix
+    def save_fog(self):
+        return [[j.explored for j in i] for i in self.matrix]
+    @classmethod
+    def load_fog(cls, m):
+        matrix = []
+        unexplored_group = FogGroup(255)
+        batch = pyglet.graphics.Batch()
+        for i in m:
+            line = []
+            for j in i:
+                line.append(get_tile(None, None, tile_size, unexplored_group, batch))
+            matrix.append(line)
+        return FogMatrix(unexplored_group, batch, matrix)
     def get_vertex_matrix(self):
         return [[get_tile(j, i, tile_size, self.unexplored_group, self.batch)
                  for j in range(x, w, tile_size)]
