@@ -133,6 +133,7 @@ does not exist. Fail silently"""
         except AppendMessage as ex:
             self.messages.append(ex.message)
         except AddPathway as ex:
+            ex.pathway.set_visual()
             self.pathways.append(ex.pathway)
         except RemovePathway as ex:
             self.pathways.remove(ex.pathway)
