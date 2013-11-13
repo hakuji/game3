@@ -156,7 +156,7 @@ class CommonScreen(Screen, Reactable):
         self.state = state
         hfield = HealthBar(state.hero, STATS_PANEL_X, STATS_PANEL_Y)
         def pfunc():
-            return str(self.state.level_no)
+            return str(self.state.current_level + 1)
         pfield = LabeledField('Level', pfunc, STATS_PANEL_X, STATS_PANEL_Y - 30)
         self.message_log = MessageLog()
         self.contents = [hfield, pfield, self.message_log]

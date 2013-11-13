@@ -43,11 +43,11 @@ class GameController(Reactable):
     def add_screen(self, screen):
         """Changes the current screen"""
         self.screens.append(screen)
-    def start_game(self, dificulty, hero = None, stage_no = 0):
+    def start_game(self, dificulty, hero = None):
         """Where the magic starts"""
         if hero is None:
             hero = Hero(self.khandler)
-        self.game_state = GameState(dificulty, hero, stage_no)
+        self.game_state = GameState(dificulty, hero)
         self.add_screen(CommonScreen(self.game_state))
     def back_one_screen(self):
         """Revert to previous screen or quit"""
@@ -88,21 +88,21 @@ events"""
 class GameState(object):
     """State of the playable parts of the game"""
     @autoset
-    def __init__(self, dificulty, hero, level_no):
-        self.level = LEVELS[level_no](hero)
+    def __init__(self, dificulty, hero, current_level=0):
+        self.level = LEVELS[current_level](hero)
         self.messages = []
     def goto_next_level(self):
         """Move to the next level or end the game"""
-        self.level_no += 1
+        self.current_level += 1
         try:
-            level = LEVELS[self.level_no]
+            level = LEVELS[self.current_level]
         except IndexError:
             raise GameOver(False)
         self.level = level(self.hero)
     def goto_prev_level(self):
         """Move to the previous level"""
-        self.level_no -= 1
-        self.level = LEVELS[self.level_no](self.hero)
+        self.current_level -= 1
+        self.level = LEVELS[self.current_level](self.hero)
     def update(self):
         try:
             self.level.update()
