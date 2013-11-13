@@ -267,11 +267,14 @@ times before raising an exception"""
     def unset_visual(self):
         """Method that unsets all references to the visual representation of an
         object"""
+        self.fogm = fog.save()
         for i in self.contents:
             for j in i:
                 i.unset_visual()
     def set_visual(self):
         """Method that sets the visual representation of an object"""
+        if hasattr(self, 'fogm'):
+            fog.load(self.fogm)
         for i in self.contents:
             for j in i:
                 j.set_visual()
