@@ -43,17 +43,15 @@ class Object(Drawable):
                 else:
                     yield d()
         return list(fun())
+    @autoset
     def __init__(self, go_through, symbol, description,
-                 event_map = {}, range = 1, id = None, x = 0,
-                 y = 0, color = TEXT_COLOR, delayed = empty_interaction):
-        self._set_properties(go_through, symbol, description, range,
-                             id, event_map, color)
+                 event_map = {}, range = 1, id = None, x_ = 0,
+                 y_ = 0, color = TEXT_COLOR, delayed = empty_interaction):
+#        self._set_properties(go_through, symbol, description, range,
+#                             id, event_map, color)
         delayed(self)
         self.set_events(self.event_map)
-        self.set_visual()
-        self.x = x
-        self.y = y
-        self.rect_ = Rect.from_dimensions(0, 0, self.w, self.h)
+        self.rect_ = Rect.from_dimensions(0, 0, 0, 0)
     def unset_visual(self):
         """Method that unsets all references to the visual representation of an
         object"""
@@ -64,7 +62,9 @@ class Object(Drawable):
             text=self.symbol,
             font_name=OBJECT_FONT_FACE,
             font_size=OBJECT_FONT_SIZE,
-            color=self.color)
+            color=self.color,
+            x=self.x_,
+            y=self.y_)
         super(Object, self).__init__(sprite)
     def get_default_map(self):
         return {'on_interact': empty_interaction}
@@ -83,6 +83,7 @@ class Object(Drawable):
         return self.sprite.x
     @x.setter
     def x(self, value):
+        self.x_ = value
         self.sprite.x = value
     @x.deleter
     def x(self):
@@ -92,6 +93,7 @@ class Object(Drawable):
         return self.sprite.y - 2
     @y.setter
     def y(self, value):
+        self.y_ = value + 2
         self.sprite.y = value + 2
     @y.deleter
     def y(self):

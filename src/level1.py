@@ -67,8 +67,8 @@ DESC_STAIRS = partial(
 
 ASC_STAIRS = partial(
     ASC_STAIRS,
-    x = 130,
-    y = 90
+    x_ = 130,
+    y_ = 90
 )
 
 leverid = 4
@@ -84,8 +84,8 @@ BOULDER = partial(
     go_through = False,
     symbol = 'O',
     description = 'large boulder blocking the stairs',
-    x = 130,
-    y = 90,
+    x_ = 130,
+    y_ = 90,
     range = 5,
     event_map = on_interact_append_message('You will deal with this later'),
     color=Color.UMBER,
@@ -103,8 +103,8 @@ TREASURE_CHEST = partial(
     BASE_CHEST,
     description = 'treasure chest',
     event_map = on_interact_append_message("It's empty"),
-    x = 100,
-    y = 100
+    x_ = 100,
+    y_ = 100
 )
 
 wolfid = 3
@@ -155,8 +155,8 @@ RUINED_LEVER = partial(
     LEVER_BASE,
     event_map = on_interact_append_message('It is ruined'),
     color = Color.BROWNNOSE,
-    x = 365,
-    y = 60
+    x_ = 365,
+    y_ = 60
 )
 
 SWORDSMAN_TRIGGER = RunOnceTrigger(
@@ -231,8 +231,8 @@ PATHWAY_LEVER = partial(
     ))),
     id = leverid,
     color=Color.BATTLESHIPGREY,
-    x=389,
-    y=210
+    x_=389,
+    y_=210
 )
 
 LEVEL = partial(

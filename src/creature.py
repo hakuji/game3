@@ -60,8 +60,8 @@ class Creature(Object):
             color=color,
             delayed=delayed
         )
-        self.intended_x = self.x
-        self.intended_y = self.y
+        self.intended_x = self.x_
+        self.intended_y = self.y_
         self.target = None
         self.last_desired_direction = [0, 0]
         self.change_countdown = 0

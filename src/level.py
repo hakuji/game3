@@ -39,41 +39,42 @@ class Level(Container):
                  creatures, triggers):
         self.objects = Object.from_list(objects)
         self.creatures = Object.from_list(creatures)
+        self.hitboxes = []
+        self.contents = []
+        self.contents.append(self.rooms)
+        self.contents.append(self.pathways)
+        self.contents.append(self.objects)
+        self.contents.append(self.hitboxes)
+        self.contents.append(self.creatures)
+        self.creatures.append(self.hero)
+        self.set_visual()
         self.arrange_objects()
         self.init_rooms()
         self.set_enemies()
         self.set_triggers()
         self.fog_matrix = fog.FogMatrix()
         self.update_fog()
-        self.contents = []
-        self.hitboxes = []
         self.messages = []
         self.hero_saw = []
-        self.contents.append(self.rooms)
-        self.contents.append(self.pathways)
-        self.contents.append(self.objects)
-        self.contents.append(self.hitboxes)
-        self.contents.append(self.creatures)
         super(Level, self).__init__(self.contents)
     def init_rooms(self):
         for r in self.rooms:
             if r.start:
                 self.init_start_room(r)
-            creatures = Object.from_list(r.creatures)
-            for c in creatures:
-                self.creatures.append(c)
-                self.set_location(c, r)
-            objects = Object.from_list(r.objects)
-            for o in objects:
-                self.objects.append(o)
-                self.set_location(o, r)
+            def set_attributes(l, container):
+                objs = Object.from_list(l)
+                for o in objs:
+                    container.append(o)
+                    o.set_visual()
+                    self.set_location(o, r)
+            set_attributes(r.creatures, self.creatures)
+            set_attributes(r.objects, self.objects)
     def init_start_room(self, r):
         stairs = filter(lambda o: o.id == -2, self.objects)
         stairs = stairs[0]
         x = stairs.x
         y = stairs.y
         self.hero.set_location(x, y)
-        self.creatures.append(self.hero)
     def set_enemies(self):
         for i in self.creatures:
             if getattr(i, 'hostile', False):
@@ -96,7 +97,9 @@ class Level(Container):
         """Add and place an object"""
         if x is None:
             obj = obj()
+            obj.set_visual()
         else:
+            obj.set_visual()
             obj.set_location(x, y)
         self.objects.append(obj)
     def replace_object(self, ex):
@@ -271,4 +274,4 @@ times before raising an exception"""
         """Method that sets the visual representation of an object"""
         for i in self.contents:
             for j in i:
-                i.set_visual()
+                j.set_visual()

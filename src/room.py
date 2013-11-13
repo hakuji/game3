@@ -34,7 +34,6 @@ class Room(object):
         self.outer_rect = Rect.from_dimensions(x, y,
                                                2 * WALL_WIDTH + w,
                                                2 * WALL_WIDTH + h)
-        self.set_visual()
     def draw(self):
         self.floor.draw(pyglet.gl.GL_QUAD_STRIP)
         for w in self.walls:
@@ -79,7 +78,6 @@ class Pathway(Room):
                 h - int(1.45 * self.thickness()))
         self.inner_rect = Rect.from_dimensions(x, y, w, h)
         self.walls = self.walls_from_rect(self.outer_rect)
-        self.set_visual()
     def draw(self):
         self.floor.draw(pyglet.gl.GL_QUAD_STRIP)
         self.awall.draw(pyglet.gl.GL_QUAD_STRIP)

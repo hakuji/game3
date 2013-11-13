@@ -46,10 +46,18 @@ class Hero(Creature):
         self.speed = 3
         self.intended_interact = False
         self.animation = Move([Direction.EAST, None], 10, self)
-        self.arrow = self.get_arrow()
         if inv is None:
             self.inv = []
         self.visible_ = True
+    def set_visual(self):
+        """Method that sets the visual representation of an object"""
+        super(Hero, self).set_visual()
+        self.arrow = self.get_arrow()
+    def unset_visual(self):
+        """Method that unsets all references to the visual representation of an
+        object"""
+        super(Hero, self).unset_visual()
+        del self.arrow
     def draw(self):
         super(Hero, self).draw()
         if self.facing[1] == Direction.NORTH:
