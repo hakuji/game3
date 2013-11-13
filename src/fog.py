@@ -49,13 +49,20 @@ h = WINDOW_HEIGHT - y
 tile_size = 5
 
 class FogMatrix(object):
-    def __init__(self, unexplored_group=None, batch=None, matrix=None):
+    def __init__(self, unexplored_group=None, explored_group=None,
+                 visible_group=None, batch=None, matrix=None):
         if unexplored_group is None:
             self.unexplored_group = FogGroup(255)
         else:
             self.unexplored_group = unexplored_group
-        self.explored_group = FogGroup(100)
-        self.visible_group = FogGroup(0)
+        if explored_group is None:
+            self.explored_group = FogGroup(100)
+        else:
+            self.explored_group = explored_group
+        if visible_group is None:
+            self.visible_group = FogGroup(0)
+        else:
+            self.visible_group = visible_group
         if batch is None:
             self.batch = pyglet.graphics.Batch()
         else:
@@ -65,18 +72,26 @@ class FogMatrix(object):
         else:
             self.matrix = matrix
     def save_fog(self):
-        return [[j.explored for j in i] for i in self.matrix]
+        return [[(j.x, j.y, j.explored) for j in i] for i in self.matrix]
     @classmethod
     def load_fog(cls, m):
         matrix = []
         unexplored_group = FogGroup(255)
+        explored_group = FogGroup(100)
+        visible_group = FogGroup(0)
         batch = pyglet.graphics.Batch()
         for i in m:
             line = []
-            for j in i:
-                line.append(get_tile(None, None, tile_size, unexplored_group, batch))
+            for t in i:
+                if t[2] == 0:
+                    group = unexplored_group
+                elif t[2] == 2:
+                    group = explored_group
+                else:
+                    group = visible_group
+                line.append(get_tile(t[0], t[1], tile_size, group, batch))
             matrix.append(line)
-        return FogMatrix(unexplored_group, batch, matrix)
+        return FogMatrix(unexplored_group, explored_group, visible_group, batch, matrix)
     def get_vertex_matrix(self):
         return [[get_tile(j, i, tile_size, self.unexplored_group, self.batch)
                  for j in range(x, w, tile_size)]
