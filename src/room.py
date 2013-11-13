@@ -102,6 +102,7 @@ class Pathway(Room):
         del self.awall
         del self.bwall
         del self.walls
+
 class MagneticPathway(Pathway):
     def is_left(self):
         """Return true if r1 is left of r2"""

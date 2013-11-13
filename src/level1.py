@@ -62,7 +62,9 @@ DESC_STAIRS = partial(
     '>',
     'descending stairs',
     event_map = on_interact_map(raise_ev(NextLevel)),
-    id = 2
+    id = 2,
+    x_=140,
+    y_=90
 )
 
 ASC_STAIRS = partial(
@@ -237,7 +239,8 @@ PATHWAY_LEVER = partial(
 
 LEVEL = partial(
     Level,
-    objects = [TREASURE_CHEST, ASC_STAIRS, PATHWAY_LEVER, RUINED_LEVER],
+    objects = [TREASURE_CHEST, ASC_STAIRS, PATHWAY_LEVER, RUINED_LEVER,
+               DESC_STAIRS],
     rooms = [
         room1,
         room2,

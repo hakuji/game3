@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with game 3.  If not, see <http://www.gnu.org/licenses/>.
 
-import pyglet
+import pyglet, pickle, cloud
 from util import Reactable
 from hero import Hero
 from exception import (
@@ -47,7 +47,7 @@ class GameController(Reactable):
         """Where the magic starts"""
         if hero is None:
             hero = Hero(self.khandler)
-        self.game_state = GameState(dificulty, hero)
+        self.game_state = GameState(self.save, dificulty, hero)
         self.add_screen(CommonScreen(self.game_state))
     def back_one_screen(self):
         """Revert to previous screen or quit"""
@@ -61,6 +61,12 @@ class GameController(Reactable):
     def draw(self):
         """Draws the current screen"""
         self.top_screen().draw()
+    def save(self):
+        with open('save_file.bin', 'wb') as fil:
+            print [str(o) for o in self.game_state.levels[0].objects]
+            cloud.serialization.cloudpickle.dump(
+                self.game_state.levels[0].objects[1],
+                fil)
     def update(self, dt):
         """Update the game"""
         try:
@@ -88,13 +94,15 @@ events"""
 class GameState(object):
     """State of the playable parts of the game"""
     @autoset
-    def __init__(self, dificulty, hero, current_level=0, levels = None):
+    def __init__(self, save_func, dificulty, hero, current_level=0,
+                 levels = None):
         if levels is None:
             self.levels = [LEVELS[current_level](hero)]
         self.messages = []
     def goto_next_level(self):
         """Move to the next level or end the game"""
         self.get_level().unset_visual()
+        self.save_func()
         self.current_level += 1
         try:
             level = LEVELS[self.current_level]
