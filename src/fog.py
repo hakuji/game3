@@ -46,80 +46,54 @@ x = 0
 y = 50
 w = WINDOW_WIDTH - x
 h = WINDOW_HEIGHT - y
+unexplored_group = FogGroup(255)
+explored_group = FogGroup(100)
+visible_group = FogGroup(0)
+batch = pyglet.graphics.Batch()
 tile_size = 5
+matrix = [[get_tile(j, i, tile_size, unexplored_group, batch)
+                for j in range(x, w, tile_size)]
+               for i in range(y, h, tile_size)]
 
-class FogMatrix(object):
-    def __init__(self, unexplored_group=None, explored_group=None,
-                 visible_group=None, batch=None, matrix=None):
-        if unexplored_group is None:
-            self.unexplored_group = FogGroup(255)
-        else:
-            self.unexplored_group = unexplored_group
-        if explored_group is None:
-            self.explored_group = FogGroup(100)
-        else:
-            self.explored_group = explored_group
-        if visible_group is None:
-            self.visible_group = FogGroup(0)
-        else:
-            self.visible_group = visible_group
-        if batch is None:
-            self.batch = pyglet.graphics.Batch()
-        else:
-            self.batch = batch
-        if matrix is None:
-            self.matrix = self.get_vertex_matrix()
-        else:
-            self.matrix = matrix
-    def save_fog(self):
-        return [[(j.x, j.y, j.explored) for j in i] for i in self.matrix]
-    @classmethod
-    def load_fog(cls, m):
-        matrix = []
-        unexplored_group = FogGroup(255)
-        explored_group = FogGroup(100)
-        visible_group = FogGroup(0)
-        batch = pyglet.graphics.Batch()
-        for i in m:
-            line = []
-            for t in i:
-                if t[2] == 0:
-                    group = unexplored_group
-                elif t[2] == 2:
-                    group = explored_group
-                else:
-                    group = visible_group
-                line.append(get_tile(t[0], t[1], tile_size, group, batch))
-            matrix.append(line)
-        return FogMatrix(unexplored_group, explored_group, visible_group, batch, matrix)
-    def get_vertex_matrix(self):
-        return [[get_tile(j, i, tile_size, self.unexplored_group, self.batch)
-                 for j in range(x, w, tile_size)]
-                for i in range(y, h, tile_size)]
-    def draw(self):
-        self.batch.draw()
-    def update(self, x, y, light_radius):
-        margin = 10
-        i1 = (x / tile_size) - (light_radius / tile_size) - margin
-        j1 = (y / tile_size) - (light_radius / tile_size) - margin
-        i1 = max(i1, 0)
-        j1 = max(j1, 0)
-        i2 = i1 + 15 + margin
-        j2 = j1 + 5 + margin
-        i2 = min(i2, len(self.matrix[0]))
-        j2 = min(j2, len(self.matrix))
-        for i in range(i1, i2):
-            for j in range(j1, j2):
-                t = self.matrix[j][i]
-                if tile_visible_from(x, y, light_radius, t):
-                    self.batch.migrate(t, pyglet.gl.GL_QUAD_STRIP, self.visible_group, self.batch)
-                    t.explored = 1
-                elif t.explored == 1:
-                    self.batch.migrate(t, pyglet.gl.GL_QUAD_STRIP, self.explored_group, self.batch)
-                    t.explored = 2
+def draw():
+    batch.draw()
 
 def tile_visible_from(x, y, light_radius, tile):
     x1 = tile.vertices[0]
     y1 = tile.vertices[1]
     return math.hypot(x - x1, y - y1) <= light_radius
 
+def save():
+    return [[j.explored for j in i] for i in matrix]
+
+def load(mat):
+    for i in range(len(mat)):
+        for j in range(len(i)):
+            g = mat[i][j]
+            if g == 0:
+                group = unexplored_group
+            elif g == 2:
+                group = explored_group
+            else:
+                group = visible_group
+            batch.migrate(matrix[i][j], pyglet.gl.GL_QUAD_STRIP, group, batch)
+
+def update(x, y, light_radius):
+    margin = 10
+    i1 = (x / tile_size) - (light_radius / tile_size) - margin
+    j1 = (y / tile_size) - (light_radius / tile_size) - margin
+    i1 = max(i1, 0)
+    j1 = max(j1, 0)
+    i2 = i1 + 15 + margin
+    j2 = j1 + 5 + margin
+    i2 = min(i2, len(matrix[0]))
+    j2 = min(j2, len(matrix))
+    for i in range(i1, i2):
+        for j in range(j1, j2):
+            t = matrix[j][i]
+            if tile_visible_from(x, y, light_radius, t):
+                batch.migrate(t, pyglet.gl.GL_QUAD_STRIP, visible_group, batch)
+                t.explored = 1
+            elif t.explored == 1:
+                batch.migrate(t, pyglet.gl.GL_QUAD_STRIP, explored_group, batch)
+                t.explored = 2

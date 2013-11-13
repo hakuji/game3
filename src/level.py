@@ -52,7 +52,6 @@ class Level(Container):
         self.init_rooms()
         self.set_enemies()
         self.set_triggers()
-        self.fog_matrix = fog.FogMatrix()
         self.update_fog()
         self.messages = []
         self.hero_saw = []
@@ -122,7 +121,7 @@ does not exist. Fail silently"""
         self.update_triggers()
         self.update_messages()
     def update_fog(self):
-        self.fog_matrix.update(self.hero.x, self.hero.y, self.hero.light_radius)
+        fog.update(self.hero.x, self.hero.y, self.hero.light_radius)
     def handle_events(self, fun):
         try:
             fun()
@@ -264,7 +263,7 @@ times before raising an exception"""
             for i in l:
                 i.draw()
         if not DEBUG:
-            self.fog_matrix.draw()
+            fog.draw()
     def unset_visual(self):
         """Method that unsets all references to the visual representation of an
         object"""
