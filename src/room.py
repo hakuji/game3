@@ -77,7 +77,6 @@ class Pathway(Room):
                 w + WALL_WIDTH,
                 h - int(1.45 * self.thickness()))
         self.inner_rect = Rect.from_dimensions(x, y, w, h)
-        self.walls = self.walls_from_rect(self.outer_rect)
     def draw(self):
         self.floor.draw(pyglet.gl.GL_QUAD_STRIP)
         self.awall.draw(pyglet.gl.GL_QUAD_STRIP)
@@ -87,6 +86,7 @@ class Pathway(Room):
         return WALL_WIDTH * 3
     def set_visual(self):
         """Method that sets the visual representation of an object"""
+        self.walls = self.walls_from_rect(self.outer_rect)
         if self.horizontal:
             self.awall = self.walls[1]
             self.bwall = self.walls[2]
@@ -101,6 +101,7 @@ class Pathway(Room):
         del self.floor
         del self.awall
         del self.bwall
+        del self.walls
 class MagneticPathway(Pathway):
     def is_left(self):
         """Return true if r1 is left of r2"""
