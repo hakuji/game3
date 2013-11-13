@@ -58,7 +58,6 @@ class Object(Drawable):
         """Method that unsets all references to the visual representation of an
         object"""
         del self.sprite
-        self.sprite = None
     def set_visual(self):
         """Method that sets the visual representation of an object"""
         sprite = pyglet.text.Label(

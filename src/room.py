@@ -25,7 +25,40 @@ from exception import ImpossiblePathwayException
 
 """Room classes"""
 
-class Pathway(object):
+class Room(object):
+    @autoset
+    def __init__(self, x, y, w, h, objects = [], creatures = [],
+                 start  = False):
+        self.inner_rect = Rect.from_dimensions(x + WALL_WIDTH, y + int(WALL_WIDTH * 1.25),
+                                               w + WALL_WIDTH, h + int(WALL_WIDTH * 1.5))
+        self.outer_rect = Rect.from_dimensions(x, y,
+                                               2 * WALL_WIDTH + w,
+                                               2 * WALL_WIDTH + h)
+        self.set_visual()
+    def draw(self):
+        self.floor.draw(pyglet.gl.GL_QUAD_STRIP)
+        for w in self.walls:
+            w.draw(pyglet.gl.GL_QUAD_STRIP)
+    def set_visual(self):
+        """Method that sets the visual representation of an object"""
+        self.walls = self.walls_from_rect(self.outer_rect)
+        d = self.inner_rect.dimension()
+        self.floor = vertex_list_from_rect(d[0], d[1] - 2, d[2], d[3], ROOM_FLOOR_COLOR)
+    def unset_visual(self):
+        """Method that unsets all references to the visual representation of an
+        object"""
+        del self.floor
+        del self.walls
+    @classmethod
+    def walls_from_rect(cls, rect, color = Color.ARTICHOKE):
+        x, y, w, h = rect.dimension()
+        left = vertex_list_from_rect(x, y, WALL_WIDTH, WALL_WIDTH + h, color)
+        top = vertex_list_from_rect(x, y + h, w, WALL_WIDTH, color)
+        bottom = vertex_list_from_rect(x, y, w, WALL_WIDTH, color)
+        right = vertex_list_from_rect(x + w, y, WALL_WIDTH, WALL_WIDTH + h, color)
+        return (left, top, bottom, right)
+
+class Pathway(Room):
     @autoset
     def __init__(self, horizontal, x, y, length):
         if horizontal:
@@ -45,15 +78,8 @@ class Pathway(object):
                 w + WALL_WIDTH,
                 h - int(1.45 * self.thickness()))
         self.inner_rect = Rect.from_dimensions(x, y, w, h)
-        walls = Room.walls_from_rect(self.outer_rect)
-        if horizontal:
-            self.awall = walls[1]
-            self.bwall = walls[2]
-        else:
-            self.awall = walls[0]
-            self.bwall = walls[3]
-        d = self.inner_rect.dimension()
-        self.floor = vertex_list_from_rect(d[0], d[1], d[2], d[3], ROOM_FLOOR_COLOR)
+        self.walls = self.walls_from_rect(self.outer_rect)
+        self.set_visual()
     def draw(self):
         self.floor.draw(pyglet.gl.GL_QUAD_STRIP)
         self.awall.draw(pyglet.gl.GL_QUAD_STRIP)
@@ -61,7 +87,22 @@ class Pathway(object):
     @classmethod
     def thickness(cls):
         return WALL_WIDTH * 3
-
+    def set_visual(self):
+        """Method that sets the visual representation of an object"""
+        if self.horizontal:
+            self.awall = self.walls[1]
+            self.bwall = self.walls[2]
+        else:
+            self.awall = self.walls[0]
+            self.bwall = self.walls[3]
+        d = self.inner_rect.dimension()
+        self.floor = vertex_list_from_rect(d[0], d[1], d[2], d[3], ROOM_FLOOR_COLOR)
+    def unset_visual(self):
+        """Method that unsets all references to the visual representation of an
+        object"""
+        del self.floor
+        del self.awall
+        del self.bwall
 class MagneticPathway(Pathway):
     def is_left(self):
         """Return true if r1 is left of r2"""
@@ -112,28 +153,3 @@ class MagneticPathway(Pathway):
                 max_y = min(lr.inner_rect.top, rr.inner_rect.top) - self.thickness() - WALL_WIDTH + 3
                 y = randint(min_y, max_y)
                 super(MagneticPathway, self).__init__(True, x, y,  width)
-
-class Room(object):
-    @autoset
-    def __init__(self, x, y, w, h, objects = [], creatures = [],
-                 start  = False):
-        self.inner_rect = Rect.from_dimensions(x + WALL_WIDTH, y + int(WALL_WIDTH * 1.25),
-                                               w + WALL_WIDTH, h + int(WALL_WIDTH * 1.5))
-        self.outer_rect = Rect.from_dimensions(x, y,
-                                               2 * WALL_WIDTH + w,
-                                               2 * WALL_WIDTH + h)
-        self.walls = self.walls_from_rect(self.outer_rect)
-        d = self.inner_rect.dimension()
-        self.floor = vertex_list_from_rect(d[0], d[1] - 2, d[2], d[3], ROOM_FLOOR_COLOR)
-    def draw(self):
-        self.floor.draw(pyglet.gl.GL_QUAD_STRIP)
-        for w in self.walls:
-            w.draw(pyglet.gl.GL_QUAD_STRIP)
-    @classmethod
-    def walls_from_rect(cls, rect, color = Color.ARTICHOKE):
-        x, y, w, h = rect.dimension()
-        left = vertex_list_from_rect(x, y, WALL_WIDTH, WALL_WIDTH + h, color)
-        top = vertex_list_from_rect(x, y + h, w, WALL_WIDTH, color)
-        bottom = vertex_list_from_rect(x, y, w, WALL_WIDTH, color)
-        right = vertex_list_from_rect(x + w, y, WALL_WIDTH, WALL_WIDTH + h, color)
-        return (left, top, bottom, right)
