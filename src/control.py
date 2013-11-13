@@ -88,8 +88,9 @@ events"""
 class GameState(object):
     """State of the playable parts of the game"""
     @autoset
-    def __init__(self, dificulty, hero, current_level=0):
-        self.level = LEVELS[current_level](hero)
+    def __init__(self, dificulty, hero, current_level=0, levels = None):
+        if levels is None:
+            self.levels = [LEVELS[current_level](hero)]
         self.messages = []
     def goto_next_level(self):
         """Move to the next level or end the game"""
@@ -98,14 +99,15 @@ class GameState(object):
             level = LEVELS[self.current_level]
         except IndexError:
             raise GameOver(False)
-        self.level = level(self.hero)
+        self.levels.append(level(self.hero))
     def goto_prev_level(self):
         """Move to the previous level"""
         self.current_level -= 1
-        self.level = LEVELS[self.current_level](self.hero)
+    def get_level(self):
+        return self.levels[self.current_level]
     def update(self):
         try:
-            self.level.update()
+            self.get_level().update()
         except NextLevel:
             self.goto_next_level()
         except PreviousLevel:

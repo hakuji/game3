@@ -173,13 +173,13 @@ class CommonScreen(Screen, Reactable):
         if self.fade < 50:
             self.state.update()
             self.message_log.append_messages(self.state.messages)
-            self.message_log.append_messages(self.state.level.messages)
+            self.message_log.append_messages(self.state.get_level().messages)
             self.state.messages = []
-            self.state.level.messages = []
+            self.state.get_level().messages = []
     def draw(self):
         pyglet.gl.glPushMatrix()
         pyglet.gl.glTranslatef(0.0, STATUS_PANEL_HEIGHT, 0.0)
-        self.state.level.draw()
+        self.state.get_level().draw()
         pyglet.gl.glPopMatrix()
         if not DEBUG:
             super(CommonScreen, self).draw()
