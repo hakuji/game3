@@ -28,7 +28,6 @@ from function import raise_ev, once
 from exception import (
     ReplaceObject,
     NextLevel,
-    PreviousLevel,
     EventList,
     AppendMessage,
     AddPathway,
