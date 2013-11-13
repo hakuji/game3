@@ -68,7 +68,7 @@ def save():
 
 def load(mat):
     for i in range(len(mat)):
-        for j in range(len(i)):
+        for j in range(len(mat[i])):
             g = mat[i][j]
             if g == 0:
                 group = unexplored_group

@@ -94,6 +94,7 @@ class GameState(object):
         self.messages = []
     def goto_next_level(self):
         """Move to the next level or end the game"""
+        self.get_level().unset_visual()
         self.current_level += 1
         try:
             level = LEVELS[self.current_level]
@@ -103,6 +104,7 @@ class GameState(object):
     def goto_prev_level(self):
         """Move to the previous level"""
         self.current_level -= 1
+        self.get_level().set_visual()
     def get_level(self):
         return self.levels[self.current_level]
     def update(self):
