@@ -269,6 +269,7 @@ times before raising an exception"""
         object"""
         del self.hitboxes[:]
         self.fogm = fog.save()
+        self.lastxy = self.hero.x, self.hero.y
         for i in self.contents:
             for j in i:
                 j.unset_visual()
@@ -279,3 +280,5 @@ times before raising an exception"""
         for i in self.contents:
             for j in i:
                 j.set_visual()
+        lastxy = getattr(self, 'lastxy', (0, 0))
+        (self.hero.x, self.hero.y) = lastxy
