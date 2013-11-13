@@ -66,6 +66,11 @@ def tile_visible_from(x, y, light_radius, tile):
 def save():
     return [[j.explored for j in i] for i in matrix]
 
+def reset():
+    for i in matrix:
+        for j in i:
+            batch.migrate(j, pyglet.gl.GL_QUAD_STRIP, unexplored_group, batch)
+
 def load(mat):
     for i in range(len(mat)):
         for j in range(len(mat[i])):

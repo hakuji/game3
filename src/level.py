@@ -269,6 +269,7 @@ times before raising an exception"""
         object"""
         del self.hitboxes[:]
         self.fogm = fog.save()
+        fog.reset()
         self.lastxy = self.hero.x, self.hero.y
         for i in self.contents:
             for j in i:
