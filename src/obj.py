@@ -47,8 +47,6 @@ class Object(Drawable):
     def __init__(self, go_through, symbol, description,
                  event_map = {}, range = 1, id = None, x_ = 0,
                  y_ = 0, color = TEXT_COLOR, delayed = empty_interaction):
-#        self._set_properties(go_through, symbol, description, range,
-#                             id, event_map, color)
         delayed(self)
         self.set_events(self.event_map)
         self.rect_ = Rect.from_dimensions(0, 0, 0, 0)
@@ -73,11 +71,6 @@ class Object(Drawable):
         nm.update(event_map)
         for k in nm:
              self.__setattr__(k, types.MethodType(nm[k], self))
-    @autoset
-    def _set_properties(self, go_through, symbol, description,
-                        range, id, event_map, color):
-        """Used during the initialization to autoset attributes"""
-        pass
     @property
     def x(self):
         return self.sprite.x
