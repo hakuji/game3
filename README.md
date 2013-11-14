@@ -17,13 +17,16 @@ Checkout virtualenvwrapper[2] to see how to install the dependencies without roo
 privileges.
 
 [1] - http://code.google.com/p/pyglet/source/browse/README - Check the requirements section
+
 [2] - http://virtualenvwrapper.readthedocs.org/en/latest/
 
 ## Running ##
 
-    $ git clone https://github.com/hakuji/game3.git
-    $ cd game3/
-    $ python src/main.py
+```
+$ git clone https://github.com/hakuji/game3.git
+$ cd game3/
+$ python src/main.py
+```
 
 
 This file is part of game 3.
