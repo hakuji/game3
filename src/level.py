@@ -92,6 +92,7 @@ class Level(Container):
             t.set_objects(pred_objs, trigger_objs)
     def remove_object(self, obj):
         self.objects.remove(obj)
+        obj.unset_visual()
     def add_object(self, obj, x = None, y = None):
         """Add and place an object"""
         if x is None:
@@ -109,8 +110,8 @@ does not exist. Fail silently"""
             this = this[0]
         else:
             return
-        self.remove_object(this)
         self.add_object(ex.that(), this.x, this.y)
+        self.remove_object(this)
     def update(self):
         del self.hitboxes[:]
         for obj in self.objects:

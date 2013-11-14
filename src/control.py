@@ -24,7 +24,8 @@ from exception import (
     PreviousLevel,
     StartGame,
     BackOneScreen,
-    QuitGame)
+    QuitGame,
+    AutoSave)
 from screens import CommonScreen
 from stage_objects import LEVELS
 from constants import INTERVAL
@@ -47,7 +48,7 @@ class GameController(Reactable):
         """Where the magic starts"""
         if hero is None:
             hero = Hero(self.khandler)
-        self.game_state = GameState(self.save, dificulty, hero)
+        self.game_state = GameState(dificulty, hero)
         self.add_screen(CommonScreen(self.game_state))
     def back_one_screen(self):
         """Revert to previous screen or quit"""
@@ -63,10 +64,9 @@ class GameController(Reactable):
         self.top_screen().draw()
     def save(self):
         with open('save_file.bin', 'wb') as fil:
-            print [str(o) for o in self.game_state.levels[0].objects]
-            cloud.serialization.cloudpickle.dump(
-                self.game_state.levels[0].objects[1],
-                fil)
+            self.game_state.get_level().unset_visual()
+            cloud.serialization.cloudpickle.dump(self.game_state, fil)
+            self.game_state.get_level().set_visual()
     def update(self, dt):
         """Update the game"""
         try:
@@ -80,6 +80,8 @@ class GameController(Reactable):
                 self.add_screen(self.victory)
         except StartGame as ex:
             self.start_game(ex.dificulty)
+        except AutoSave:
+            self.save()
     def react(self, key, modifiers):
         """Calls default reactions and screen specific reactions to keyboard
 events"""
@@ -94,7 +96,7 @@ events"""
 class GameState(object):
     """State of the playable parts of the game"""
     @autoset
-    def __init__(self, save_func, dificulty, hero, current_level=0,
+    def __init__(self, dificulty, hero, current_level=0,
                  levels = None):
         if levels is None:
             self.levels = [LEVELS[current_level](hero)]
@@ -102,7 +104,6 @@ class GameState(object):
     def goto_next_level(self):
         """Move to the next level or end the game"""
         self.get_level().unset_visual()
-        self.save_func()
         self.current_level += 1
         try:
             level = LEVELS[self.current_level]
@@ -120,6 +121,7 @@ class GameState(object):
             self.get_level().update()
         except NextLevel:
             self.goto_next_level()
+            raise AutoSave()
         except PreviousLevel:
             self.goto_prev_level()
 
