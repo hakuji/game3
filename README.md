@@ -2,23 +2,22 @@ Copyright 2013 by akuji.
 See the end of the file for license conditions.
 
 ## About ##
-Game 3 is a game inspired by rouge and other classic rpg games.
+Game 3 is a simple hack and slash game.
 It is coded in python and uses pyglet for the graphical parts.
 
 ## Dependencies ##
-To test it you need pyglet installed.
+Before testing you need to install its dependencies. OS related dependencies
+are the same as the ones for pyglet[1].
 
-On debian-like systems use
+The python dependencies should be installed with pip:
 
-    # apt-get install python-pyglet
+    $ pip install -r dependencies.txt
 
-Gentoo and Arch have a pretty up-to-date version of the pyglet. See if it works
-for you :-)
+Checkout virtualenvwrapper[2] to see how to install the dependencies without root
+privileges.
 
-Fedora has 1.1.2 packaged, so the official repository version might not work.
-
-If your system is not listed or does not package a version of pyglet that works
-out of the box check this site: http://www.pyglet.org/download.html
+[1] - http://code.google.com/p/pyglet/source/browse/README - Check the requirements section
+[2] - http://virtualenvwrapper.readthedocs.org/en/latest/
 
 ## Running ##
 

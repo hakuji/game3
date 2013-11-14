@@ -1,0 +1,2 @@
+-e hg+https://pyglet.googlecode.com/hg/@2813:0aa8bfe3313a#egg=pyglet
+cloud==2.8.5
